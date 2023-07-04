@@ -1,4 +1,5 @@
 *.tlog
 *.exe
 *.pdb
-Debug/
+x64/
+.vs/
