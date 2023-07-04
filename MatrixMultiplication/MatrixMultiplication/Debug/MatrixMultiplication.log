@@ -1,0 +1,21 @@
+﻿  MatrixMultiplication.cpp
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(18,15): warning C4244: 'argomento': conversione da 'time_t' a 'unsigned int'. Possibile perdita di dati.
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(42,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(44,24): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(48,25): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(74,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(76,24): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(80,25): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(94,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(96,24): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(109,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(111,24): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(120,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(122,24): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(132,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(134,24): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(142,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(144,24): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(154,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\MatrixMultiplication\MatrixMultiplication.cpp(156,24): warning C4018: '<': errata corrispondenza tra signed e unsigned
+  MatrixMultiplication.vcxproj -> C:\Users\VGpc\Documents\GitHub\CppCodeSamples\MatrixMultiplication\Debug\MatrixMultiplication.exe
