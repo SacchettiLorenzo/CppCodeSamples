@@ -18,5 +18,8 @@
     <ClCompile Include="Data Types.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="TypeCasting.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
