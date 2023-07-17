@@ -63,5 +63,3 @@ void Entity::setId(int id) {
 
 int Entity::getId() { return Entity::id; }
 
-
-

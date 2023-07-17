@@ -1,11 +1,11 @@
 
 
 #include <iostream>
-#include "Array.h"
-#include "Vector.h"
-#include "List.h"
-//#include "Map.h"; //escluso dalla compilazione
-#include "Enum.h"
+//#include "Array.h"
+//#include "Vector.h"
+//#include "List.h"
+#include "Map.h"
+//#include "Enum.h"
 
 using namespace std;
 
@@ -37,6 +37,9 @@ int main()
 
     //ENUM
     //PrintEnum();
+
+    //Map();
+    Unordered_Map();
 }
 
 
@@ -83,6 +86,7 @@ int main()
         In map the use of [] operator (cityMap["Torino"]) create the element if not exist, the key element will have the assigned name but
         all the other non-provided date will be at default value; to avoid this instead of use [] use .at() .
         Mind that Vector are for the general use faster then maps but for larger set of data maps are better; for example for indexing big structure
+        for general porpuse is better the unordered map because is faster unless we need an ordered structure
     -ENUM
         Enum consist of a group of variable of the same type.
         By default, if there aren't other value specified the value of the enum variable is in increasing order starting by the firt one at 0;(Example1)

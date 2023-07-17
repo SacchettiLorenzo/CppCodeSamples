@@ -6,6 +6,7 @@ void functionToCall();
 
 int main()
 {
+    //-----------------------------------------------------------------------------------------------------------------
     std::cout << "number of thread available " << std::thread::hardware_concurrency() << std::endl; // it can be wrong depending on the system
     // the main run in his own thread so it is possible to get the main thread id
     std::thread::id main_thread_id = std::this_thread::get_id();
@@ -22,8 +23,13 @@ int main()
     t1.joinable() ? std::cout << "yes" << std::endl : std::cout << "no" << std::endl;
 
     functionToCall(); // calling the function in the main thread
+    //-----------------------------------------------------------------------------------------------------------------
+    
 }
 
 void functionToCall() {
     std::cout << "Called the function from thread " << std::this_thread::get_id() << std::endl;
 }
+
+
+

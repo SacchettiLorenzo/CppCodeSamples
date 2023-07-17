@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdlib.h> 
 #include <time.h>
+#include <stdexcept>
 
 using namespace std;
 
@@ -15,17 +16,19 @@ void printMatrix(int* t, int a, int b);
 
 int main()
 {
-    srand(time(0));
+    srand(static_cast<unsigned int>(time(0)));
 	//squareMatrixMultiplication();
+
 	matrixMultiplication();
+	
 
 }
 
 void matrixMultiplication(){
 	//matrix with form a[M][N]  e b[N][P]
-	int n = 1 << 2;
-	int m = 1 << 3;
-	int p = 1 << 2;
+	int n = 1 << 2; //4
+	int m = 1 << 3; //8
+	int p = 1 << 2; //4
 
 	size_t bytesA = n * m * sizeof(int);
 	size_t bytesB = n * p * sizeof(int);
@@ -47,13 +50,15 @@ void matrixMultiplication(){
 			int temp = 0;
 			for (size_t k = 0; k < n; k++)
 			{
-				temp += a[i * m + k] * b[k * n + j];
+				temp += (a[i * m + k] * b[k * n + j]);
 			}
 			c[i * m + j] = temp;
 		}
 	}
 
 	printMatrix(c, m, p);
+
+	
 	
 }
 
@@ -136,6 +141,8 @@ void initMatrix(int* a, int* b, int* c, int n, int m, int p) {
 			c[i * m + j] = 0;
 		}
 	}
+
+	printMatrix(c, m, p);
 }
 
 void printMatrix(int* t, int n) {
@@ -160,5 +167,6 @@ void printMatrix(int* t, int a, int b) {
 		cout << endl;
 	}
 	cout << endl;
+
 }
 

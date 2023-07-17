@@ -2,7 +2,7 @@
 #include <map>
 #include <unordered_map>
 #include <string>
-#include <vector>
+
 
 struct CityRecord {
 	string name;
@@ -10,37 +10,30 @@ struct CityRecord {
 	double Latitude, Longitude;
 };
 
+//the hash key has to be a easy hashable type like integer or string
 // if i want to use a more complex data as index  in map
 //have to tell to the compiler how to use the hash function in my specific case
 // redefine hash function eith my data type (CityRecord)
-namespace std {
+namespace std
+{
 
 	template<>
-	struct hash<CityRecord> {
-		size_t operator()(const CityRecord& key)const {
+	struct hash<CityRecord> 
+		
+{
+		size_t operator()(const CityRecord& key)const
+		{
 			return hash<string>()(key.name);
 		}
-
+	
 		
 	};
 }
 //this functionality can be used in case of non unique data that could return multiple elements (city with same name)
 
-void example() {
 
-	// data structure with several element
-	// in this case i should iterate all the structure to find what i'm looking for
-	/*
-	vector<CityRecord> cities;
-	cities.emplace_back("Torino", 1000, 9.4, 8.4);
-	cities.emplace_back("Milano", 2000, 6.4, 9.6);
-	cities.emplace_back("Roma", 7452, 9.7, 1.6);
-	cities.emplace_back("Firenze", 453, 3.4, 2.6);
-	cities.emplace_back("Venezia", 87667, 9.8, 8.6);
-	*/
-
-	/*
-	// use of map
+void Map() {
+	//this type of map is ordered thank to a self balancing binary tree
 	map<string, CityRecord> cityMap;	// first argument is the key used to index the data, in this case it index by name
 	cityMap["Torino"] = CityRecord{ "Torino", 1000, 9.4, 8.4 };
 	cityMap["Milano"] = CityRecord{ "Milano", 2000, 6.4, 9.6 };
@@ -48,12 +41,14 @@ void example() {
 	cityMap["Torino"] = CityRecord{ "Firenze", 453, 3.4, 2.6 };
 	cityMap["Venezia"] = CityRecord{ "Venezia", 87667, 9.8, 8.6 };
 
-	string cityinput = "Torino"; // requested city name
+	//data fetching
+	//CityRecord& TurinData = cityMap["Torino"];
 	
-	CityRecord& genericCity = cityMap[cityinput]; //  
-	genericCity.Population;
-	*/
 
+}
+
+void Unordered_Map() {
+	//use ash table to gether the hash that find the searched element, sometimes the data are stored inthe same order as inserted but is not guaranteed
 	unordered_map<string, CityRecord> cityMap;	// first argument is the key used to index the data, in this case it index by name
 	cityMap["Torino"] = CityRecord{ "Torino", 1000, 9.4, 8.4 };
 	cityMap["Milano"] = CityRecord{ "Milano", 2000, 6.4, 9.6 };
@@ -61,16 +56,27 @@ void example() {
 	cityMap["Torino"] = CityRecord{ "Firenze", 453, 3.4, 2.6 };
 	cityMap["Venezia"] = CityRecord{ "Venezia", 87667, 9.8, 8.6 };
 
-	string cityinput = "Torino"; // requested city name
+	//data fetching
+	CityRecord& TurinData = cityMap["Torino"];
 
-	CityRecord& genericCity = cityMap[cityinput]; //  
-	genericCity.Population;
+	//use city record as key through the hash template for city record
+	unordered_map<CityRecord, int> founded_map;
+	founded_map[CityRecord{ "Torino", 1000, 9.4, 8.4 }] = 1000;
+	founded_map[CityRecord{ "Milano", 2000, 6.4, 9.6 }] = 1500;
+	founded_map[CityRecord{ "Roma", 7452, 9.7, 1.6 }] = 1200;
+	founded_map[CityRecord{ "Firenze", 453, 3.4, 2.6 }] = 2000;
+	founded_map[CityRecord{ "Venezia", 87667, 9.8, 8.6 }] = 5667;
 
-	if (cityMap.find("Milano") == cityMap.end()) // find is used to chek if an element exist before accessing with [] operator or .at() function
-		cout << cityMap.at("Milano").name << " is the last city" << endl;
+	//iterating through map (nonsense, if we need to iterate is easier to use vector)
+	for (auto& kv : cityMap) {
+		const string& name = kv.first;
+		CityRecord& city = kv.second;
+		cout << name << endl;;
+	}
 
-	unordered_map<CityRecord, uint32_t> foundedCity;
-	foundedCity[CityRecord{ "Torino", 1000, 9.4, 8.4 }] = 1850; //using the full CityRecord struct as key of the map
-	
-
+	/* c++ 17 version of iterating
+	for (auto& [name, city] : cityMap) {
+		cout << name << city << endl;
+	}
+	*/
 }

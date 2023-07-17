@@ -35,10 +35,12 @@ public:
 
 	int getId();
 
-
+	friend void friendFunction(Entity& obj);
+	
 	
 private:
 	int id;
+	int private_variable;
 	int* data;
 	
 };

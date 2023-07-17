@@ -35,17 +35,20 @@ int main()
         genericEnemy.WhoAmI();
         genericOpponent.WhoAmI();
 
-        
+        friendFunction(genericEntity);
+
+
       
         __debugbreak();
 
-        
-       
-
-        
 
 
 }
+
+void friendFunction(Entity& obj) {
+    cout << "printed private variable from outside the class using friend function: " << obj.id << endl;
+}
+
 
 //rule of zero five three
 /*
@@ -84,4 +87,23 @@ int main()
 /* VIRTUAL FUNCTIONS
 * Allow subclass to override the functions of the base class
 * in a diamond inheritance the D class is overriding the A class functions (if exist)
+*/
+
+/* ACCESS MODIFIERS
+* 
+* Public:
+* All the public class members are available to everyone
+* All the public members are available from anywhere in the program with member access operator "instance.member"
+* 
+* Private:
+* All the member declered as private can be accessed only by the member functions inside the class or from friend class
+* 
+* Protected:
+* All the member declered as protected can be accessed only by the member functions insided class or from subclasses
+* 
+*/
+
+/* FRIEND function
+* friend functions are functions declered as friednd inside the class but defined outside.
+* friend functions can access private members of the class by an instance passed by reference
 */

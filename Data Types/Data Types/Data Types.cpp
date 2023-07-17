@@ -7,6 +7,7 @@
 
 #if VERSION == 17
 #include <any>
+#include <variant>
 #endif
 #include <vector>
 
@@ -75,7 +76,7 @@ int main()
 
 #if VERSION == 17
     //any --------------------------------------
-
+    
     any any_value;
 
     any_value = 42;
@@ -86,6 +87,13 @@ int main()
 
     any_value = std::string("Hello, world!");
     std::cout << "string value: " << std::any_cast<std::string>(any_value) << std::endl;
+
+    //variant --------------------------------------
+    variant<int, string> data;
+    data = 2;
+    data = "Lollo";
+    string s = get<string>(data);
+    string s2 = any_cast<string>(data);
 #endif
 
     //typeid -------------------------------

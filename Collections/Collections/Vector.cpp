@@ -49,10 +49,10 @@ void VectorCapacity() {
 
     g1.resize(4);   // resize the vector so that contains 'n' elements
 
-    if (g1.empty() == false) // return true if vector is empty
-        cout << "\nVector is not empty";
-    else
-        cout << "\nVector is empty";
+    //if (g1.empty() == false) // return true if vector is empty
+      //  cout << "\nVector is not empty";
+    //else
+       // cout << "\nVector is empty";
 
     g1.shrink_to_fit(); // remove the unused capacity. Reduce 'capacity()' to 'size()'
 
