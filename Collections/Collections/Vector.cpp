@@ -103,7 +103,7 @@ void VectorModifier() {
     g1.push_back(1);    // push an element from the back of the vector
     g1.pop_back();    // remove last element
     g1.insert(g1.begin(),30);   //insert a new element before the element in the specified position (in this case before the first element)
-    g1.erase(g1.begin());       //remove the element in the specified position (in this case the first element)
+    g1.erase(g1.begin());       //remove the element in the specified position (in this case the first element) it return a new iterator that can repalce the old one to keep the loop going 
     g1.swap(g2);    //swap all the element of one vector with another vector of the same type, size of the vector can be different and will be swapped too
     g1.clear();     //remove all the element and resize the vector to 0;
     g1.emplace(g1.begin(), 5);  //like insert but it is possible to create an object inside the parameter

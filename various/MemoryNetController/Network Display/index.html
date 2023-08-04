@@ -1,0 +1,38 @@
+<html>
+<head>
+    <script type="text/javascript" src="res/unpkg.com_vis-network@9.1.6_standalone_umd_vis-network.min.js"></script>
+    <script type="text/javascript" src="../MemoryNetController/Dataset.js"></script>
+
+    <style type="text/css">
+        #mynetwork {
+            width: 1920px;
+            height: 1080px;
+            border: 1px solid lightgray;
+        }
+    </style>
+</head>
+<body>
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
+    // create an array with nodes
+    var nodes = new vis.DataSet(NodesDataset);
+
+    // create an array with edges
+    var edges = new vis.DataSet(ConnectionDataset);
+
+    // create a network
+    var container = document.getElementById('mynetwork');
+
+    // provide the data in the vis format
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    var options = {};
+
+    // initialize your network!
+    var network = new vis.Network(container, data, options);
+</script>
+</body>
+</html>

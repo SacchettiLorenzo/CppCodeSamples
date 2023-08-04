@@ -4,8 +4,9 @@
 //#include "Array.h"
 //#include "Vector.h"
 //#include "List.h"
-#include "Map.h"
+//#include "Map.h"
 //#include "Enum.h"
+#include "Queue.h"
 
 using namespace std;
 
@@ -39,7 +40,11 @@ int main()
     //PrintEnum();
 
     //Map();
-    Unordered_Map();
+   //Unordered_Map();
+
+    QueueOperations();
+    
+
 }
 
 
@@ -65,7 +70,7 @@ int main()
         and deletion.
         List need a proper defined iterator to work with.
         Some statement are similar to vectors.
-    -QUE
+    -QUEUE
         Que are a type of container that works with (FIFO) first in first out. The element are inserted at the back and deleted from the front of the dataset
     -DEQUE
         Double-ended que are que capable of expansion and contraction on both end. Like Vector it's possible to push and pop element at the back fo the dataset
