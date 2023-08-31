@@ -49,11 +49,11 @@ int main()
 * in const pointer it is not possible to modify the content of the pointer but it is possible to change the variable pointed at;
 * depending on the syntax there are different behaviour:
 * - const int* a = int const* a; normal constant pointer
-* - int* const; cannot reassing the pointed variable but can change the content
+* - int* const; cannot reassign the pointed variable but can change the content
 * 
-* const behaviour is different is the keyword is before the asterisk or after the asterisk
+* const behaviour is different if the keyword is before the asterisk or after the asterisk
 * 
-* in classes a method can me defined const if the method shold never modify other class members
+* in classes a method can me defined const if the method should never modify other class members
 * 
 * the const keyword used 3 times in method declareation means:
 * - the method will return a pointer that cannot be modified
