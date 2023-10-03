@@ -70,15 +70,16 @@ int main() {
 * weak_ptr
 * 
 * unique_ptr (scope pointers)
-* free the memory when the pointer is out of scope 
+* free the memory when the pointer is out of scope. can take a heap-allocated pointer and manage it so that it's cleaned up automatically when there is no longer a reference to it.
 * it's called unique pointer because it cannot be copied 
 * 
 * shared_ptr
-* work with reference counting. it keep the count of how there many references are to the pointe
+* work with reference counting. it keep the count of how there many references are to the pointer
 * when the ammount of references reaches 0, the pointer gets deleted 
 * 
 * weak_ptr
-* work the same as a shared pointer but it doesn't encrease teh count of the references
+* work the same as a shared pointer but it doesn't encrease the count of the references
+* a weak pointer must be converted to a shared pointer to access the referenced object
 * 
 * smart pointer provide functions to get information about pointers
 */

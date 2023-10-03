@@ -1,0 +1,3 @@
+﻿  Benchmarking.cpp
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Benchmarking\Benchmarking\Benchmarking.cpp(44,15): warning C4244: 'argomento': conversione da 'time_t' a 'unsigned int'. Possibile perdita di dati.
+  Benchmarking.vcxproj -> C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Benchmarking\x64\Debug\Benchmarking.exe

@@ -1,0 +1,10 @@
+﻿  Average Color.cpp
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\OpenCV\OpenCVGeneral\Average Color\Average Color.cpp(134,28): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\OpenCV\OpenCVGeneral\Average Color\Average Color.cpp(154,36): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\OpenCV\OpenCVGeneral\Average Color\Average Color.cpp(154,33): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\OpenCV\OpenCVGeneral\Average Color\Average Color.cpp(155,36): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\OpenCV\OpenCVGeneral\Average Color\Average Color.cpp(155,33): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\OpenCV\OpenCVGeneral\Average Color\Average Color.cpp(156,36): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\OpenCV\OpenCVGeneral\Average Color\Average Color.cpp(156,33): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\OpenCV\OpenCVGeneral\Average Color\Average Color.cpp(202,28): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  Average Color.vcxproj -> C:\Users\VGpc\Documents\GitHub\CppCodeSamples\OpenCV\OpenCVGeneral\x64\Debug\Average Color.exe

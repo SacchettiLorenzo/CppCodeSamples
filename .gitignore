@@ -1,5 +1,9 @@
 *.tlog
 *.exe
 *.pdb
-x64/
+*.obj
+*.applocal
+*.ilk
+*.exe.recipe
+/libraries/*
 .vs/

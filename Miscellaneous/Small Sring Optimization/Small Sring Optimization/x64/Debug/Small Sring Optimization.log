@@ -1,0 +1,4 @@
+﻿  Small Sring Optimization.cpp
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Miscellaneous\Small Sring Optimization\Small Sring Optimization\Small Sring Optimization.cpp(5,1): warning C4005: '_ITERATOR_DEBUG_LEVEL': ridefinizione macro
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\yvals.h(128,1): message : vedere la precedente definizione di '_ITERATOR_DEBUG_LEVEL'
+  Small Sring Optimization.vcxproj -> C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Miscellaneous\Small Sring Optimization\x64\Debug\Small Sring Optimization.exe

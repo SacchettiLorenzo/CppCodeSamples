@@ -1,0 +1,5 @@
+﻿  OpenCV Basics.cpp
+OpenCV Basics.obj : error LNK2001: unresolved external symbol "void __cdecl cv::imshow(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &,class cv::_InputArray const &)" (?imshow@cv@@YAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV_InputArray@1@@Z)
+OpenCV Basics.obj : error LNK2001: unresolved external symbol "public: void __cdecl cv::Mat::copyTo(class cv::_OutputArray const &)const " (?copyTo@Mat@cv@@QEBAXAEBV_OutputArray@2@@Z)
+OpenCV Basics.obj : error LNK2001: unresolved external symbol "void __cdecl cv::LUT(class cv::_InputArray const &,class cv::_InputArray const &,class cv::_OutputArray const &)" (?LUT@cv@@YAXAEBV_InputArray@1@0AEBV_OutputArray@1@@Z)
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\OpenCV\OpenCVGeneral\x64\Release\OpenCV Basics.exe : fatal error LNK1120: 3 unresolved externals

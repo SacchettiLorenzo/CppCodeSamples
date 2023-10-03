@@ -1,0 +1,3 @@
+﻿  MemoryNetController.cpp
+C:\Users\VGpc\Documents\GitHub\MemoryNetController\MemoryNetController\MemoryNetController.cpp(18,15): warning C4244: 'argomento': conversione da 'time_t' a 'unsigned int'. Possibile perdita di dati.
+  MemoryNetController.vcxproj -> C:\Users\VGpc\Documents\GitHub\MemoryNetController\x64\Debug\MemoryNetController.exe

@@ -1,0 +1,56 @@
+﻿  Conway Game Of Life.cpp
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Projects\Conway Game Of Life\Conway Game Of Life\Conway Game Of Life.cpp(20,46): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Projects\Conway Game Of Life\Conway Game Of Life\Conway Game Of Life.cpp(20,39): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Projects\Conway Game Of Life\Conway Game Of Life\Conway Game Of Life.cpp(49,84): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Projects\Conway Game Of Life\Conway Game Of Life\Conway Game Of Life.cpp(49,64): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+  GridSpawner.cpp
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Projects\Conway Game Of Life\Conway Game Of Life\GridSpawner.cpp(10,65): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Projects\Conway Game Of Life\Conway Game Of Life\GridSpawner.cpp(10,47): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Projects\Conway Game Of Life\Conway Game Of Life\GridSpawner.cpp(11,34): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Projects\Conway Game Of Life\Conway Game Of Life\GridSpawner.cpp(11,31): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Simulation.cpp
+  Square.cpp
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Projects\Conway Game Of Life\Conway Game Of Life\Square.cpp(5,43): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Projects\Conway Game Of Life\Conway Game Of Life\Square.cpp(5,37): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  Generating Code...
+  Conway Game Of Life.vcxproj -> C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Projects\Conway Game Of Life\x64\Debug\Conway Game Of Life.exe

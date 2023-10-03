@@ -9,7 +9,7 @@ int main()
     //basic file handling -------------------------------------------
     ofstream file; //creates and write to files
     ifstream file2; //reads from files
-    fstream file3; // conmination of ofstream and ifstrfeam 
+    fstream file3; // conbination of ofstream and ifstrfeam 
 
     ofstream Myfile("myfile.txt");
     Myfile << "write to the file" << endl;
