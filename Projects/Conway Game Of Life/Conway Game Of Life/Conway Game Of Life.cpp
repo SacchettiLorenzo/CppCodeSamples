@@ -19,11 +19,13 @@ int main()
 
     sf::View view(sf::FloatRect(0, 0, width, height));
 
-
+    //generate the grid
     GridSpawner g(gap, squaresize, width, height);
 
+    //manage the simulation
     Simulation s(g.getVecAddr(), &width, &height, &squaresize, &gap);
 
+    //event manager (keyboard event or mouse event)
     while (window.isOpen())
     {
         sf::Event event;

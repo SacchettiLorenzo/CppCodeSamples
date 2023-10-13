@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void someFunction(int arg)
 {
@@ -9,14 +10,14 @@ void someFunction(int arg)
 
 int main() {
 	typedef struct {
-		char* name;
+		char name[10];
 		int age;
 	} person;
 
 	person* myperson = (person*)malloc(sizeof(person)); //This tells the compiler that we want to dynamically allocate just enough to hold a person struct in memory and then return a pointer of type person to the newly allocated data.
-	// malloc return void so (person*) is a typecast top a type holding person pointer
+	// malloc return void so (person*) is a typecast to a type holding person pointer
 
-	myperson->name = "John";
+	strncpy(myperson->name, "John", sizeof("John"));
 	myperson->age = 27;
 
 	printf("The age a is %d\n", (*myperson).age);

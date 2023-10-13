@@ -8,9 +8,14 @@ class Simulation
 public:
 	Simulation(std::vector<Square>* vec_ptr, int* width, int* height, int* squaresize, int* gap);
 	void setVecPtr(std::vector<Square>* vec_ptr);
+
+	//define a smaller portion of the grid to perform the calculation on
 	void defineSquaredAround();
+
+	//
 	void performSimulation();
 
+	//check the square neightbour
 	bool checkTopLeftNeightbour(Square s);
 	bool checkLeftNeightbour(Square s);
 	bool checkBottomLeftNeightbour(Square s);

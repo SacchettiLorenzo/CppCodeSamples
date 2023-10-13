@@ -12,3 +12,7 @@ public:
 private:
     std::vector<Square> grid;
 };
+
+/*
+generate the grid for the simulation
+*/

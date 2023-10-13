@@ -1,2 +1,4 @@
-﻿  Smart Pointers.cpp
+﻿  PointersMiscellaneous.c
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Pointers\Pointers\PointersMiscellaneous.c(23,6): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Pointers\Pointers\PointersMiscellaneous.c(33,6): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
   Pointers.vcxproj -> C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Pointers\x64\Debug\Pointers.exe

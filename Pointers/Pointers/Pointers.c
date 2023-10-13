@@ -2,7 +2,7 @@
 
 //c++ = 0
 //c   = 1
-#define language 1
+#define language 0
 
 typedef struct {
     int x;
