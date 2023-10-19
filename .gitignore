@@ -1,7 +1,11 @@
+*.log
 *.tlog
 *.exe
 *.pdb
+*.idb
 *.obj
+*.obj.enc
+*.hint
 *.applocal
 *.ilk
 *.exe.recipe

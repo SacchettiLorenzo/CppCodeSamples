@@ -1,4 +1,4 @@
 ﻿  stdio.cpp
-C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Basic IO\Basic IO\stdio.cpp(10,18): warning C4474: 'scanf_s' : too many arguments passed for format string
-C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Basic IO\Basic IO\stdio.cpp(10,18): message : placeholders and their parameters expect 0 variadic arguments, but 1 were provided
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Basic IO\Basic IO\stdio.cpp(11,18): warning C4474: 'scanf_s' : too many arguments passed for format string
+C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Basic IO\Basic IO\stdio.cpp(11,18): message : placeholders and their parameters expect 0 variadic arguments, but 1 were provided
   Basic IO.vcxproj -> C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Basic IO\x64\Debug\Basic IO.exe
