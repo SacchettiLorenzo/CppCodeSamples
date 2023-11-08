@@ -19,7 +19,7 @@ Node * newNode(Generic* content) {
 	return n;
 }
 
-void emplaceBack(Node * parent, Generic* content) {
+void push_back(Node * parent, Generic* content) {
 	while (parent->next != NULL) {
 		parent = parent->next;
 	}
@@ -27,7 +27,7 @@ void emplaceBack(Node * parent, Generic* content) {
 	parent->next->content = content;
 }
 
-void emplaceFront(Node** current, Generic* content){
+void emplace_front(Node** current, Generic* content){
 
 	Node* newElement = nodeCalloc(sizeof(Generic));
 	newElement->content = content;
@@ -51,7 +51,7 @@ void insertOrdered(Node* head, Generic* content, bool(*comparativeFunction)(Gene
 		head = head->next;
 	}
 	if (!inserted) {
-		emplaceBack(head, content);
+		push_back(head, content);
 	}
 }
 
@@ -112,6 +112,13 @@ void* sort(Node** head, bool(*comparativeFunction)(Generic* first, Generic* seco
 	}
 }
 
+/*TODO - 
+ assign(){} // assign a new content to a node
+ pop_back(){} // remove last element
+ erase(){} // recursivley dealloc all the nodes
+ clear(){} // delete the content of a node allocationg an empty new generic pointer
+*/
+
 
 
 
@@ -133,27 +140,27 @@ int main()
 	Generic t11 = { 11,'k',70 };
 
 	/*Node* list = newNode(&t1);
-	emplaceBack(list, &t0);
-	emplaceBack(list, &t2);
-	emplaceBack(list, &t3);
-	emplaceBack(list, &t4);
-	emplaceBack(list, &t5);
-	emplaceBack(list, &t6);
-	emplaceBack(list, &t7);
-	emplaceBack(list, &t8);
-	emplaceBack(list, &t9);*/
+	push_back(list, &t0);
+	push_back(list, &t2);
+	push_back(list, &t3);
+	push_back(list, &t4);
+	push_back(list, &t5);
+	push_back(list, &t6);
+	push_back(list, &t7);
+	push_back(list, &t8);
+	push_back(list, &t9);*/
 
 	Node* list = newNode(&t1);
-	emplaceBack(list, &t2);
-	emplaceBack(list, &t6);
-	emplaceBack(list, &t3);
-	emplaceBack(list, &t4);
-	emplaceBack(list, &t5);
-	emplaceBack(list, &t7);
-	emplaceBack(list, &t8);
-	emplaceBack(list, &t0);
-	emplaceBack(list, &t9);
-	emplaceFront(&list, &t10);
+	push_back(list, &t2);
+	push_back(list, &t6);
+	push_back(list, &t3);
+	push_back(list, &t4);
+	push_back(list, &t5);
+	push_back(list, &t7);
+	push_back(list, &t8);
+	push_back(list, &t0);
+	push_back(list, &t9);
+	emplace_front(&list, &t10);
 
 	printList(list);
 
