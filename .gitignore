@@ -11,3 +11,4 @@
 *.exe.recipe
 /libraries/*
 .vs/
+*.out
