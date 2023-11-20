@@ -2,6 +2,7 @@
     "files.associations": {
         "signal.h": "c",
         "corecrt.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "string.h": "c"
     }
 }
