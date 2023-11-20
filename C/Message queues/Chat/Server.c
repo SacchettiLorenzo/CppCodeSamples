@@ -11,12 +11,12 @@ void boot(int maxConnections){
 
 void waitForConnection()
 {
-    while (true)
+    while (1)
     {
         received = msgrcv(common, &publicMsg, PUBLICMSGLEN, MSGTYPE, 0);
         if (received >= 0)
         {
-            break;
+            printf("new connection on with pid: %d",atoi(publicMsg.mtext));
         }
     }
 

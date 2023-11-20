@@ -16,3 +16,5 @@ struct publicMsgBuf{
     long mtype;
     char mtext[PUBLICMSGLEN];
 };
+
+#endif
