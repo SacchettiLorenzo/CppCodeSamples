@@ -10,27 +10,10 @@ typedef  struct Generic Generic;
 
 /*check if the first argument is greater than the second one */
 /*must be modified for each implementation*/
-bool isGreaterThen(Generic* first, Generic* second) {
-	if (first->c > second->c)
-	{
-		return true;
-	}
-	else {
-		return false;
-	}
-}
+bool isGreaterThen(Generic* first, Generic* second);
 
 /*check if each member of the first argument are equals to the respective ones in the second argument*/
 /*must be modified for each implementation*/
-bool isEqualTo(Generic* first, Generic* second) {
-	if (
-		first->a == second->a &&
-		first->b == second->b &&
-		first->c == second->c
-		)return true;
-	else return false;
-}
+bool isEqualTo(Generic* first, Generic* second);
 
-void printAllParams(Generic* content) {
-	printf("%d, %c, %d\n", content->a, content->b, content->c);
-}
+void printAllParams(Generic* content);
