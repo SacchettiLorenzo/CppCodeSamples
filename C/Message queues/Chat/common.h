@@ -1,5 +1,6 @@
 #ifndef __IPC_MSG_SMALIB_H__
 #define __IPC_MSG_SMALIB_H__
+#define _GNU_SOURCE 
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -10,11 +11,19 @@
 #include <string.h>
 
 #define PUBLIC_KEY 0X111111
-long MSGTYPE = 1;
+long publicMsgType = 1;
 #define PUBLICMSGLEN 6
+
+long privateMsgType = 2;
+#define PRIVATEMSGLEN 120
 struct publicMsgBuf{
     long mtype;
     char mtext[PUBLICMSGLEN];
+};
+
+struct privateMsgBuf{
+    long mtype;
+    char mtext[PRIVATEMSGLEN];
 };
 
 #define TEST_ERROR    if (errno) {fprintf(stderr, \
