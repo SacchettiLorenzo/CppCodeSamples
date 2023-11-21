@@ -20,10 +20,17 @@ void connection(){
 
 int main(int argc, char *argv[]){
     connection();
+    while (1)
+    {
     received = msgrcv(private, &privateMsg, PRIVATEMSGLEN, privateMsgType,0);
         
         if (received >= 0)
         {
             printf("message: %s\n", privateMsg.mtext);
         }
+    
+        fgets(privateMsg.mtext, PRIVATEMSGLEN, stdin);
+        msgsnd(private, &privateMsg, PRIVATEMSGLEN, 0);
+    }
+    
 }

@@ -1,8 +1,18 @@
 #include "common.h"
 #include <sys/time.h>
 #include <signal.h>
-#define INTERVAL 2000
+#include <time.h>
 
+#define CHECK_FOR_CONNCECTION_INTERVAL 2000
+#define BROADCAST_INTERVAL 500
+
+#define CLOCKID CLOCK_REALTIME
+#define SIG SIGUSR1
+
+
+
+timer_t connection_timer;
+timer_t broadcast_timer;
 int common;
 int *queues;
 int queuesCounter = 0;
@@ -10,13 +20,19 @@ struct publicMsgBuf publicMsg;
 struct privateMsgBuf privateMsg;
 int received;
 int maxConnections;
-struct itimerval it_val;
-struct sigaction sa;
+struct itimerspec connectionTimer;
+struct sigaction alarm_handler;
+struct sigaction sigusr_handler;
+struct itimerspec broadcastTimer;
 
+struct sigevent sigalarm;
+struct sigevent sigusr;
 
 void boot();
 void waitForConnection();
-void handle_signal();
+void handle_alarm();
+void handle_sigusr();
+void broadcast();
 
 int main(int argc, char *argv[])
 {
@@ -24,30 +40,56 @@ int main(int argc, char *argv[])
     common = msgget(PUBLIC_KEY, IPC_CREAT | 0600);
     while (1)
     {
-        //keep computing something
+        
     }
 }
 
 void boot(int maxCon)
 {
     maxConnections = maxCon;
+    publicMsg.mtype = publicMsgType;
+    privateMsg.mtype = privateMsgType;
     queues = (int *)malloc(sizeof(int) * maxCon);
-    bzero(&sa, sizeof(sa));
-    sa.sa_handler = handle_signal;
-    sigaction(SIGALRM, &sa, NULL);
-    it_val.it_value.tv_sec = INTERVAL / 1000;
-    it_val.it_value.tv_usec = (INTERVAL * 1000) % 1000000;
-    it_val.it_interval = it_val.it_value;
-    if (setitimer(ITIMER_REAL, &it_val, NULL) == -1)
-    {
-        perror("error calling setitimer()");
-        exit(1);
-    }
+
+    /*alarm handler for connection*/
+    bzero(&alarm_handler, sizeof(alarm_handler));
+    alarm_handler.sa_handler = handle_alarm;
+    sigaction(SIGALRM, &alarm_handler, NULL);
+
+    /*siguser handler for broadcast*/
+    bzero(&sigusr_handler, sizeof(sigusr_handler));
+    sigusr_handler.sa_handler = handle_sigusr;
+    sigaction(SIGUSR1, &sigusr_handler, NULL);
+
+    /*setup signal event alarm*/
+    sigalarm.sigev_notify = SIGEV_SIGNAL;
+    sigalarm.sigev_signo = SIGALRM;
+    sigalarm.sigev_value.sival_ptr = &connection_timer;
+    timer_create(CLOCKID, &sigalarm, &connection_timer);
+
+    /*setup signal event siguser*/
+    sigusr.sigev_notify = SIGEV_SIGNAL;
+    sigusr.sigev_signo = SIGUSR1;
+    sigusr.sigev_value.sival_ptr = &broadcast_timer;
+    timer_create(CLOCKID, &sigusr, &broadcast_timer);
+
+    /*setup connection timer*/
+    connectionTimer.it_value.tv_sec = CHECK_FOR_CONNCECTION_INTERVAL / 1000;
+    connectionTimer.it_value.tv_nsec = 0;
+    connectionTimer.it_interval = connectionTimer.it_value;
+    timer_settime(connection_timer, 0, &connectionTimer, NULL);
+
+    /*setup broadcast timer*/
+    broadcastTimer.it_value.tv_sec = 0;
+    broadcastTimer.it_value.tv_nsec = 500000000;
+    broadcastTimer.it_interval = broadcastTimer.it_value;
+    timer_settime(broadcast_timer, 0, &broadcastTimer, NULL);
+
 }
 
 void waitForConnection()
 {
-    printf("waiting\n");
+    write(1,"waiting\n",8);
     if (queuesCounter < maxConnections)
     {
         received = msgrcv(common, &publicMsg, PUBLICMSGLEN, publicMsgType, IPC_NOWAIT);
@@ -65,14 +107,23 @@ void waitForConnection()
     {
         char s[] = "Server stop waiting for connection";
         write(1,s,strlen(s));
-        it_val.it_value.tv_sec = 0;
-        it_val.it_value.tv_usec = 0;
-        it_val.it_interval = it_val.it_value;
-        setitimer(ITIMER_REAL, &it_val, NULL);
+        connectionTimer.it_value.tv_sec = 0;
+        connectionTimer.it_value.tv_nsec = 0;
+        connectionTimer.it_interval = connectionTimer.it_value;
+        timer_settime(connection_timer, 0, &connectionTimer, NULL);
     }
 }
 
-void handle_signal()
+void handle_alarm()
 {
     waitForConnection();
+}
+
+void handle_sigusr(){
+    broadcast();
+    //write(1,"sigusr\n",7);
+}
+
+void broadcast(){
+    
 }
