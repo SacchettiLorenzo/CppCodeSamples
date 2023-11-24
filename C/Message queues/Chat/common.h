@@ -9,12 +9,19 @@
 #include <sys/msg.h>
 #include <errno.h>
 #include <string.h>
+#include <signal.h>
 
 #define PUBLIC_KEY 0X111111
 long publicMsgType = 1;
 #define PUBLICMSGLEN 6
 
-long privateMsgType = 2;
+long privateMsgTypeServerRcv = 2;
+long privateMsgTypeClientSend = 2;
+
+long privateMsgTypeServerSend = 3;
+long privateMsgTypeClientRcv = 3;
+
+#define USERNAMEMAXLEN  30
 #define PRIVATEMSGLEN 120
 struct publicMsgBuf{
     long mtype;
