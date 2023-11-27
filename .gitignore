@@ -12,3 +12,4 @@
 /libraries/*
 .vs/
 *.out
+*.json

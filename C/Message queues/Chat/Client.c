@@ -18,20 +18,8 @@ struct sigaction sa;
 
 void handle_signal();
 void boot(char *);
-// il server avvisa i client che del messaggio tramite un segnale SIGUSR1
-// all'interno dell'handler il client prende e stampa il messaggio
-// il client rimane sempre in modalità scrittura e invia dopo il carattere \n
+void connection();
 
-void connection()
-{
-
-    sprintf(publicMsg.mtext, "%d", getpid());
-    common = msgget(PUBLIC_KEY, IPC_CREAT | 0600);
-    TEST_ERROR;
-    msgsnd(common, &publicMsg, PUBLICMSGLEN, 0);
-    private = msgget(getpid(), IPC_CREAT | 0600);
-    /// TEST_ERROR;
-}
 
 int main(int argc, char *argv[])
 {
@@ -71,4 +59,15 @@ void boot(char *username)
     privateMsgSend.mtype = privateMsgTypeClientSend;
 
     strcpy(client.username, username);
+}
+
+void connection()
+{
+
+    sprintf(publicMsg.mtext, "%d", getpid());
+    common = msgget(PUBLIC_KEY, IPC_CREAT | 0600);
+    TEST_ERROR;
+    msgsnd(common, &publicMsg, PUBLICMSGLEN, 0);
+    private = msgget(getpid(), IPC_CREAT | 0600);
+    /// TEST_ERROR;
 }

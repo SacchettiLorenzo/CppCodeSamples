@@ -1,0 +1,4 @@
+1.  Add a functionality to the server that log every message on a file
+2.  Better message visualization
+3.  Add handler for both client and server for closing the queues when the programm terminate
+4.  Comment

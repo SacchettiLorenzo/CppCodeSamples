@@ -27,12 +27,13 @@ struct privateMsgBuf privateMsgSend;
 int received;
 int maxConnections;
 struct itimerspec connectionTimer;
-struct sigaction alarm_handler;
-struct sigaction sigusr_handler;
 struct itimerspec broadcastTimer;
 
 struct sigevent sigalarm;
 struct sigevent sigusr;
+
+struct sigaction alarm_handler;
+struct sigaction sigusr_handler;
 
 void boot(int);
 void waitForConnection();

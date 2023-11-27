@@ -12,17 +12,17 @@
 #include <signal.h>
 
 #define PUBLIC_KEY 0X111111
-long publicMsgType = 1;
 #define PUBLICMSGLEN 6
+#define USERNAMEMAXLEN  30
+#define PRIVATEMSGLEN 120
 
+long publicMsgType = 1;
 long privateMsgTypeServerRcv = 2;
 long privateMsgTypeClientSend = 2;
 
 long privateMsgTypeServerSend = 3;
 long privateMsgTypeClientRcv = 3;
 
-#define USERNAMEMAXLEN  30
-#define PRIVATEMSGLEN 120
 struct publicMsgBuf{
     long mtype;
     char mtext[PUBLICMSGLEN];
