@@ -9,9 +9,6 @@
 #include <errno.h>
 #include <string.h>
 
-#define key 0x111111
-#define NUM_PROC 4
-
 #define filename "file.txt"
 #define NUM_CHILD 5
 
