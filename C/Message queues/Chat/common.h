@@ -17,8 +17,8 @@
 #define PRIVATEMSGLEN 120
 
 long publicMsgType = 1;
-long privateMsgTypeServerRcv = 2;
 long privateMsgTypeClientSend = 2;
+long privateMsgTypeServerRcv = 2;
 
 long privateMsgTypeServerSend = 3;
 long privateMsgTypeClientRcv = 3;
