@@ -1,5 +1,49 @@
 #include "../include/attivatore.h"
 
-int main(int argc, char* argv[]){
+struct sembuf sops;
+int startSimulationSemId;
+int main(int argc, char *argv[])
+{
+    init();
+    ready();
+}
 
+void init()
+{
+    startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600);
+
+    bzero(&sa, sizeof(sa));
+    sa.sa_sigaction = handle_signals;
+    sa.sa_flags = SA_SIGINFO;
+    sigaction(SIGINT, &sa, NULL);
+}
+
+void ready()
+{
+    sops.sem_num = ID_READY;
+    sops.sem_op = 1;
+    semop(startSimulationSemId, &sops, 1);
+    /*write(1, "attivatore ready\n", 17);*/
+    waitForParentStartSimulation();
+}
+
+void waitForParentStartSimulation()
+{
+    sops.sem_num = ID_GO;
+    sops.sem_op = -1;
+    semop(startSimulationSemId, &sops, 1);
+}
+
+void handle_signals(int signal,siginfo_t* info, void* v)
+{
+    switch (signal)
+    {
+    case SIGINT:
+        write(1, "Attivatore Handling SIGINT\n", 27);
+        exit(EXIT_SUCCESS);
+        break;
+
+    default:
+        break;
+    }
 }
