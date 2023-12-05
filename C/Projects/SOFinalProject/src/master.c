@@ -99,7 +99,6 @@ void init()
 
     nAtomQueue = msgget(N_ATOM_QUEUE_KEY, 0600 | IPC_CREAT);
     
-
     /*SECTION - timer*/
     /*TODO - check if everything is necessary*/
     sigalarm.sigev_notify = SIGEV_SIGNAL;

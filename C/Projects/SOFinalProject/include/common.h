@@ -18,13 +18,16 @@
 
 struct sigaction sa;
 
+typedef enum {Master,Atomo,Attivatore,Alimentazione} processType;
 
 void handle_signals(int signal,siginfo_t* info, void* v);
 
+void Write(int fd, const void* buff, size_t len, processType pType);
 
 
 
-typedef enum {Master,Atomo,Attivatore,Alimentazione} processType;
+
+
 
 #define TEST_ERROR    if (errno) {fprintf(stderr, \
 					  "%s:%d: PID=%5d: Error %d (%s)\n", \
