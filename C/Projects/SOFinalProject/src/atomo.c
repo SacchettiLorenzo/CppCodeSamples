@@ -23,6 +23,11 @@ int main(int argc, char *argv[])
 {
     init();
     waitForParentStartSimulation();
+    while (1)
+    {
+        /* code */
+    }
+    
 }
 
 void init()
@@ -39,7 +44,9 @@ void init()
     bzero(&sa, sizeof(sa));
     sa.sa_sigaction = handle_signals;
     sa.sa_flags = SA_SIGINFO;
-    sigaction(SIGINT | SIGALRM, &sa, NULL);
+
+    sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGUSR1, &sa, NULL);
 
     nAtomQueue = msgget(N_ATOM_QUEUE_KEY, 0600);
     snprintf(AtomMsgSnd.mtext,ATOM_MSG_LEN,"%d", getpid());
@@ -50,7 +57,7 @@ void init()
     /*SECTION - timer*/
     /*TODO - check if everything is necessary*/
     sigalarm.sigev_notify = SIGEV_SIGNAL;
-    sigalarm.sigev_signo = SIGALRM;
+    sigalarm.sigev_signo = SIGUSR1;
     sigalarm.sigev_value.sival_ptr = &checkmsgtimer;
     timer_create(CLOCK_REALTIME, &sigalarm, &checkmsgtimer);
     checkMsgTimer.it_value.tv_sec = 0;
@@ -75,7 +82,6 @@ void waitForParentStartSimulation()
     semop(startSimulationSemId, &sops, 1);
 }
 
-/*FIXME - SIGINT non funziona. Possibile soluzione: dividere gli handler in handler singoli e non comulativi*/
 void handle_signals(int signal, siginfo_t *info, void *v)
 {
     switch (signal)
@@ -84,7 +90,7 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         write(1, "Atomo Handling SIGINT\n", 22);
         exit(EXIT_SUCCESS);
         break;
-    case SIGALRM:
+    case SIGUSR1:
         checkForMsg();
         break;
 

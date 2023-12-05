@@ -80,9 +80,7 @@ int main(int argc, char *argv[])
     }
 
     waitForChildReady();
-    while ((childPid = wait(&status)) != -1)
-    {
-    }
+    while ((childPid = wait(&status)) != -1);
 }
 
 void init()
@@ -94,7 +92,8 @@ void init()
     sa.sa_sigaction = handle_signals; /*same as handler*/
     sa.sa_flags = SA_SIGINFO;
 
-    sigaction(SIGINT | SIGALRM, &sa, NULL);
+    sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGUSR1, &sa, NULL);
 
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600 | IPC_CREAT);
 
@@ -104,7 +103,7 @@ void init()
     /*SECTION - timer*/
     /*TODO - check if everything is necessary*/
     sigalarm.sigev_notify = SIGEV_SIGNAL;
-    sigalarm.sigev_signo = SIGALRM;
+    sigalarm.sigev_signo = SIGUSR1;
     sigalarm.sigev_value.sival_ptr = &checkmsgtimer;
     timer_create(CLOCK_REALTIME, &sigalarm, &checkmsgtimer);
     checkMsgTimer.it_value.tv_sec = 0;
@@ -133,7 +132,7 @@ void startSimulation()
     semop(startSimulationSemId, &sops, 1);
 }
 
-/*FIXME - SIGINT non funziona. Possibile soluzione: dividere gli handler in handler singoli e non comulativi*/
+
 void handle_signals(int signal, siginfo_t *info, void *v)
 {
     switch (signal)
@@ -141,8 +140,6 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     case SIGINT:
         write(1, "Master Handling SIGINT\n", 23);
 
-        /*FIXME - semctl and msgctl are not doing what supposed to*/
-        /*remove all semaphore with startSimulationSemId id - semnum ingored*/
         semctl(startSimulationSemId, 0, IPC_RMID);
         semctl(startSimulationSemId, 0, IPC_RMID);
 
@@ -151,13 +148,11 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         /*send SIGINT to all the child process*/
         for (i = 0; i < totalChild; i++)
         {
-            snprintf(writeBuffer,20,"%d", (childs + i)->pid);
-            write(1,writeBuffer,20);
             kill((childs + i)->pid, SIGINT);
         }
         exit(EXIT_SUCCESS);
         break;
-    case SIGALRM:
+    case SIGUSR1:
         checkForMsg();
         break;
 
@@ -182,7 +177,6 @@ int normalDistributionNumberGenerator()
 
 void checkForMsg()
 {
-    /*FIXME - it does not read*/
     checkMsgTimer.it_value.tv_nsec = 0;
     timer_settime(checkmsgtimer, 0, &checkMsgTimer, NULL);
     while (msgrcv(nAtomQueue, &AtomMsgRcv, ATOM_MSG_LEN, MASTER_QUE_TYPE, 0) > 0)
