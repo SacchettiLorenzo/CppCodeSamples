@@ -23,7 +23,7 @@ void ready()
     sops.sem_num = ID_READY;
     sops.sem_op = 1;
     semop(startSimulationSemId, &sops, 1);
-    /*write(1, "attivatore ready\n", 17);*/
+    Write(1, "Attivatore ready\n", 17,Attivatore);
     waitForParentStartSimulation();
 }
 
@@ -39,7 +39,7 @@ void handle_signals(int signal,siginfo_t* info, void* v)
     switch (signal)
     {
     case SIGINT:
-        write(1, "Attivatore Handling SIGINT\n", 27);
+        Write(1, "Attivatore Handling SIGINT\n", 27,Attivatore);
         exit(EXIT_SUCCESS);
         break;
 

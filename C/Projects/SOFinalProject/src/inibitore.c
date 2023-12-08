@@ -1,7 +1,6 @@
-#include "../include/alimentazione.h"
+#include "../include/inibitore.h"
 
 struct sembuf sops;
-
 int startSimulationSemId;
 int main(int argc, char *argv[])
 {
@@ -24,7 +23,7 @@ void ready()
     sops.sem_num = ID_READY;
     sops.sem_op = 1;
     semop(startSimulationSemId, &sops, 1);
-    Write(1, "Alimentazione ready\n", 20, Alimentazione);
+    Write(1, "Inibitore ready\n", 17,Inibitore);
     waitForParentStartSimulation();
 }
 
@@ -40,7 +39,7 @@ void handle_signals(int signal,siginfo_t* info, void* v)
     switch (signal)
     {
     case SIGINT:
-        Write(1, "Alimentazione Handling SIGINT\n", 30, Alimentazione);
+        Write(1, "Inibitore Handling SIGINT\n", 27,Inibitore);
         exit(EXIT_SUCCESS);
         break;
 
