@@ -14,15 +14,20 @@
 #include <sys/sem.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <time.h>
+#include <math.h>
 
 #define START_SIMULATION_SEM_KEY 0x111111
 #define ID_READY 0 /*used to tell the parent that the child is ready to execute*/
 #define ID_GO 1 /*used to tell the child to start execute*/
-#define START_SIMULATION_NUM_RES 2
+#define START_SIMULATION_NUM_RES 5
 
 #define N_ATOMI_INIT 5
 
 #define WRITE_BUFFER_LEN 64
+
+/*max nAtomo to generate*/
+#define N_ATOM_MAX 300
 
 #define TEST_ERROR    if (errno) {fprintf(stderr, \
 					  "%s:%d: PID=%5d: Error %d (%s)\n", \
@@ -51,6 +56,12 @@ void handle_signals(int signal,siginfo_t* info, void* v);
 
 /*REVIEW - redefine this functions in each file to avoid that one process write with another one color*/
 extern void Write(int fd, const void* buff, size_t len, processType pType);
+
+/*
+*   Generate a numer using Box Muller operation
+*   the number in generated with a normal distributed probabilty
+*/
+int normalDistributionNumberGenerator(int n_atom_max);
 
 #endif /* COMMON_H*/
 

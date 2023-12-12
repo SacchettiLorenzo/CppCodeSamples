@@ -10,7 +10,7 @@ char *args_0[] = {"./attivatore.out", (char*)0};
 char *args_1[] = {"./alimentazione.out",(char*)0};
 char *args_2[] = {"./inibitore.out", (char*)0};
 char *args_3[] = {"./atomo.out", (char*)0};
-double random1, random2;
+
 
 struct AtomMsgbuf
 {
@@ -27,9 +27,11 @@ struct sigevent sigalarm;
 int simulation_Sem;
 int nAtom_Queue;
 
+int totalChild = N_ATOMI_INIT + N_SERVICE_PROCESS;
+
 int main(int argc, char *argv[])
 {
-    normalDistributionNumberGenerator();
+    normalDistributionNumberGenerator(0);
     init();
     for (i = 0; i < totalChild; i++)
     {
@@ -123,8 +125,6 @@ int main(int argc, char *argv[])
 
 void init()
 {
-    srand(time(NULL));
-
     bzero(&sa, sizeof(sa));
     sa.sa_sigaction = handle_signals; /*same as handler*/
     sa.sa_flags = SA_SIGINFO;
@@ -194,19 +194,6 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     }
 }
 
-int normalDistributionNumberGenerator()
-{
-    int randomAtomNumber;
-    /*Using Box-Muller Transformation*/
-    while (randomAtomNumber < 1 || randomAtomNumber > N_ATOM_MAX)
-    {
-        random1 = (double)rand() / (double)RAND_MAX;
-        random2 = (double)rand() / (double)RAND_MAX;
-        randomAtomNumber = abs((int)(100 * (sqrt(-2 * log(random1)) * cos(2 * 3.14 * random2))));
-    }
-    return randomAtomNumber;
-}
-
 void checkForMsg()
 {
     checkMsgTimer.it_value.tv_nsec = 0;
@@ -214,7 +201,7 @@ void checkForMsg()
     while (msgrcv(nAtom_Queue, &AtomMsgRcv, ATOM_MSG_LEN, MASTER_QUE_TYPE, 0) > 0)
     {
         AtomMsgSnd.mtype = (long)atoi(AtomMsgRcv.mtext);
-        snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator());
+        snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
         msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0);
         kill(AtomMsgSnd.mtype, SIGUSR1);
     }

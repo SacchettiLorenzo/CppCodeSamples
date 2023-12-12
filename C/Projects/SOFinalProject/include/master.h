@@ -1,11 +1,6 @@
 #ifndef COMMON_H
 #include "common.h"
 #endif
-#include <math.h>
-#include <time.h>
-
-/*max nAtomo to generate*/
-#define N_ATOM_MAX 300
 
 /*  Lenght of the message that deliver nAtom
 *   6 char msg + 8byte msg type 
@@ -20,7 +15,7 @@
 /*Attivatore, Alimentazioni, Inibitore*/
 #define N_SERVICE_PROCESS 3
 
-int totalChild = N_ATOMI_INIT + N_SERVICE_PROCESS;
+
 
 struct ServiceProcessData{
     pid_t pid;
@@ -49,12 +44,6 @@ void waitForChildReady();
 * start the simulation
 */
 void startSimulation();
-
-/*
-*   Generate a numer using Box Muller operation
-/   the number in generated with a normal distributed probabilty
-*/
-int normalDistributionNumberGenerator();
 
 /*  
 *   check the queue for nAtom requet,

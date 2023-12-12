@@ -45,3 +45,6 @@ void waitForParentStartSimulation();
 * check the message queue for nAtom message
 */
 void checkForMsg();
+
+void split();
+
