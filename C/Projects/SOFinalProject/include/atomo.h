@@ -1,31 +1,20 @@
 #include "common.h"
 #include <time.h>
 
-/*  Lenght of the message that deliver nAtom
-*   6 char msg + 8byte msg type 
-*/
-#define ATOM_MSG_LEN 6 + 8 
-
 /*IPC Message Queue Key */
 #define N_ATOM_QUEUE_KEY 0x222222
 
 /*IPC Message Queue type the atom use for sending*/
 #define MASTER_QUE_TYPE 1
 
-struct Atomo{
-    pid_t pid;
-    int nAtom;
-    pid_t masterPid;
-    pid_t parentPid;
-    bool scoria;
-    bool inibito;
-};
+
 
 
 /*
 * Initialization of.
 * -signal handler
 * -IPC 
+* -Get nAtom
 */
 void init();
 
@@ -39,7 +28,7 @@ void ready();
 * wait for the master to 
 * start simulation using ID_GO
 */
-void waitForParentStartSimulation();
+void waitForMasterStartSimulation();
 
 /*
 * check the message queue for nAtom message
@@ -47,4 +36,3 @@ void waitForParentStartSimulation();
 void checkForMsg();
 
 void split();
-

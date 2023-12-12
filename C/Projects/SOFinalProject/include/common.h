@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <sys/sem.h>
 #include <sys/wait.h>
+#include <sys/shm.h>
 #include <signal.h>
 #include <time.h>
 #include <math.h>
@@ -20,14 +21,24 @@
 #define START_SIMULATION_SEM_KEY 0x111111
 #define ID_READY 0 /*used to tell the parent that the child is ready to execute*/
 #define ID_GO 1 /*used to tell the child to start execute*/
-#define START_SIMULATION_NUM_RES 5
+/*IPC Message Queue Key */
+#define N_ATOM_QUEUE_KEY 0x222222
+#define SHARED_MEM_KEY 0X333333
 
 #define N_ATOMI_INIT 5
+/*Attivatore, Alimentazioni, Inibitore*/
+#define N_SERVICE_PROCESS 3
+#define START_SIMULATION_NUM_RES  N_ATOMI_INIT + N_SERVICE_PROCESS
 
 #define WRITE_BUFFER_LEN 64
 
 /*max nAtomo to generate*/
 #define N_ATOM_MAX 300
+
+/*  Lenght of the message that deliver nAtom
+*   6 char msg + 8byte msg type 
+*/
+#define ATOM_MSG_LEN 6 + 8 
 
 #define TEST_ERROR    if (errno) {fprintf(stderr, \
 					  "%s:%d: PID=%5d: Error %d (%s)\n", \
@@ -46,6 +57,31 @@ static char* colors[5] = {
 	"91m","92m","96m","33m","93m"
 };
 
+struct AtomMsgbuf
+{
+    long mtype;
+    char mtext[ATOM_MSG_LEN];
+};
+
+struct SharedMemHeader{
+	int version;
+	int n_atomi;
+	bool simulation;
+};
+
+struct Atomo{
+    pid_t pid;
+    int nAtom;
+    pid_t masterPid;
+    pid_t parentPid;
+    bool scoria;
+    bool inibito;
+};
+
+struct SharedMemory{
+	struct SharedMemHeader SMH;
+	struct Atomo* atomi;
+};
 
 static char precolor[5] = "\033[";
 static char blank[7] = "\033[0m";

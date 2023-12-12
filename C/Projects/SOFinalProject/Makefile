@@ -7,7 +7,7 @@ all: ./build/common.o ./build/master.o ./build/alimentazione.o ./build/atomo.o .
 ./build/common.o: ./src/common.c ./include/common.h
 	${CC} ${CFLAGS} -c $< -o $@ 
 
-./build/master.o: ./src/master.c ./include/master.h 
+./build/master.o: ./src/master.c ./include/master.h ./include/common.h
 	${CC} ${CFLAGS} -c $< -o $@ -lm
 
 ./bin/master.out: ./build/master.o ./build/common.o

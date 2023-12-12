@@ -7,43 +7,46 @@ struct Atomo atomo;
 int masterPid = 0;
 siginfo_t si;
 
-struct AtomMsgbuf
-{
-    long mtype;
-    char mtext[ATOM_MSG_LEN];
-};
 struct AtomMsgbuf AtomMsgSnd;
 struct AtomMsgbuf AtomMsgRcv;
 
 struct sigevent sigalarm;
 
 int startSimulationSemId;
-int nAtomQueue;
-bool is_N_Atom = false;
+int nAtom_Queue;
 
 int value;
-char *args_0[] = {"./atomo.out", (char*)0};
+char *args_0[] = {"./atomo.out", (char *)0};
+
+int shared_mem_id;
+
+struct SharedMemory* SM;
 
 int main(int argc, char *argv[])
 {
     init();
-    waitForParentStartSimulation();
-    while (1)
-    {
-        /* code */
-    }
+
+    waitForMasterStartSimulation();
+
+    pause();
 }
 
 void init()
 {
-    
+
     atomo.pid = getpid();
     atomo.nAtom = 0;
     atomo.masterPid = getppid();
 
+/*
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOMI_INIT*sizeof(struct Atomo), 0600| IPC_CREAT);
+    shmctl(shared_mem_id, IPC_RMID, NULL);
+    SM = (struct SharedMemory*)shmat(shared_mem_id, NULL, 0);
+*/
+
     if (atomo.masterPid == 0)
     {
-        write(1, "cannot get master pid\n", 22);
+        Write(1, "cannot get master pid\n", 22, Atomo);
         exit(EXIT_FAILURE);
     }
 
@@ -56,24 +59,32 @@ void init()
     sigaction(SIGINT, &sa, NULL);
     sigaction(SIGUSR1, &sa, NULL);
 
-    nAtomQueue = msgget(N_ATOM_QUEUE_KEY, 0600);
-    snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", getpid());
+    nAtom_Queue = msgget(N_ATOM_QUEUE_KEY, 0600);
 
-    AtomMsgSnd.mtype = MASTER_QUE_TYPE;
-    msgsnd(nAtomQueue, &AtomMsgSnd, ATOM_MSG_LEN, 0);
-
-    
+    if (msgrcv(nAtom_Queue, &AtomMsgRcv, ATOM_MSG_LEN, getpid(), 0) > 0)
+    {
+        atomo.nAtom = atoi(AtomMsgRcv.mtext);
+        if (atomo.nAtom > 0)
+        {
+            snprintf(writeBuffer, 25 + strlen(AtomMsgRcv.mtext) + 6, "Atomo: %d got nAtom %d\n", getpid(), atomo.nAtom);
+            Write(1, writeBuffer, 19 + strlen(AtomMsgRcv.mtext) + 6, Atomo);
+            ready();
+        }
+    }
 }
 
 void ready()
 {
+    /*FIXME -
+    if splitted atom this operation is useless
+    */
     sops.sem_num = ID_READY;
     sops.sem_op = 1;
     semop(startSimulationSemId, &sops, 1);
     Write(1, "Atomo ready\n", 12, Atomo);
 }
 
-void waitForParentStartSimulation()
+void waitForMasterStartSimulation()
 {
     sops.sem_num = ID_GO;
     sops.sem_op = -1;
@@ -89,66 +100,42 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         exit(EXIT_SUCCESS);
         break;
     case SIGUSR1:
-        if (is_N_Atom == false)
-        {
-            checkForMsg();
-        }
+        split();
         break;
 
     default:
+        pause();
         break;
     }
 }
 
-void checkForMsg()
+void split()
 {
-    if (msgrcv(nAtomQueue, &AtomMsgRcv, ATOM_MSG_LEN, getpid(), 0) > 0)
-    {
-         atomo.nAtom = atoi(AtomMsgRcv.mtext);
-        if ( atomo.nAtom > 0)
-        {
-            is_N_Atom = true;
-            snprintf(writeBuffer, 25 + strlen(AtomMsgRcv.mtext) + 6, "Atomo: %d got nAtom %d\n", getpid(),  atomo.nAtom);
-            Write(1, writeBuffer, 19 + strlen(AtomMsgRcv.mtext) + 6, Atomo);
-            ready();
-        }
-    }
-}
-/*
-void split(){
     switch (value = fork())
     {
     case -1:
-            fprintf(stderr, "Error #%03d: %s\n", errno, strerror(errno));
-            break;
+        Write(1, "Error splitting Atomo\n", 22, Atomo);
+        TEST_ERROR;
+        break;
     case 0:
-        if(execve(args_0[0], args_0, NULL) == -1){
-                    Write(1,"Error splitting Atomo\n",22,Atomo);
-                    TEST_ERROR;
-                    exit(EXIT_FAILURE);
-                }
-            /*TODO: 
-            l'atomo manda a master la richiesta di ottenere un nuovo nAtom
-            se il pid del padre dell'atomo è già presente tra gli atomi usa il suo nAtom 
-            per generare nAtom del nuovo atomo.
-            Devo fare una differenza tra gli atomi creati dal nulla e qulli splittati
 
-            Atomi creati dal nulla:
-                operazione eseguita durante l'init del master e dal processo alimentazione
-                viene generato un nAtom tra 0 e N_ATOM_MAX
-            Atomi splittati:
-                viene creato un nAtom tra 0 e il nAtom dell'atomo che viene splittato
-                il master può trovare nAtom del padre quando riceve il suo pid sulla coda di messaggi
-                il master esegue una ricerca lineare tra tutti gli atomi disponibili
-                considerare le situazione in cui nAtom originale è pari o dispari per avere una suddivisione 
-                di nAtom senza perdita dei decimali
-            
+        if (execve(args_0[0], args_0, NULL) == -1)
+        {
+            Write(1, "Error splitting Atomo\n", 22, Atomo);
+            TEST_ERROR;
+            exit(EXIT_FAILURE);
+        }
 
         break;
-    
+
     default:
+        AtomMsgSnd.mtype = value;
+        snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
+        if (msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0) == -1)
+        {
+            Write(1, "Error sending message\n", 22, Atomo);
+            TEST_ERROR;
+        }
         break;
     }
 }
-
-*/

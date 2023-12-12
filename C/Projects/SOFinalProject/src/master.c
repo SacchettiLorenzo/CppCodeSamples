@@ -12,11 +12,6 @@ char *args_2[] = {"./inibitore.out", (char*)0};
 char *args_3[] = {"./atomo.out", (char*)0};
 
 
-struct AtomMsgbuf
-{
-    long mtype;
-    char mtext[ATOM_MSG_LEN];
-};
 struct AtomMsgbuf AtomMsgRcv;
 struct AtomMsgbuf AtomMsgSnd;
 
@@ -28,6 +23,12 @@ int simulation_Sem;
 int nAtom_Queue;
 
 int totalChild = N_ATOMI_INIT + N_SERVICE_PROCESS;
+
+int shared_mem_id;
+
+struct SharedMemory* SM;
+
+int* init_atomi_pid;
 
 int main(int argc, char *argv[])
 {
@@ -77,7 +78,10 @@ int main(int argc, char *argv[])
             }
             if (i > 2)
             {
+                /*REVIEW - */
+                /*qui va eseguito il msgsnd di nAtom e non nella funzione checkForMsg*/
                 Write(1, "calling Atomo\n", 14, Master);
+                
                 if(execve(args_3[0], args_3, NULL) == -1){
                     Write(1,"Error calling Atomo\n",20,Master);
                     TEST_ERROR;
@@ -107,11 +111,24 @@ int main(int argc, char *argv[])
                 (service_process + i)->pid = value;
             }
 
+            if(i >= N_SERVICE_PROCESS){
+                *(init_atomi_pid + (i-N_SERVICE_PROCESS)) = value;
+                AtomMsgSnd.mtype = value;
+                snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
+                msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0);
+            }
+
             break;
         }
     }
 
     waitForChildReady();
+
+    while (1)
+    {
+        /* code */
+    }
+    
 
     {
         /*FIXME - chage with a single call to the process group*/
@@ -125,6 +142,7 @@ int main(int argc, char *argv[])
 
 void init()
 {
+    init_atomi_pid = malloc(N_ATOMI_INIT*sizeof(int));
     bzero(&sa, sizeof(sa));
     sa.sa_sigaction = handle_signals; /*same as handler*/
     sa.sa_flags = SA_SIGINFO;
@@ -138,6 +156,14 @@ void init()
     semctl(simulation_Sem, ID_GO, SETVAL, 0);
     
     nAtom_Queue = msgget(N_ATOM_QUEUE_KEY, 0600 | IPC_CREAT);
+
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOMI_INIT*sizeof(struct Atomo), 0600| IPC_CREAT);
+    if(shared_mem_id == -1){
+        Write(1,"Error shmget\n",12,Master);
+        TEST_ERROR;
+    }
+    
+    SM = (struct SharedMemory*)shmat(shared_mem_id, NULL, 0);
 
     /*SECTION - timer*/
     /*TODO - check if everything is necessary*/
@@ -159,7 +185,7 @@ void waitForChildReady()
     sops.sem_flg = 0;
     /*write(1, "master wait for child ready\n", 28);*/
     semop(simulation_Sem, &sops, 1);
-    /*write(1, "all process ready: starting simulation\n", 39);*/
+    Write(1, "All process ready: starting simulation\n", 39,Master);
 }
 
 void startSimulation()
@@ -181,30 +207,18 @@ void handle_signals(int signal, siginfo_t *info, void *v)
 
         msgctl(nAtom_Queue, IPC_RMID, NULL);
 
+        shmctl(shared_mem_id, IPC_RMID, NULL);
+
+        shmdt(SM);
+
         killpg(getpid(), SIGINT);
         
         exit(EXIT_SUCCESS);
         break;
     case SIGUSR1:
-        checkForMsg();
         break;
 
     default:
         break;
     }
-}
-
-void checkForMsg()
-{
-    checkMsgTimer.it_value.tv_nsec = 0;
-    timer_settime(checkmsgtimer, 0, &checkMsgTimer, NULL);
-    while (msgrcv(nAtom_Queue, &AtomMsgRcv, ATOM_MSG_LEN, MASTER_QUE_TYPE, 0) > 0)
-    {
-        AtomMsgSnd.mtype = (long)atoi(AtomMsgRcv.mtext);
-        snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
-        msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0);
-        kill(AtomMsgSnd.mtype, SIGUSR1);
-    }
-    checkMsgTimer.it_value.tv_nsec = 500000000;
-    timer_settime(checkmsgtimer, 0, &checkMsgTimer, NULL);
 }
