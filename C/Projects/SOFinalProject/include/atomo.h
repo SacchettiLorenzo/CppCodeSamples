@@ -36,3 +36,8 @@ void waitForMasterStartSimulation();
 void checkForMsg();
 
 void split();
+void setUpdateSharedMemory();
+/*
+void lookForSharedmemoryPosition();
+void getUpdateSharedMemory();
+*/

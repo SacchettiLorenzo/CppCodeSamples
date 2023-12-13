@@ -30,3 +30,5 @@ int normalDistributionNumberGenerator(int n_atom_max)
     
     return randomAtomNumber;
 }
+
+

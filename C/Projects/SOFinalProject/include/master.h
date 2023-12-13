@@ -32,3 +32,7 @@ void waitForChildReady();
 */
 void startSimulation();
 
+void sharedMemoryReview();
+
+void sharedMemoryUpgrade();
+

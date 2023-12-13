@@ -6,6 +6,7 @@ int main(int argc, char *argv[])
 {
     init();
     ready();
+    pause();
 }
 
 void init()

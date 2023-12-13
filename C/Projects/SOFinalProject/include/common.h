@@ -19,6 +19,7 @@
 #include <math.h>
 
 #define START_SIMULATION_SEM_KEY 0x111111
+#define SHARED_MEM_SEM 0X111112
 #define ID_READY 0 /*used to tell the parent that the child is ready to execute*/
 #define ID_GO 1 /*used to tell the child to start execute*/
 /*IPC Message Queue Key */
@@ -28,7 +29,7 @@
 #define N_ATOMI_INIT 5
 /*Attivatore, Alimentazioni, Inibitore*/
 #define N_SERVICE_PROCESS 3
-#define START_SIMULATION_NUM_RES  N_ATOMI_INIT + N_SERVICE_PROCESS
+#define START_SIMULATION_NUM_RES  2 /*ID_READY ID_GO*/
 
 #define WRITE_BUFFER_LEN 64
 
@@ -67,12 +68,12 @@ struct SharedMemHeader{
 	int version;
 	int n_atomi;
 	bool simulation;
+    pid_t masterPid;
 };
 
 struct Atomo{
     pid_t pid;
     int nAtom;
-    pid_t masterPid;
     pid_t parentPid;
     bool scoria;
     bool inibito;
@@ -98,6 +99,8 @@ extern void Write(int fd, const void* buff, size_t len, processType pType);
 *   the number in generated with a normal distributed probabilty
 */
 int normalDistributionNumberGenerator(int n_atom_max);
+
+
 
 #endif /* COMMON_H*/
 

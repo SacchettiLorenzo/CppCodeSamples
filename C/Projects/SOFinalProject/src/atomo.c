@@ -4,7 +4,6 @@ int startSimulationSemId;
 
 struct Atomo atomo;
 
-int masterPid = 0;
 siginfo_t si;
 
 struct AtomMsgbuf AtomMsgSnd;
@@ -13,14 +12,20 @@ struct AtomMsgbuf AtomMsgRcv;
 struct sigevent sigalarm;
 
 int startSimulationSemId;
+int sharedMemorySemId;
 int nAtom_Queue;
 
 int value;
 char *args_0[] = {"./atomo.out", (char *)0};
 
 int shared_mem_id;
+int shared_mem_atom_position;
+struct SharedMemory *SM;
 
-struct SharedMemory* SM;
+int atomPositionInSharedMem;
+
+int i;
+char buff[40];
 
 int main(int argc, char *argv[])
 {
@@ -29,28 +34,25 @@ int main(int argc, char *argv[])
     waitForMasterStartSimulation();
 
     pause();
+    Write(1, "Atomo terminating\n", 18, Atomo);
 }
 
 void init()
 {
-
-    atomo.pid = getpid();
     atomo.nAtom = 0;
-    atomo.masterPid = getppid();
+    atomo.parentPid = getppid();
+    atomo.inibito = 0;
+    startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600 | IPC_CREAT);
 
-/*
-    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOMI_INIT*sizeof(struct Atomo), 0600| IPC_CREAT);
-    shmctl(shared_mem_id, IPC_RMID, NULL);
-    SM = (struct SharedMemory*)shmat(shared_mem_id, NULL, 0);
-*/
-
-    if (atomo.masterPid == 0)
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOMI_INIT * sizeof(struct Atomo), 0600 | IPC_CREAT);
+    if (shared_mem_id == -1)
     {
-        Write(1, "cannot get master pid\n", 22, Atomo);
-        exit(EXIT_FAILURE);
+        Write(1, "Error shmget\n", 12, Master);
+        TEST_ERROR;
     }
 
-    startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600);
+    sharedMemorySemId = semget(START_SIMULATION_SEM_KEY, 2, 0600 | IPC_CREAT);
+    semctl(sharedMemorySemId, 0, SETVAL, 1);
 
     bzero(&sa, sizeof(sa));
     sa.sa_sigaction = handle_signals;
@@ -68,9 +70,22 @@ void init()
         {
             snprintf(writeBuffer, 25 + strlen(AtomMsgRcv.mtext) + 6, "Atomo: %d got nAtom %d\n", getpid(), atomo.nAtom);
             Write(1, writeBuffer, 19 + strlen(AtomMsgRcv.mtext) + 6, Atomo);
-            ready();
         }
     }
+    sops.sem_num = 0;
+    sops.sem_op = -1;
+    sops.sem_flg = 0;
+    semop(sharedMemorySemId, &sops, 1);
+    SM = shmat(shared_mem_id, NULL, 0);
+    shared_mem_atom_position = SM->SMH.n_atomi;
+    SM->SMH.n_atomi = SM->SMH.n_atomi + 1;
+    setUpdateSharedMemory();
+    shmdt(SM);
+    sops.sem_num = 0;
+    sops.sem_op = 1;
+    semop(sharedMemorySemId, &sops, 1);
+
+    ready();
 }
 
 void ready()
@@ -100,9 +115,9 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         exit(EXIT_SUCCESS);
         break;
     case SIGUSR1:
+        Write(1, "Atomo Handling SIGUSR1\n", 23, Atomo);
         split();
         break;
-
     default:
         pause();
         break;
@@ -138,4 +153,14 @@ void split()
         }
         break;
     }
+}
+
+void setUpdateSharedMemory()
+{
+    SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
+    (SM->atomi + (shared_mem_atom_position))->pid = getpid();
+    (SM->atomi + (shared_mem_atom_position))->nAtom = atomo.nAtom;
+    (SM->atomi + (shared_mem_atom_position))->parentPid = atomo.parentPid;
+    (SM->atomi + (shared_mem_atom_position))->scoria = atomo.scoria;
+    (SM->atomi + (shared_mem_atom_position))->inibito = atomo.inibito;
 }

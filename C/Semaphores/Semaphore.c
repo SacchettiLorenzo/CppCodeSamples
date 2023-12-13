@@ -29,26 +29,26 @@ int main(){
     
     sops.sem_num = SEM1;    //setting semaphore 1
     sops.sem_op = -1;       //removing / taking resources / actual use of semaphore
-    sops.flasg = 0;         //options
+    sops.sem_flg = 0;         //options
     semop(sem_id, &sops, 1); //sops could be an array of operations for different semaphores. in this case is only 1 semaphore and it is specified by the argument
     /*ACCESSING CRITICAL SECTION*/
         /*PERFORMING SOME ACTION*/
     /*LEAVING CRITICAL SECTION*/
     sops.sem_num = SEM1;    //setting semaphore 1
-    sops.sem_op = -1;       //restore / return resources / actual use of semaphore
-    sops.flasg = 0;         //options
+    sops.sem_op = 1;       //restore / return resources / actual use of semaphore
+    sops.sem_flg = 0;         //options
     semop(sem_id, &sops, 1)
 
     sops.sem_num = SEM2;    //setting semaphore 2
     sops.sem_op = -1;       //removing / taking resources / actual use of semaphore
-    sops.flasg = 0;         //options
+    sops.sem_flg = 0;         //options
     semop(sem_id, &sops, 1); //sops could be an array of operations for different semaphores. in this case is only 1 semaphore and it is specified by the argument
     /*ACCESSING CRITICAL SECTION*/
         /*PERFORMING SOME ACTION*/
     /*LEAVING CRITICAL SECTION*/
     sops.sem_num = SEM2;    //setting semaphore 2
-    sops.sem_op = -1;       //restore / return resources / actual use of semaphore
-    sops.flasg = 0;         //options
+    sops.sem_op = 1;       //restore / return resources / actual use of semaphore
+    sops.sem_flg = 0;         //options
     semop(sem_id, &sops, 1)
 
 } 
