@@ -12,14 +12,7 @@
 /*IPC Message Queue type the atom use for sending*/
 #define MASTER_QUE_TYPE 1
 
-struct Atomo{
-    pid_t pid;
-    int nAtom;
-    pid_t masterPid;
-    pid_t parentPid;
-    bool scoria;
-    bool inibito;
-};
+
 
 
 /*

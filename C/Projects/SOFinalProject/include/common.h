@@ -13,9 +13,12 @@
 #include <sys/types.h>
 #include <sys/sem.h>
 #include <sys/wait.h>
+#include <sys/shm.h>
 #include <signal.h>
 
 #define START_SIMULATION_SEM_KEY 0x111111
+#define SHARED_MEM_KEY 0x333333
+#define SHAREDMEM_SEM_KEY 0x444444
 #define ID_READY 0 /*used to tell the parent that the child is ready to execute*/
 #define ID_GO 1 /*used to tell the child to start execute*/
 #define START_SIMULATION_NUM_RES 2
@@ -36,11 +39,31 @@ typedef enum {false,true} bool;
 
 static struct sigaction sa;
 
+struct SharedMemoryHeader{
+	int version;
+	int ShMemSize;
+	int n_atoms;
+};
+
+struct Atomo{
+    pid_t pid;
+    int nAtom;
+    pid_t masterPid;
+    pid_t parentPid;
+    bool scoria;
+    bool inibito;
+};
+
+struct SharedMemory{
+	struct SharedMemoryHeader SMH;
+	struct Atomo* atomi;
+};
+
+
 typedef enum {Master,Atomo,Attivatore,Alimentazione,Inibitore} processType;
 static char* colors[5] = {
 	"91m","92m","96m","33m","93m"
 };
-
 
 static char precolor[5] = "\033[";
 static char blank[7] = "\033[0m";

@@ -5,11 +5,11 @@ int status;
 struct ServiceProcessData service_process[N_SERVICE_PROCESS];
 struct sembuf sops;
 pid_t childPid;
-int i;
-char *args_0[] = {"./attivatore.out", (char*)0};
-char *args_1[] = {"./alimentazione.out",(char*)0};
-char *args_2[] = {"./inibitore.out", (char*)0};
-char *args_3[] = {"./atomo.out", (char*)0};
+int i, j, k;
+char *args_0[] = {"./attivatore.out", (char *)0};
+char *args_1[] = {"./alimentazione.out", (char *)0};
+char *args_2[] = {"./inibitore.out", (char *)0};
+char *args_3[] = {"./atomo.out", (char *)0};
 double random1, random2;
 
 struct AtomMsgbuf
@@ -27,6 +27,13 @@ struct sigevent sigalarm;
 int simulation_Sem;
 int nAtom_Queue;
 
+int sharedMemory_Sem;
+int sharedMemory;
+
+struct SharedMemory *SM;
+
+char buff[30];
+
 int main(int argc, char *argv[])
 {
     normalDistributionNumberGenerator();
@@ -43,8 +50,9 @@ int main(int argc, char *argv[])
             if (i == 0)
             {
                 Write(1, "calling Attivatore\n", 19, Master);
-                if(execve(args_0[0], args_0, NULL) == -1){
-                    Write(1,"Error calling Attivatore\n",25,Master);
+                if (execve(args_0[0], args_0, NULL) == -1)
+                {
+                    Write(1, "Error calling Attivatore\n", 25, Master);
                     TEST_ERROR;
                     exit(EXIT_FAILURE);
                 }
@@ -54,8 +62,9 @@ int main(int argc, char *argv[])
             if (i == 1)
             {
                 Write(1, "calling Alimentazione\n", 22, Master);
-                if(execve(args_1[0], args_1, NULL) == -1){
-                    Write(1,"Error calling Alimentazione\n",28,Master);
+                if (execve(args_1[0], args_1, NULL) == -1)
+                {
+                    Write(1, "Error calling Alimentazione\n", 28, Master);
                     TEST_ERROR;
                     exit(EXIT_FAILURE);
                 }
@@ -65,8 +74,9 @@ int main(int argc, char *argv[])
             if (i == 2)
             {
                 Write(1, "calling Inibitore\n", 18, Master);
-                if(execve(args_2[0], args_2, NULL) == -1){
-                    Write(1,"Error calling Inibitore\n",24,Master);
+                if (execve(args_2[0], args_2, NULL) == -1)
+                {
+                    Write(1, "Error calling Inibitore\n", 24, Master);
                     TEST_ERROR;
                     exit(EXIT_FAILURE);
                 }
@@ -76,8 +86,9 @@ int main(int argc, char *argv[])
             if (i > 2)
             {
                 Write(1, "calling Atomo\n", 14, Master);
-                if(execve(args_3[0], args_3, NULL) == -1){
-                    Write(1,"Error calling Atomo\n",20,Master);
+                if (execve(args_3[0], args_3, NULL) == -1)
+                {
+                    Write(1, "Error calling Atomo\n", 20, Master);
                     TEST_ERROR;
                     exit(EXIT_FAILURE);
                 }
@@ -111,18 +122,24 @@ int main(int argc, char *argv[])
 
     waitForChildReady();
 
+    waitpid((service_process + 0)->pid, &status, 0);
+    waitpid((service_process + 1)->pid, &status, 0);
+    waitpid((service_process + 2)->pid, &status, 0);
+
+    while (1)
     {
-        /*FIXME - chage with a single call to the process group*/
-        waitpid((service_process + 0)->pid, &status, 0);
-        waitpid((service_process + 1)->pid, &status, 0);
-        waitpid((service_process + 2)->pid, &status, 0);
+        /* code */
     }
-        
+    
     /*NOTE - master do not have to wait all the process but just the service_process*/
 }
 
 void init()
 {
+    i = 0;
+    j = 0;
+    k = 0;
+
     srand(time(NULL));
 
     bzero(&sa, sizeof(sa));
@@ -132,24 +149,47 @@ void init()
     sigaction(SIGINT, &sa, NULL);
     sigaction(SIGUSR1, &sa, NULL);
 
+    /*Start simulation SEM ----------------------*/
     simulation_Sem = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600 | IPC_CREAT);
-    
     semctl(simulation_Sem, ID_READY, SETVAL, 0);
     semctl(simulation_Sem, ID_GO, SETVAL, 0);
-    
+    /*-------------------------------------------*/
+
+    /*Message Queue -----------------------------*/
     nAtom_Queue = msgget(N_ATOM_QUEUE_KEY, 0600 | IPC_CREAT);
+    /*-------------------------------------------*/
+
+    /*Shared Memory SEM -------------------------*/
+    sharedMemory_Sem = semget(SHAREDMEM_SEM_KEY, 1, 0600 | IPC_CREAT);
+    semctl(sharedMemory_Sem, 0, SETVAL, 0);
+    /*-------------------------------------------*/
+
+    /*Shared Memory -----------------------------*/
+    sharedMemory = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemoryHeader) + N_ATOMI_INIT * sizeof(struct Atomo), 0600 | IPC_CREAT);
+    if (sharedMemory == -1)
+    {
+        Write(1, "Error creating shared memory segment\n", 36, Master);
+        TEST_ERROR;
+    }
+    SM = shmat(sharedMemory, NULL, 0);
+    shmctl(sharedMemory, 0, NULL);
+
+    SM->SMH.version = 0;
+    SM->SMH.ShMemSize = sizeof(struct SharedMemoryHeader) + N_ATOMI_INIT * sizeof(struct Atomo);
+    SM->SMH.n_atoms = N_ATOMI_INIT;
+    SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemoryHeader));
+    /*-------------------------------------------*/
 
     /*SECTION - timer*/
     /*TODO - check if everything is necessary*/
-    sigalarm.sigev_notify = SIGEV_SIGNAL;
+    /*sigalarm.sigev_notify = SIGEV_SIGNAL;*/
     sigalarm.sigev_signo = SIGUSR1;
     sigalarm.sigev_value.sival_ptr = &checkmsgtimer;
     timer_create(CLOCK_REALTIME, &sigalarm, &checkmsgtimer);
-    checkMsgTimer.it_value.tv_sec = 0;
-    checkMsgTimer.it_value.tv_nsec = 500000000;
+    checkMsgTimer.it_value.tv_sec = 1;
+    checkMsgTimer.it_value.tv_nsec = 0;
     checkMsgTimer.it_interval = checkMsgTimer.it_value;
     timer_settime(checkmsgtimer, 0, &checkMsgTimer, NULL);
-
 }
 
 void waitForChildReady()
@@ -181,8 +221,10 @@ void handle_signals(int signal, siginfo_t *info, void *v)
 
         msgctl(nAtom_Queue, IPC_RMID, NULL);
 
+        shmctl(sharedMemory, IPC_RMID, NULL);
+
         killpg(getpid(), SIGINT);
-        
+
         exit(EXIT_SUCCESS);
         break;
     case SIGUSR1:
@@ -209,15 +251,53 @@ int normalDistributionNumberGenerator()
 
 void checkForMsg()
 {
-    checkMsgTimer.it_value.tv_nsec = 0;
-    timer_settime(checkmsgtimer, 0, &checkMsgTimer, NULL);
-    while (msgrcv(nAtom_Queue, &AtomMsgRcv, ATOM_MSG_LEN, MASTER_QUE_TYPE, 0) > 0)
+    
+    while (msgrcv(nAtom_Queue, &AtomMsgRcv, ATOM_MSG_LEN, MASTER_QUE_TYPE, IPC_NOWAIT) > 0)
     {
         AtomMsgSnd.mtype = (long)atoi(AtomMsgRcv.mtext);
         snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator());
-        msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0);
-        kill(AtomMsgSnd.mtype, SIGUSR1);
+
+        /*NOTE - remove msgsnd because atom neen to look at shared memory */
+        if (msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0) == -1)
+        {
+            Write(1, "Error sending message\n", 21, Master);
+        }
+
+        if (k < N_ATOMI_INIT)
+        {
+            (SM->atomi + k)->pid = atoi(AtomMsgRcv.mtext);
+            (SM->atomi + k)->nAtom = normalDistributionNumberGenerator();
+            (SM->atomi + k)->masterPid = getpid();
+            (SM->atomi + k)->parentPid = 0;
+            (SM->atomi + k)->scoria = 0;
+            (SM->atomi + k)->inibito = 0;
+            k++;
+        }
+        else
+        {
+            /*TODO - expand shared memory*/
+        }
+
+        if (kill(AtomMsgSnd.mtype, SIGUSR1) == -1)
+        {
+            Write(1, "Error sending signal\n", 21, Master);
+        }
     }
-    checkMsgTimer.it_value.tv_nsec = 500000000;
-    timer_settime(checkmsgtimer, 0, &checkMsgTimer, NULL);
+    
+    
+}
+
+void SharedMemoryReview()
+{
+    bzero(buff, 30);
+    snprintf(buff, 30, "header: %d %d %d\n", SM->SMH.n_atoms, SM->SMH.ShMemSize, SM->SMH.version);
+    write(1, buff, 30);
+    
+    for (j = 0; j < SM->SMH.n_atoms; j++)
+    {
+        bzero(buff, 30);
+        snprintf(buff, 30, "atom %d have n_atom %d\n", (SM->atomi + j)->pid, (SM->atomi + j)->nAtom);
+        write(1, buff, 30);
+    }
+    
 }

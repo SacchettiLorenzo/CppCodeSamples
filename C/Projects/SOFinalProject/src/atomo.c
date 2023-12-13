@@ -25,10 +25,7 @@ int main(int argc, char *argv[])
 {
     init();
     waitForParentStartSimulation();
-    while (1)
-    {
-        /* code */
-    }
+    
 }
 
 void init()
@@ -97,6 +94,7 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     }
 }
 
+/*TODO - remove the message queue for getting the nAtom and add a search in the shared memory*/
 void checkForMsg()
 {
     if (msgrcv(nAtomQueue, &AtomMsgRcv, ATOM_MSG_LEN, getpid(), 0) > 0)

@@ -4,6 +4,7 @@
 #include <math.h>
 #include <time.h>
 
+
 /*max nAtomo to generate*/
 #define N_ATOM_MAX 300
 
@@ -26,6 +27,7 @@ struct ServiceProcessData{
     pid_t pid;
     processType type;
 };
+
 
 
 
@@ -61,3 +63,5 @@ int normalDistributionNumberGenerator();
 *   if requested send nAtom,
 */
 void checkForMsg();
+
+void SharedMemoryReview();
