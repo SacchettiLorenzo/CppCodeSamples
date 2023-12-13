@@ -92,7 +92,6 @@ int main(int argc, char *argv[])
                 /*REVIEW - */
                 /*qui va eseguito il msgsnd di nAtom e non nella funzione checkForMsg*/
                 Write(1, "calling Atomo\n", 14, Master);
-
                 if (execve(args_3[0], args_3, NULL) == -1)
                 {
                     Write(1, "Error calling Atomo\n", 20, Master);
@@ -160,12 +159,33 @@ void init()
     sigaction(SIGINT, &sa, NULL);
     sigaction(SIGUSR1, &sa, NULL);
 
+    /*Start simulation SEM ----------------------*/
     simulation_Sem = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600 | IPC_CREAT);
 
     semctl(simulation_Sem, ID_READY, SETVAL, 0);
     semctl(simulation_Sem, ID_GO, SETVAL, 0);
 
     nAtom_Queue = msgget(N_ATOM_QUEUE_KEY, 0600 | IPC_CREAT);
+    /*-------------------------------------------*/
+
+    /*Shared Memory SEM -------------------------*/
+    sharedMemorySemId = semget(SHARED_MEM_SEM, 1, 0600 | IPC_CREAT);
+    semctl(sharedMemorySemId, 0, SETVAL, 1);
+    /*-------------------------------------------*/
+
+    /*Shared Memory -----------------------------*/
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOMI_INIT * sizeof(struct Atomo), 0600 | IPC_CREAT);
+    if (shared_mem_id == -1)
+    {
+        Write(1, "Error creating shared memory segment\n", 36, Master);
+        TEST_ERROR;
+    }
+    SM = shmat(shared_mem_id, NULL, 0);
+
+    SM->SMH.version = 0;
+    SM->SMH.n_atomi = 0;
+    SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
+    /*-------------------------------------------*/
 
     shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOMI_INIT * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
@@ -186,7 +206,7 @@ void init()
 
     /*SECTION - timer*/
     /*TODO - check if everything is necessary*/
-    sigalarm.sigev_notify = SIGEV_SIGNAL;
+    /*sigalarm.sigev_notify = SIGEV_SIGNAL;*/
     sigalarm.sigev_signo = SIGUSR1;
     sigalarm.sigev_value.sival_ptr = &checkmsgtimer;
     timer_create(CLOCK_REALTIME, &sigalarm, &checkmsgtimer);
@@ -261,15 +281,16 @@ void sharedMemoryReview()
     shmdt(SM);
 }
 
+/*
 void sharedMemoryUpgrade()
 {
-    /*attach*/
+    /*attach
     current_atom_quantity = SM->atomi;
-    /*detach*/
+    /*detach
     SMBuffer = malloc(sizeof(struct SharedMemHeader) + (current_atom_quantity) * sizeof(struct Atomo));
     memcpy(SMBuffer,SM,sizeof(struct SharedMemHeader) + (current_atom_quantity) * sizeof(struct Atomo));
-    /*create a copy of the current shared memory before this code*/
-    /*encreare the version of the shared memory*/
+    /*create a copy of the current shared memory before this code
+    /*encreare the version of the shared memory
     shmctl(shared_mem_id, IPC_RMID, NULL);
     shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + (current_atom_quantity + 10) * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
@@ -280,3 +301,4 @@ void sharedMemoryUpgrade()
     memcpy(SM,SMBuffer,sizeof(struct SharedMemHeader) + (current_atom_quantity) * sizeof(struct Atomo));
     free(SMBuffer);
 }
+*/
