@@ -26,7 +26,7 @@ int totalChild = N_ATOMI_INIT + N_SERVICE_PROCESS;
 int shared_mem_id;
 
 struct SharedMemory *SM;
-struct SharedMemory* SMBuffer;
+struct SharedMemory *SMBuffer;
 
 int *init_atomi_pid;
 
@@ -89,8 +89,6 @@ int main(int argc, char *argv[])
             }
             if (i > 2)
             {
-                /*REVIEW - */
-                /*qui va eseguito il msgsnd di nAtom e non nella funzione checkForMsg*/
                 Write(1, "calling Atomo\n", 14, Master);
                 if (execve(args_3[0], args_3, NULL) == -1)
                 {
@@ -129,22 +127,21 @@ int main(int argc, char *argv[])
                 snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
                 msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0);
             }
-
             break;
         }
     }
 
     waitForChildReady();
 
-    while (1)
-    {
-        /* code */
-    }
-
     /*FIXME - chage with a single call to the process group*/
     waitpid((service_process + 0)->pid, &status, 0);
     waitpid((service_process + 1)->pid, &status, 0);
     waitpid((service_process + 2)->pid, &status, 0);
+
+    while (1)
+    {
+        pause();
+    }
 
     /*NOTE - master do not have to wait all the process but just the service_process*/
 }
@@ -169,12 +166,12 @@ void init()
     /*-------------------------------------------*/
 
     /*Shared Memory SEM -------------------------*/
-    sharedMemorySemId = semget(SHARED_MEM_SEM, 1, 0600 | IPC_CREAT);
+    sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
     semctl(sharedMemorySemId, 0, SETVAL, 1);
     /*-------------------------------------------*/
 
     /*Shared Memory -----------------------------*/
-    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOMI_INIT * sizeof(struct Atomo), 0600 | IPC_CREAT);
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
         Write(1, "Error creating shared memory segment\n", 36, Master);
@@ -184,19 +181,9 @@ void init()
 
     SM->SMH.version = 0;
     SM->SMH.n_atomi = 0;
+    SM->SMH.masterPid = getpid();
     SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
     /*-------------------------------------------*/
-
-    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOMI_INIT * sizeof(struct Atomo), 0600 | IPC_CREAT);
-    if (shared_mem_id == -1)
-    {
-        Write(1, "Error shmget\n", 12, Master);
-        TEST_ERROR;
-    }
-
-    SM = shmat(shared_mem_id, NULL, 0);
-
-    sharedMemorySemId = semget(START_SIMULATION_SEM_KEY, N_ATOMI_INIT, 0600 | IPC_CREAT);
 
     SM->SMH.n_atomi = 0;
     SM->SMH.version = 0;
@@ -272,7 +259,7 @@ void sharedMemoryReview()
     snprintf(buff, 40, "header: n_atomi:%d, version: %d \n", SM->SMH.n_atomi, SM->SMH.version);
     write(1, buff, 40);
     SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
-    for (j = 0; j < 5; j++)
+    for (j = 0; j < SM->SMH.n_atomi; j++)
     {
         bzero(buff, 40);
         snprintf(buff, 40, "atom %d have n_atom %d\n", (SM->atomi + j)->pid, (SM->atomi + j)->nAtom);
@@ -281,24 +268,4 @@ void sharedMemoryReview()
     shmdt(SM);
 }
 
-/*
-void sharedMemoryUpgrade()
-{
-    /*attach
-    current_atom_quantity = SM->atomi;
-    /*detach
-    SMBuffer = malloc(sizeof(struct SharedMemHeader) + (current_atom_quantity) * sizeof(struct Atomo));
-    memcpy(SMBuffer,SM,sizeof(struct SharedMemHeader) + (current_atom_quantity) * sizeof(struct Atomo));
-    /*create a copy of the current shared memory before this code
-    /*encreare the version of the shared memory
-    shmctl(shared_mem_id, IPC_RMID, NULL);
-    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + (current_atom_quantity + 10) * sizeof(struct Atomo), 0600 | IPC_CREAT);
-    if (shared_mem_id == -1)
-    {
-        Write(1, "Error shmget\n", 12, Master);
-        TEST_ERROR;
-    }
-    memcpy(SM,SMBuffer,sizeof(struct SharedMemHeader) + (current_atom_quantity) * sizeof(struct Atomo));
-    free(SMBuffer);
-}
-*/
+

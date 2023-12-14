@@ -21,9 +21,9 @@ char *args_0[] = {"./atomo.out", (char *)0};
 int shared_mem_id;
 int shared_mem_atom_position;
 struct SharedMemory *SM;
-
+struct shmid_ds shm_info;
 int atomPositionInSharedMem;
-
+int masterPid;
 int i;
 char buff[40];
 
@@ -44,14 +44,14 @@ void init()
     atomo.inibito = 0;
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600 | IPC_CREAT);
 
-    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOMI_INIT * sizeof(struct Atomo), 0600 | IPC_CREAT);
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
         Write(1, "Error shmget\n", 12, Master);
         TEST_ERROR;
     }
 
-    sharedMemorySemId = semget(START_SIMULATION_SEM_KEY, 2, 0600 | IPC_CREAT);
+    sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
     semctl(sharedMemorySemId, 0, SETVAL, 1);
 
     bzero(&sa, sizeof(sa));
@@ -72,16 +72,20 @@ void init()
             Write(1, writeBuffer, 19 + strlen(AtomMsgRcv.mtext) + 6, Atomo);
         }
     }
-    sops.sem_num = 0;
+
+    SM = shmat(shared_mem_id, NULL, 0);
+    shmctl(shared_mem_id, IPC_STAT, &shm_info);
+    shared_mem_atom_position = SM->SMH.n_atomi;
+
+    sops.sem_num = ID_WRITE;
     sops.sem_op = -1;
     sops.sem_flg = 0;
     semop(sharedMemorySemId, &sops, 1);
-    SM = shmat(shared_mem_id, NULL, 0);
-    shared_mem_atom_position = SM->SMH.n_atomi;
+
     SM->SMH.n_atomi = SM->SMH.n_atomi + 1;
     setUpdateSharedMemory();
-    shmdt(SM);
-    sops.sem_num = 0;
+
+    sops.sem_num = ID_WRITE;
     sops.sem_op = 1;
     semop(sharedMemorySemId, &sops, 1);
 
@@ -91,7 +95,7 @@ void init()
 void ready()
 {
     /*FIXME -
-    if splitted atom this operation is useless
+    if splitted atom this operation is useless use semget to figure out if sem is already 0; if yes skip
     */
     sops.sem_num = ID_READY;
     sops.sem_op = 1;
@@ -145,7 +149,17 @@ void split()
 
     default:
         AtomMsgSnd.mtype = value;
-        snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
+        if (atomo.nAtom % 2 == 0)
+        {
+            snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", (atomo.nAtom / 2));
+            atomo.nAtom = atomo.nAtom / 2;
+        }
+        else
+        {
+            snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", (atomo.nAtom / 2));
+            atomo.nAtom = (atomo.nAtom / 2)+1;
+        }
+        setUpdateSharedMemory(); /*NOTE - should be removed*/
         if (msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0) == -1)
         {
             Write(1, "Error sending message\n", 22, Atomo);

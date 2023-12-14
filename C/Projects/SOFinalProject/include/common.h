@@ -19,22 +19,28 @@
 #include <math.h>
 
 #define START_SIMULATION_SEM_KEY 0x111111
-#define SHARED_MEM_SEM 0X111112
+#define START_SIMULATION_NUM_RES  2 /*ID_READY ID_GO*/
 #define ID_READY 0 /*used to tell the parent that the child is ready to execute*/
 #define ID_GO 1 /*used to tell the child to start execute*/
+
+#define SHARED_MEM_SEM_KEY 0X111112
+#define SHARED_MEM_NUM_RES 1
+#define ID_WRITE 0
+
+
 /*IPC Message Queue Key */
 #define N_ATOM_QUEUE_KEY 0x222222
 #define SHARED_MEM_KEY 0X333333
 
 #define N_ATOMI_INIT 5
+#define N_ATOM_MAX 10000
 /*Attivatore, Alimentazioni, Inibitore*/
 #define N_SERVICE_PROCESS 3
-#define START_SIMULATION_NUM_RES  2 /*ID_READY ID_GO*/
 
 #define WRITE_BUFFER_LEN 64
 
 /*max nAtomo to generate*/
-#define N_ATOM_MAX 300
+#define NATOM_MAX 300
 
 /*  Lenght of the message that deliver nAtom
 *   6 char msg + 8byte msg type 
@@ -69,11 +75,16 @@ struct SharedMemHeader{
 	int n_atomi;
 	bool simulation;
     pid_t masterPid;
+	int ATTIVATORE;
+	int ENERGIA_PRODOTTA;
+	int ENERGIA_CONSUMATA;
+	int ENERGIA_ASSORBITA;
+	char lastInibition[100];/*ultima operazione di bilanciamento*/
 };
 
 struct Atomo{
     pid_t pid;
-    int nAtom;
+    int nAtom;/*NOTE - nAtom is a provate information and shold not be in the shared memory */
     pid_t parentPid;
     bool scoria;
     bool inibito;

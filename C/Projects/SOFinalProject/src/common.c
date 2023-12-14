@@ -16,7 +16,7 @@ int normalDistributionNumberGenerator(int n_atom_max)
     srand ( time(NULL) + u);
     u++;
     if(n_atom_max == 0){
-        n_atom_max = N_ATOM_MAX;
+        n_atom_max = NATOM_MAX;
     }
     
     /*Using Box-Muller Transformation*/
