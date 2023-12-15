@@ -2,12 +2,24 @@
 
 struct sembuf sops;
 
+struct itimerspec atomGenerationTimer;
+timer_t atomgenerationtimer;
+struct sigevent sigusr;
+
 int startSimulationSemId;
+int i;
+char *args_0[] = {"./atomo.out", (char *)0};
+int value;
 int main(int argc, char *argv[])
 {
     init();
     ready();
-    pause();
+
+    while (1)
+    {
+        pause();
+        /* code */
+    }
 }
 
 void init()
@@ -18,6 +30,18 @@ void init()
     sa.sa_sigaction = handle_signals;
     sa.sa_flags = SA_SIGINFO;
     sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGUSR1, &sa, NULL);
+
+    /*SECTION - timer*/
+    /*TODO - check if everything is necessary and change name*/
+    /*sigalarm.sigev_notify = SIGEV_SIGNAL;*/
+    sigusr.sigev_signo = SIGUSR1;
+    sigusr.sigev_value.sival_ptr = &atomgenerationtimer;
+    timer_create(CLOCK_REALTIME, &sigusr, &atomgenerationtimer);
+    atomGenerationTimer.it_value.tv_sec = STEP;
+    atomGenerationTimer.it_value.tv_nsec = 0;
+    atomGenerationTimer.it_interval = atomGenerationTimer.it_value;
+    timer_settime(atomgenerationtimer, 0, &atomGenerationTimer, NULL);
 }
 
 void ready()
@@ -36,7 +60,7 @@ void waitForParentStartSimulation()
     semop(startSimulationSemId, &sops, 1);
 }
 
-void handle_signals(int signal,siginfo_t* info, void* v)
+void handle_signals(int signal, siginfo_t *info, void *v)
 {
     switch (signal)
     {
@@ -44,8 +68,36 @@ void handle_signals(int signal,siginfo_t* info, void* v)
         Write(1, "Alimentazione Handling SIGINT\n", 30, Alimentazione);
         exit(EXIT_SUCCESS);
         break;
+    case SIGUSR1:
+        Write(1, "Alimentazione generate new atoms\n", 33, Alimentazione);
+        generateNewAtoms();
+        break;
 
     default:
         break;
+    }
+}
+
+void generateNewAtoms()
+{
+    for (i = 0; i < N_NUOVI_ATOMI; i++)
+    {
+        switch (value = fork())
+        {
+        case -1:
+            fprintf(stderr, "Error #%03d: %s\n", errno, strerror(errno));
+            break;
+
+        case 0:
+            Write(1, "calling Atomo\n", 14, Alimentazione);
+            if (execve(args_0[0], args_0, NULL) == -1)
+            {
+                Write(1, "Error calling Atomo\n", 20, Master);
+                TEST_ERROR;
+                exit(EXIT_FAILURE);
+            }
+            exit(EXIT_SUCCESS);
+            break;
+        }
     }
 }

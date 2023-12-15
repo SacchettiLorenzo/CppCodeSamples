@@ -192,7 +192,7 @@ void init()
     shmdt(SM);
 
     /*SECTION - timer*/
-    /*TODO - check if everything is necessary*/
+    /*TODO - check if everything is necessary and change name*/
     /*sigalarm.sigev_notify = SIGEV_SIGNAL;*/
     sigalarm.sigev_signo = SIGUSR1;
     sigalarm.sigev_value.sival_ptr = &checkmsgtimer;

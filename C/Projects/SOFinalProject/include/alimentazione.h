@@ -2,6 +2,9 @@
 
 int startSimulationSemId;
 
+#define STEP 5
+#define N_NUOVI_ATOMI 5
+
 /*
 * Initialization of.
 * -signal handler
@@ -20,3 +23,5 @@ void ready();
 * start simulation using ID_GO
 */
 void waitForParentStartSimulation();
+
+void generateNewAtoms();
