@@ -5,11 +5,13 @@ struct sembuf sops;
 struct itimerspec atomGenerationTimer;
 timer_t atomgenerationtimer;
 struct sigevent sigusr;
+struct AtomMsgbuf AtomMsgSnd;
 
 int startSimulationSemId;
 int i;
 char *args_0[] = {"./atomo.out", (char *)0};
 int value;
+int nAtom_Queue;
 int main(int argc, char *argv[])
 {
     init();
@@ -18,12 +20,12 @@ int main(int argc, char *argv[])
     while (1)
     {
         pause();
-        /* code */
     }
 }
 
 void init()
 {
+    nAtom_Queue = msgget(N_ATOM_QUEUE_KEY, 0600 | IPC_CREAT);
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600);
 
     bzero(&sa, sizeof(sa));
@@ -97,6 +99,14 @@ void generateNewAtoms()
                 exit(EXIT_FAILURE);
             }
             exit(EXIT_SUCCESS);
+            break;
+        default:
+            AtomMsgSnd.mtype = value;
+            snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
+            if (msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0) == -1)
+            {
+                Write(1, "Cannot send message to new atom\n", 32, Alimentazione);
+            }
             break;
         }
     }

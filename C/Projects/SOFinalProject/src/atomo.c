@@ -50,6 +50,7 @@ void init()
         Write(1, "Error shmget\n", 12, Master);
         TEST_ERROR;
     }
+    SM = shmat(shared_mem_id, NULL, 0);
 
     sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
     semctl(sharedMemorySemId, 0, SETVAL, 1);
@@ -73,7 +74,7 @@ void init()
         }
     }
 
-    SM = shmat(shared_mem_id, NULL, 0);
+    
     shmctl(shared_mem_id, IPC_STAT, &shm_info);
     shared_mem_atom_position = SM->SMH.n_atomi;
 

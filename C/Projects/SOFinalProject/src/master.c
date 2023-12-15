@@ -1,6 +1,6 @@
 #include "../include/master.h"
 
-int value;
+int value; /*REVIEW - rename this variable with "forkResult" in all the files that have fork() */
 int status;
 struct ServiceProcessData service_process[N_SERVICE_PROCESS];
 struct sembuf sops;
@@ -40,7 +40,7 @@ bool simulation = false;
 
 int main(int argc, char *argv[])
 {
-    normalDistributionNumberGenerator(0);
+    /*normalDistributionNumberGenerator(0);*/
     init();
     for (i = 0; i < totalChild; i++)
     {
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 
             if (i >= N_SERVICE_PROCESS)
             {
-                *(init_atomi_pid + (i - N_SERVICE_PROCESS)) = value;
+                *(init_atomi_pid + (i - N_SERVICE_PROCESS)) = value;/*REVIEW - delete cause is useless*/
                 AtomMsgSnd.mtype = value;
                 snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
                 msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0);
@@ -183,13 +183,9 @@ void init()
     SM->SMH.n_atomi = 0;
     SM->SMH.masterPid = getpid();
     SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
+    SM->SMH.simulation = false;
     /*-------------------------------------------*/
 
-    SM->SMH.n_atomi = 0;
-    SM->SMH.version = 0;
-    SM->SMH.simulation = false;
-    SM->SMH.masterPid = getpid();
-    shmdt(SM);
 
     /*SECTION - timer*/
     /*TODO - check if everything is necessary and change name*/
@@ -254,7 +250,6 @@ void handle_signals(int signal, siginfo_t *info, void *v)
 
 void sharedMemoryReview()
 {
-    SM = shmat(shared_mem_id, NULL, 0);
     bzero(buff, 40);
     snprintf(buff, 40, "header: n_atomi:%d, version: %d \n", SM->SMH.n_atomi, SM->SMH.version);
     write(1, buff, 40);
@@ -265,7 +260,6 @@ void sharedMemoryReview()
         snprintf(buff, 40, "atom %d have n_atom %d\n", (SM->atomi + j)->pid, (SM->atomi + j)->nAtom);
         Write(1, buff, 40, Master);
     }
-    shmdt(SM);
 }
 
 

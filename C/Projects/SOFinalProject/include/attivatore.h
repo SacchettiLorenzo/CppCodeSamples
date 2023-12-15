@@ -20,3 +20,5 @@ void ready();
 * start simulation using ID_GO
 */
 void waitForParentStartSimulation();
+
+void choseAndSignal();
