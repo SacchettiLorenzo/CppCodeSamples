@@ -2,8 +2,8 @@
 
 int startSimulationSemId;
 
-#define STEP 5
-#define N_NUOVI_ATOMI 5
+#define STEP 10
+#define N_NUOVI_ATOMI 0
 
 /*
 * Initialization of.

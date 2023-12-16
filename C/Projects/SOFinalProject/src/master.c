@@ -40,6 +40,7 @@ bool simulation = false;
 
 int main(int argc, char *argv[])
 {
+    srand(time(NULL));
     /*normalDistributionNumberGenerator(0);*/
     init();
     for (i = 0; i < totalChild; i++)
@@ -122,7 +123,7 @@ int main(int argc, char *argv[])
 
             if (i >= N_SERVICE_PROCESS)
             {
-                *(init_atomi_pid + (i - N_SERVICE_PROCESS)) = value;/*REVIEW - delete cause is useless*/
+                *(init_atomi_pid + (i - N_SERVICE_PROCESS)) = value; /*REVIEW - delete cause is useless*/
                 AtomMsgSnd.mtype = value;
                 snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
                 msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0);
@@ -132,8 +133,8 @@ int main(int argc, char *argv[])
     }
 
     waitForChildReady();
+    startSimulation();
 
-    /*FIXME - chage with a single call to the process group*/
     waitpid((service_process + 0)->pid, &status, 0);
     waitpid((service_process + 1)->pid, &status, 0);
     waitpid((service_process + 2)->pid, &status, 0);
@@ -186,7 +187,6 @@ void init()
     SM->SMH.simulation = false;
     /*-------------------------------------------*/
 
-
     /*SECTION - timer*/
     /*TODO - check if everything is necessary and change name*/
     /*sigalarm.sigev_notify = SIGEV_SIGNAL;*/
@@ -212,7 +212,7 @@ void waitForChildReady()
 void startSimulation()
 {
     sops.sem_num = ID_GO;
-    sops.sem_op = totalChild;
+    sops.sem_op = N_SERVICE_PROCESS;
     semop(simulation_Sem, &sops, 1);
 }
 
@@ -234,6 +234,7 @@ void handle_signals(int signal, siginfo_t *info, void *v)
 
         killpg(getpid(), SIGINT);
 
+        /*TODO - here dump shared memory into file*/
         exit(EXIT_SUCCESS);
         break;
     case SIGUSR1:
@@ -250,6 +251,11 @@ void handle_signals(int signal, siginfo_t *info, void *v)
 
 void sharedMemoryReview()
 {
+    sops.sem_num = ID_READ_WRITE;
+    sops.sem_op = -1;
+    sops.sem_flg = 0;
+    semop(sharedMemorySemId, &sops, 1);
+
     bzero(buff, 40);
     snprintf(buff, 40, "header: n_atomi:%d, version: %d \n", SM->SMH.n_atomi, SM->SMH.version);
     write(1, buff, 40);
@@ -260,6 +266,8 @@ void sharedMemoryReview()
         snprintf(buff, 40, "atom %d have n_atom %d\n", (SM->atomi + j)->pid, (SM->atomi + j)->nAtom);
         Write(1, buff, 40, Master);
     }
+
+    sops.sem_num = ID_READ_WRITE;
+    sops.sem_op = 1;
+    semop(sharedMemorySemId, &sops, 1);
 }
-
-

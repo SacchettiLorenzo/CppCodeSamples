@@ -25,27 +25,31 @@
 
 #define SHARED_MEM_SEM_KEY 0X111112
 #define SHARED_MEM_NUM_RES 1
-#define ID_WRITE 0
+#define ID_READ_WRITE 0
 
 
-/*IPC Message Queue Key */
-#define N_ATOM_QUEUE_KEY 0x222222
-#define SHARED_MEM_KEY 0X333333
+/*IPC Message Queue Keys */
+#define N_ATOM_QUEUE_KEY 0x222221
+
+/*IPC Shared Memory Keys*/
+#define SHARED_MEM_KEY 0X333331
 
 #define N_ATOMI_INIT 5
 #define N_ATOM_MAX 10000
-/*Attivatore, Alimentazioni, Inibitore*/
-#define N_SERVICE_PROCESS 3
+
+#define N_SERVICE_PROCESS 3	/*Attivatore, Alimentazioni, Inibitore*/
 
 #define WRITE_BUFFER_LEN 64
 
 /*max nAtomo to generate*/
-#define NATOM_MAX 300
+#define NATOM_MAX 3000
 
 /*  Lenght of the message that deliver nAtom
-*   6 char msg + 8byte msg type 
+*   6 char msg + 8 byte mtype 
 */
 #define ATOM_MSG_LEN 6 + 8 
+
+#define RADOM_MSG_LEN 4 + 8 /*numbers from 0 to 1000 (4 chat) + 8 byte mtype*/
 
 #define TEST_ERROR    if (errno) {fprintf(stderr, \
 					  "%s:%d: PID=%5d: Error %d (%s)\n", \
@@ -102,8 +106,9 @@ static char writeBuffer[WRITE_BUFFER_LEN];
 
 void handle_signals(int signal,siginfo_t* info, void* v);
 
-/*REVIEW - redefine this functions in each file to avoid that one process write with another one color*/
+/*REVIEW - check if extern in necessary */
 extern void Write(int fd, const void* buff, size_t len, processType pType);
+
 
 /*
 *   Generate a numer using Box Muller operation

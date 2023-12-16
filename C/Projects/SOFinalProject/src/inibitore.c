@@ -6,7 +6,12 @@ int main(int argc, char *argv[])
 {
     init();
     ready();
-    pause();
+    waitForParentStartSimulation();
+
+    while (1)
+    {
+        pause();
+    }
 }
 
 void init()
@@ -24,8 +29,7 @@ void ready()
     sops.sem_num = ID_READY;
     sops.sem_op = 1;
     semop(startSimulationSemId, &sops, 1);
-    Write(1, "Inibitore ready\n", 17,Inibitore);
-    waitForParentStartSimulation();
+    Write(1, "Inibitore ready\n", 17, Inibitore);
 }
 
 void waitForParentStartSimulation()
@@ -33,14 +37,15 @@ void waitForParentStartSimulation()
     sops.sem_num = ID_GO;
     sops.sem_op = -1;
     semop(startSimulationSemId, &sops, 1);
+    Write(1, "Inibitore start simulation\n", 29, Inibitore);
 }
 
-void handle_signals(int signal,siginfo_t* info, void* v)
+void handle_signals(int signal, siginfo_t *info, void *v)
 {
     switch (signal)
     {
     case SIGINT:
-        Write(1, "Inibitore Handling SIGINT\n", 27,Inibitore);
+        Write(1, "Inibitore Handling SIGINT\n", 27, Inibitore);
         exit(EXIT_SUCCESS);
         break;
 

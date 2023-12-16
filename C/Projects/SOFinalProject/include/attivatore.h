@@ -1,5 +1,6 @@
 #include "common.h"
 
+#define ACTIVATION_PER_SECOND 3
 int startSimulationSemId;
 
 /*
@@ -22,3 +23,4 @@ void ready();
 void waitForParentStartSimulation();
 
 void choseAndSignal();
+

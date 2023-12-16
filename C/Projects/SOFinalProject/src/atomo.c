@@ -9,8 +9,6 @@ siginfo_t si;
 struct AtomMsgbuf AtomMsgSnd;
 struct AtomMsgbuf AtomMsgRcv;
 
-struct sigevent sigalarm;
-
 int startSimulationSemId;
 int sharedMemorySemId;
 int nAtom_Queue;
@@ -30,11 +28,10 @@ char buff[40];
 int main(int argc, char *argv[])
 {
     init();
-
-    waitForMasterStartSimulation();
-
-    pause();
-    Write(1, "Atomo terminating\n", 18, Atomo);
+    while (1)
+    {
+        pause();
+    }
 }
 
 void init()
@@ -74,11 +71,10 @@ void init()
         }
     }
 
-    
     shmctl(shared_mem_id, IPC_STAT, &shm_info);
     shared_mem_atom_position = SM->SMH.n_atomi;
 
-    sops.sem_num = ID_WRITE;
+    sops.sem_num = ID_READ_WRITE;
     sops.sem_op = -1;
     sops.sem_flg = 0;
     semop(sharedMemorySemId, &sops, 1);
@@ -86,7 +82,7 @@ void init()
     SM->SMH.n_atomi = SM->SMH.n_atomi + 1;
     setUpdateSharedMemory();
 
-    sops.sem_num = ID_WRITE;
+    sops.sem_num = ID_READ_WRITE;
     sops.sem_op = 1;
     semop(sharedMemorySemId, &sops, 1);
 
@@ -102,13 +98,6 @@ void ready()
     sops.sem_op = 1;
     semop(startSimulationSemId, &sops, 1);
     Write(1, "Atomo ready\n", 12, Atomo);
-}
-
-void waitForMasterStartSimulation()
-{
-    sops.sem_num = ID_GO;
-    sops.sem_op = -1;
-    semop(startSimulationSemId, &sops, 1);
 }
 
 void handle_signals(int signal, siginfo_t *info, void *v)
@@ -131,6 +120,13 @@ void handle_signals(int signal, siginfo_t *info, void *v)
 
 void split()
 {
+
+    if ((int)rand() % 1000 > 1000 * ACTIVATION_PROBABILTY)
+    {
+        return;
+        /*TODO - check if work*/
+    }
+
     switch (value = fork())
     {
     case -1:
@@ -145,7 +141,7 @@ void split()
             TEST_ERROR;
             exit(EXIT_FAILURE);
         }
-
+        Write(1, "Splitting Atomo\n", 16, Atomo);
         break;
 
     default:
@@ -158,9 +154,9 @@ void split()
         else
         {
             snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", (atomo.nAtom / 2));
-            atomo.nAtom = (atomo.nAtom / 2)+1;
+            atomo.nAtom = (atomo.nAtom / 2) + 1;
         }
-        setUpdateSharedMemory(); /*NOTE - should be removed*/
+        
         if (msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0) == -1)
         {
             Write(1, "Error sending message\n", 22, Atomo);

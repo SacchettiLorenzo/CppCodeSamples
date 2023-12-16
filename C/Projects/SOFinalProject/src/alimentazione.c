@@ -12,10 +12,12 @@ int i;
 char *args_0[] = {"./atomo.out", (char *)0};
 int value;
 int nAtom_Queue;
+char buff[40];
 int main(int argc, char *argv[])
 {
     init();
     ready();
+    waitForParentStartSimulation();
 
     while (1)
     {
@@ -34,6 +36,7 @@ void init()
     sigaction(SIGINT, &sa, NULL);
     sigaction(SIGUSR1, &sa, NULL);
 
+    /*FIXME - THIS timer SHOULD START AFTER MASTER START SIMULATION*/
     /*SECTION - timer*/
     /*TODO - check if everything is necessary and change name*/
     /*sigalarm.sigev_notify = SIGEV_SIGNAL;*/
@@ -52,7 +55,6 @@ void ready()
     sops.sem_op = 1;
     semop(startSimulationSemId, &sops, 1);
     Write(1, "Alimentazione ready\n", 20, Alimentazione);
-    waitForParentStartSimulation();
 }
 
 void waitForParentStartSimulation()
@@ -60,6 +62,7 @@ void waitForParentStartSimulation()
     sops.sem_num = ID_GO;
     sops.sem_op = -1;
     semop(startSimulationSemId, &sops, 1);
+    Write(1, "Alimentazione start simulation\n", 31, Alimentazione);
 }
 
 void handle_signals(int signal, siginfo_t *info, void *v)
@@ -103,6 +106,9 @@ void generateNewAtoms()
         default:
             AtomMsgSnd.mtype = value;
             snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
+            bzero(buff, 40);
+            snprintf(buff, 40, "alim create atom %d with %d\n", value, atoi(AtomMsgSnd.mtext));
+            Write(1, buff, 40, Alimentazione);
             if (msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0) == -1)
             {
                 Write(1, "Cannot send message to new atom\n", 32, Alimentazione);
