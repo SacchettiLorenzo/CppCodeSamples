@@ -24,7 +24,7 @@ int atomPositionInSharedMem;
 int masterPid;
 int i;
 char buff[40];
-
+int masterPid;
 int main(int argc, char *argv[])
 {
     init();
@@ -80,6 +80,7 @@ void init()
     semop(sharedMemorySemId, &sops, 1);
 
     SM->SMH.n_atomi = SM->SMH.n_atomi + 1;
+    masterPid = SM->SMH.masterPid;
     setUpdateSharedMemory();
 
     sops.sem_num = ID_READ_WRITE;
@@ -106,6 +107,7 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     {
     case SIGINT:
         Write(1, "Atomo Handling SIGINT\n", 22, Atomo);
+        killpg(masterPid, SIGINT);
         exit(EXIT_SUCCESS);
         break;
     case SIGUSR1:

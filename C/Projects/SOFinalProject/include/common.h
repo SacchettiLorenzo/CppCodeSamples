@@ -88,7 +88,7 @@ struct SharedMemHeader{
 
 struct Atomo{
     pid_t pid;
-    int nAtom;/*NOTE - nAtom is a provate information and shold not be in the shared memory */
+    int nAtom;/*NOTE - nAtom is a private information and should not be in the shared memory */
     pid_t parentPid;
     bool scoria;
     bool inibito;

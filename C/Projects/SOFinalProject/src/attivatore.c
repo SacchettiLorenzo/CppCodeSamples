@@ -13,6 +13,7 @@ struct itimerspec activationTimer;
 timer_t activationtimer;
 struct sigevent sigalarm;
 char buff[40];
+int masterPid;
 int main(int argc, char *argv[])
 {
     init();
@@ -48,6 +49,17 @@ void init()
         TEST_ERROR;
     }
     SM = shmat(shared_mem_id, NULL, 0);
+
+    sops.sem_num = ID_READ_WRITE;
+    sops.sem_op = -1;
+    sops.sem_flg = 0;
+    semop(sharedMemorySemId, &sops, 1);
+
+    masterPid = SM->SMH.masterPid;
+
+    sops.sem_num = ID_READ_WRITE;
+    sops.sem_op = 1;
+    semop(sharedMemorySemId, &sops, 1);
     /*-------------------------------------------*/
 
     /*FIXME - THIS timer SHOULD START AFTER MASTER START SIMULATION*/
@@ -87,6 +99,7 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     {
     case SIGINT:
         Write(1, "Attivatore Handling SIGINT\n", 27, Attivatore);
+        killpg(masterPid, SIGINT);
         exit(EXIT_SUCCESS);
         break;
     case SIGUSR1:
