@@ -39,7 +39,7 @@
 
 #define N_SERVICE_PROCESS 3	/*Attivatore, Alimentazioni, Inibitore*/
 
-#define WRITE_BUFFER_LEN 64
+#define WRITE_BUFFER_LEN 128
 
 /*max nAtomo to generate*/
 #define NATOM_MAX 3000
@@ -64,6 +64,7 @@ typedef enum {false,true} bool;
 
 static struct sigaction sa;
 
+typedef enum {Low,Normal,High} precisionLevel;
 typedef enum {Master,Atomo,Attivatore,Alimentazione,Inibitore} processType;
 static char* colors[5] = {
 	"91m","92m","96m","33m","93m"
@@ -79,12 +80,13 @@ struct SharedMemHeader{
 	int n_atomi;
 	bool simulation;
     pid_t masterPid;
-	int ATTIVATORE;
+	int ATTIVAZIONI;
 	int ENERGIA_PRODOTTA;
 	int ENERGIA_CONSUMATA;
 	int ENERGIA_ASSORBITA;
 	int scorie;
 	char lastInibition[100];/*ultima operazione di bilanciamento*/
+	precisionLevel logPrecisionLevel; 
 };
 
 struct Atomo{
@@ -107,8 +109,7 @@ static char writeBuffer[WRITE_BUFFER_LEN];
 
 void handle_signals(int signal,siginfo_t* info, void* v);
 
-/*REVIEW - check if extern in necessary */
-extern void Write(int fd, const void* buff, size_t len, processType pType);
+void Write(int fd, const void* buff, size_t len, processType pType);
 
 
 /*

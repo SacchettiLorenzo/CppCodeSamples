@@ -6,6 +6,12 @@
 /*IPC Message Queue type the master use for reading*/
 #define MASTER_QUE_TYPE 1
 
+#define ENERGY_DEMAND 30
+
+#define SIM_DURATION 200
+
+#define ENERGY_EXPLODE_THRESHOLD 10000000
+
 struct ServiceProcessData{
     pid_t pid;
     processType type;
@@ -32,6 +38,9 @@ void waitForChildReady();
 */
 void startSimulation();
 
-void sharedMemoryReview();
+/*
+* dump shared memory into a file
+*/
+void dumpMemory();
 
 

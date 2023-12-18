@@ -10,7 +10,7 @@ struct AtomMsgbuf AtomMsgSnd;
 int startSimulationSemId;
 int i;
 char *args_0[] = {"./atomo.out", (char *)0};
-int value;
+int forkResult;
 int nAtom_Queue;
 char buff[40];
 int sharedMemorySemId;
@@ -58,17 +58,13 @@ void init()
     sigaction(SIGINT, &sa, NULL);
     sigaction(SIGUSR1, &sa, NULL);
 
-    /*FIXME - THIS timer SHOULD START AFTER MASTER START SIMULATION*/
-    /*SECTION - timer*/
-    /*TODO - check if everything is necessary and change name*/
-    /*sigalarm.sigev_notify = SIGEV_SIGNAL;*/
     sigusr.sigev_signo = SIGUSR1;
     sigusr.sigev_value.sival_ptr = &atomgenerationtimer;
     timer_create(CLOCK_REALTIME, &sigusr, &atomgenerationtimer);
     atomGenerationTimer.it_value.tv_sec = STEP;
     atomGenerationTimer.it_value.tv_nsec = 0;
     atomGenerationTimer.it_interval = atomGenerationTimer.it_value;
-    timer_settime(atomgenerationtimer, 0, &atomGenerationTimer, NULL);
+    
 }
 
 void ready()
@@ -85,6 +81,7 @@ void waitForParentStartSimulation()
     sops.sem_op = -1;
     semop(startSimulationSemId, &sops, 1);
     Write(1, "Alimentazione start simulation\n", 31, Alimentazione);
+    timer_settime(atomgenerationtimer, 0, &atomGenerationTimer, NULL);
 }
 
 void handle_signals(int signal, siginfo_t *info, void *v)
@@ -110,7 +107,7 @@ void generateNewAtoms()
 {
     for (i = 0; i < N_NUOVI_ATOMI; i++)
     {
-        switch (value = fork())
+        switch (forkResult = fork())
         {
         case -1:
             fprintf(stderr, "Error #%03d: %s\n", errno, strerror(errno));
@@ -121,16 +118,16 @@ void generateNewAtoms()
             if (execve(args_0[0], args_0, NULL) == -1)
             {
                 Write(1, "Error calling Atomo\n", 20, Master);
-                TEST_ERROR;
+                Write(1, "meltdown\n",9 , Alimentazione);
                 exit(EXIT_FAILURE);
             }
             exit(EXIT_SUCCESS);
             break;
         default:
-            AtomMsgSnd.mtype = value;
+            AtomMsgSnd.mtype = forkResult;
             snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
             bzero(buff, 40);
-            snprintf(buff, 40, "alim create atom %d with %d\n", value, atoi(AtomMsgSnd.mtext));
+            snprintf(buff, 40, "alim create atom %d with %d\n", forkResult, atoi(AtomMsgSnd.mtext));
             Write(1, buff, 40, Alimentazione);
             if (msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0) == -1)
             {

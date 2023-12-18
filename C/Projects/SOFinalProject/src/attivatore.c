@@ -61,18 +61,14 @@ void init()
     sops.sem_op = 1;
     semop(sharedMemorySemId, &sops, 1);
     /*-------------------------------------------*/
-
-    /*FIXME - THIS timer SHOULD START AFTER MASTER START SIMULATION*/
-    /*SECTION - timer*/
-    /*TODO - check if everything is necessary and change name*/
-    /*sigalarm.sigev_notify = SIGEV_SIGNAL;*/
+    
     sigalarm.sigev_signo = SIGUSR1;
     sigalarm.sigev_value.sival_ptr = &activationtimer;
     timer_create(CLOCK_REALTIME, &sigalarm, &activationtimer);
     activationTimer.it_value.tv_sec = 1;
     activationTimer.it_value.tv_nsec = 0;
     activationTimer.it_interval = activationTimer.it_value;
-    timer_settime(activationtimer, 0, &activationTimer, NULL);
+    
 }
 
 void ready()
@@ -91,6 +87,7 @@ void waitForParentStartSimulation()
     sops.sem_flg = 0;
     semop(startSimulationSemId, &sops, 1);
     Write(1, "Attivatore start simulation\n", 28, Attivatore);
+    timer_settime(activationtimer, 0, &activationTimer, NULL);
 }
 
 void handle_signals(int signal, siginfo_t *info, void *v)
