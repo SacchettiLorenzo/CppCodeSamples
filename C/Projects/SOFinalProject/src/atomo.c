@@ -23,8 +23,9 @@ struct shmid_ds shm_info;
 int atomPositionInSharedMem;
 int masterPid;
 int i;
-char buff[40];
+char buff[60];
 int masterPid;
+
 int main(int argc, char *argv[])
 {
     init();
@@ -36,6 +37,7 @@ int main(int argc, char *argv[])
 
 void init()
 {
+    srand(time(NULL));
     atomo.nAtom = 0;
     atomo.parentPid = getppid();
     atomo.inibito = 0;
@@ -54,7 +56,7 @@ void init()
 
     bzero(&sa, sizeof(sa));
     sa.sa_sigaction = handle_signals;
-    sa.sa_flags = SA_SIGINFO;
+    sa.sa_flags = SA_SIGINFO | SA_NOMASK;
 
     sigaction(SIGINT, &sa, NULL);
     sigaction(SIGUSR1, &sa, NULL);
@@ -64,21 +66,23 @@ void init()
     if (msgrcv(nAtom_Queue, &AtomMsgRcv, ATOM_MSG_LEN, getpid(), 0) > 0)
     {
         atomo.nAtom = atoi(AtomMsgRcv.mtext);
+        /*
         if (atomo.nAtom > 0)
         {
             snprintf(writeBuffer, 25 + strlen(AtomMsgRcv.mtext) + 6, "Atomo: %d got nAtom %d\n", getpid(), atomo.nAtom);
             Write(1, writeBuffer, 19 + strlen(AtomMsgRcv.mtext) + 6, Atomo);
         }
+        */
     }
 
     shmctl(shared_mem_id, IPC_STAT, &shm_info);
-    shared_mem_atom_position = SM->SMH.n_atomi;
 
     sops.sem_num = ID_READ_WRITE;
     sops.sem_op = -1;
     sops.sem_flg = 0;
     semop(sharedMemorySemId, &sops, 1);
 
+    shared_mem_atom_position = SM->SMH.n_atomi;
     SM->SMH.n_atomi = SM->SMH.n_atomi + 1;
     masterPid = SM->SMH.masterPid;
     setUpdateSharedMemory();
@@ -92,13 +96,13 @@ void init()
 
 void ready()
 {
-    /*FIXME -
-    if splitted atom this operation is useless use semget to figure out if sem is already 0; if yes skip
-    */
-    sops.sem_num = ID_READY;
-    sops.sem_op = 1;
-    semop(startSimulationSemId, &sops, 1);
-    Write(1, "Atomo ready\n", 12, Atomo);
+    if (shared_mem_atom_position <= N_ATOMI_INIT - 1)
+    {
+        sops.sem_num = ID_READY;
+        sops.sem_op = 1;
+        semop(startSimulationSemId, &sops, 1);
+        Write(1, "Atomo ready\n", 12, Atomo);
+    }
 }
 
 void handle_signals(int signal, siginfo_t *info, void *v)
@@ -107,15 +111,41 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     {
     case SIGINT:
         Write(1, "Atomo Handling SIGINT\n", 22, Atomo);
-        killpg(masterPid, SIGINT);
+        /*killpg(masterPid, SIGINT);*/
         exit(EXIT_SUCCESS);
         break;
     case SIGUSR1:
-        Write(1, "Atomo Handling SIGUSR1\n", 23, Atomo);
-        split();
+        /*Write(1, "Atomo Handling SIGUSR1\n", 23, Atomo);*/
+
+        /*TODO - create a function isAtomoScoria()*/
+        if (atomo.nAtom > MIN_N_ATOMICO)
+        {
+            split();
+        }
+        else
+        {
+            if (atomo.scoria == false)
+            {
+                atomo.scoria = true;
+
+                sops.sem_num = ID_READ_WRITE;
+                sops.sem_op = -1;
+                sops.sem_flg = 0;
+                semop(sharedMemorySemId, &sops, 1);
+
+                SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader)); /*REVIEW - check if i have to do this operation every time or just put it in the init */
+                (SM->atomi + (shared_mem_atom_position))->scoria = atomo.scoria;
+                SM->SMH.scorie++;
+
+                sops.sem_num = ID_READ_WRITE;
+                sops.sem_op = 1;
+                semop(sharedMemorySemId, &sops, 1);
+
+                exit(EXIT_SUCCESS);
+            }
+        }
         break;
     default:
-        pause();
         break;
     }
 }
@@ -125,8 +155,8 @@ void split()
 
     if ((int)rand() % 1000 > 1000 * ACTIVATION_PROBABILTY)
     {
+        Write(1, "Not spliting\n", 22, Atomo);
         return;
-        /*TODO - check if work*/
     }
 
     switch (value = fork())
@@ -137,33 +167,52 @@ void split()
         break;
     case 0:
 
+        Write(1, "Splitting Atomo\n", 16, Atomo);
         if (execve(args_0[0], args_0, NULL) == -1)
         {
             Write(1, "Error splitting Atomo\n", 22, Atomo);
             TEST_ERROR;
             exit(EXIT_FAILURE);
         }
-        Write(1, "Splitting Atomo\n", 16, Atomo);
         break;
 
     default:
+    /*REVIEW - (optional) create a more interesting nAtom division function*/
         AtomMsgSnd.mtype = value;
         if (atomo.nAtom % 2 == 0)
         {
             snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", (atomo.nAtom / 2));
             atomo.nAtom = atomo.nAtom / 2;
+            calculateEnergy(atomo.nAtom,atomo.nAtom);
         }
         else
         {
             snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", (atomo.nAtom / 2));
             atomo.nAtom = (atomo.nAtom / 2) + 1;
+            atomo.nAtom(atomo.nAtom,atomo.nAtom-1);
         }
-        
+
         if (msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0) == -1)
         {
             Write(1, "Error sending message\n", 22, Atomo);
             TEST_ERROR;
+            exit(EXIT_FAILURE);
         }
+
+        /*TODO - send on message queue to the master the energy value produced by the splitting*/
+
+        sops.sem_num = ID_READ_WRITE;
+        sops.sem_op = -1;
+        sops.sem_flg = 0;
+        semop(sharedMemorySemId, &sops, 1);
+
+        SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader)); /*REVIEW - check if i have to do this operation every time or just put it in the init */
+        (SM->atomi + (shared_mem_atom_position))->nAtom = atomo.nAtom;
+
+        sops.sem_num = ID_READ_WRITE;
+        sops.sem_op = 1;
+        semop(sharedMemorySemId, &sops, 1);
+
         break;
     }
 }
@@ -176,4 +225,12 @@ void setUpdateSharedMemory()
     (SM->atomi + (shared_mem_atom_position))->parentPid = atomo.parentPid;
     (SM->atomi + (shared_mem_atom_position))->scoria = atomo.scoria;
     (SM->atomi + (shared_mem_atom_position))->inibito = atomo.inibito;
+}
+
+int calculateEnergy(int nAtom1, int nAtom2){
+    if(nAtom1 > nAtom2){
+        return nAtom1 * nAtom2 -nAtom1;
+    }else{
+         return nAtom1 * nAtom2 -nAtom2;
+    }
 }

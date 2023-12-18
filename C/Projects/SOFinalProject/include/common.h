@@ -52,12 +52,13 @@
 #define RADOM_MSG_LEN 4 + 8 /*numbers from 0 to 1000 (4 chat) + 8 byte mtype*/
 
 #define TEST_ERROR    if (errno) {fprintf(stderr, \
-					  "%s:%d: PID=%5d: Error %d (%s)\n", \
+					  "%s:%d: PID=%5d: Error %d (%s) %s\n", \
 					  __FILE__,			\
 					  __LINE__,			\
 					  getpid(),			\
 					  errno,			\
-					  strerror(errno));}
+					  strerror(errno), \
+					  strerrorname_np(errno));}
 
 typedef enum {false,true} bool;
 
@@ -75,7 +76,6 @@ struct AtomMsgbuf
 };
 
 struct SharedMemHeader{
-	int version;
 	int n_atomi;
 	bool simulation;
     pid_t masterPid;
@@ -83,6 +83,7 @@ struct SharedMemHeader{
 	int ENERGIA_PRODOTTA;
 	int ENERGIA_CONSUMATA;
 	int ENERGIA_ASSORBITA;
+	int scorie;
 	char lastInibition[100];/*ultima operazione di bilanciamento*/
 };
 

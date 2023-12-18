@@ -6,6 +6,8 @@
 
 #define ACTIVATION_PROBABILTY 0.9
 
+#define MIN_N_ATOMICO 10
+
 
 /*
 * Initialization of.
@@ -27,8 +29,7 @@ void ready();
 void checkForMsg();
 
 void split();
+
 void setUpdateSharedMemory();
-/*
-void lookForSharedmemoryPosition();
-void getUpdateSharedMemory();
-*/
+
+int calculateEnergy(int nAtom1, int nAtom2);

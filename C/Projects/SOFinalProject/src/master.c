@@ -34,14 +34,13 @@ int sharedMemorySemId;
 
 int current_atom_quantity;
 
-char buff[40];
+char buff[60];
 
 bool simulation = false;
 
 int main(int argc, char *argv[])
 {
-    srand(time(NULL));
-    /*normalDistributionNumberGenerator(0);*/
+    
     init();
     for (i = 0; i < totalChild; i++)
     {
@@ -149,6 +148,7 @@ int main(int argc, char *argv[])
 
 void init()
 {
+    srand(time(NULL));
     init_atomi_pid = malloc(N_ATOMI_INIT * sizeof(int));
     bzero(&sa, sizeof(sa));
     sa.sa_sigaction = handle_signals; /*same as handler*/
@@ -180,7 +180,6 @@ void init()
     }
     SM = shmat(shared_mem_id, NULL, 0);
 
-    SM->SMH.version = 0;
     SM->SMH.n_atomi = 0;
     SM->SMH.masterPid = getpid();
     SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
@@ -240,7 +239,8 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     case SIGUSR1:
         if (simulation)
         {
-            sharedMemoryReview();
+            /*FIXME - this logging function bring to a core dump in some way*/
+            /*sharedMemoryReview();*/
         }
         break;
 
@@ -256,15 +256,15 @@ void sharedMemoryReview()
     sops.sem_flg = 0;
     semop(sharedMemorySemId, &sops, 1);
 
-    bzero(buff, 40);
-    snprintf(buff, 40, "header: n_atomi:%d, version: %d \n", SM->SMH.n_atomi, SM->SMH.version);
-    write(1, buff, 40);
+    bzero(buff, 60);
+    snprintf(buff, 60, "header: n_atomi: %d scorie: %d\n", SM->SMH.n_atomi, SM->SMH.scorie);
+    write(1, buff, 60);
     SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
     for (j = 0; j < SM->SMH.n_atomi; j++)
     {
-        bzero(buff, 40);
-        snprintf(buff, 40, "atom %d have n_atom %d\n", (SM->atomi + j)->pid, (SM->atomi + j)->nAtom);
-        Write(1, buff, 40, Master);
+        bzero(buff, 60);
+        snprintf(buff, 60, "atom %d have n_atom:%d, scoria:%d, parent:%d\n", j, (SM->atomi + j)->nAtom,(SM->atomi + j)->scoria, (SM->atomi + j)->parentPid);
+        Write(1, buff, 60, Master);
     }
 
     sops.sem_num = ID_READ_WRITE;

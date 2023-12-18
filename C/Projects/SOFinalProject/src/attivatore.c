@@ -12,7 +12,7 @@ int randomNumber;
 struct itimerspec activationTimer;
 timer_t activationtimer;
 struct sigevent sigalarm;
-char buff[40];
+char buff[60];
 int masterPid;
 int main(int argc, char *argv[])
 {
@@ -121,9 +121,18 @@ void choseAndSignal()
 
     for (i = 0; i < ACTIVATION_PER_SECOND; i++)
     {
-        bzero(buff, 40);
         randomNumber = (int)rand() % (SM->SMH.n_atomi);
-        kill((SM->atomi + (randomNumber))->pid, SIGUSR1);
+        if ((SM->atomi + (randomNumber))->scoria != true)
+        {
+            if ((SM->atomi + (randomNumber))->pid != 0)
+            {
+                kill((SM->atomi + (randomNumber))->pid, SIGUSR1);
+            }
+        }
+        else
+        {
+            i--;
+        }
     }
     sops.sem_num = ID_READ_WRITE;
     sops.sem_op = 1;
