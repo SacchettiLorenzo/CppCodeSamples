@@ -247,7 +247,7 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         }
 
         semctl(simulation_Sem, 0, IPC_RMID);
-        semctl(simulation_Sem, 0, IPC_RMID);
+        semctl(sharedMemorySemId, 0, IPC_RMID);
 
         msgctl(nAtom_Queue, IPC_RMID, NULL);
 
@@ -320,11 +320,18 @@ void handle_signals(int signal, siginfo_t *info, void *v)
 void dumpMemory()
 {
     memoryDump = fopen("memorydump.txt", "w");
-    if(memoryDump == NULL){
+    if (memoryDump == NULL)
+    {
         Write(1, "Error opening memory dump file\n", 31, Master);
     }
+
+    fprintf(memoryDump, "-Total- ATOMI: %d SCORIE: %d SCISSIONI: %d ENERGIA PRODOTTA:%d ENERGIA CONSUMATA: %d ENERGIA ASSORBITA: %d\n\n",
+                     SM->SMH.n_atomi, SM->SMH.scorie, SM->SMH.ATTIVAZIONI, SM->SMH.ENERGIA_PRODOTTA, SM->SMH.ENERGIA_CONSUMATA, SM->SMH.ENERGIA_ASSORBITA);
+
     for (i = 0; i < SM->SMH.n_atomi; i++)
     {
-        fprintf(memoryDump, "test\n");
+        fprintf(memoryDump, "pid: %d, parent pid: %d, scoria: %d, inibito: %d\n", (SM->atomi + i)->pid, (SM->atomi + i)->parentPid, (SM->atomi + i)->scoria, (SM->atomi + i)->inibito);
     }
+
+    fclose(memoryDump);
 }

@@ -12,6 +12,8 @@ int main(int argc, char *argv[])
     ready();
     waitForParentStartSimulation();
 
+    /*TODO - select ATOM_INIBITION_NUMBER atoms and cgange the value in the shared memory*/
+
     while (1)
     {
         pause();
@@ -67,7 +69,6 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     {
     case SIGINT:
         Write(1, "Inibitore Handling SIGINT\n", 27, Inibitore);
-        killpg(masterPid, SIGINT);
         exit(EXIT_SUCCESS);
         break;
 

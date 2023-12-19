@@ -35,14 +35,16 @@
 #define SHARED_MEM_KEY 0X333331
 
 #define N_ATOMI_INIT 5
-#define N_ATOM_MAX 10000
+
+/*max number of atoms*/ 
+#define N_ATOM_MAX 10000 /*REVIEW - controllare i nomi sul documento*/
 
 #define N_SERVICE_PROCESS 3	/*Attivatore, Alimentazioni, Inibitore*/
 
 #define WRITE_BUFFER_LEN 128
 
 /*max nAtomo to generate*/
-#define NATOM_MAX 3000
+#define NATOM_MAX 3000 /*REVIEW - controllare i nomi sul documento*/
 
 /*  Lenght of the message that deliver nAtom
 *   6 char msg + 8 byte mtype 

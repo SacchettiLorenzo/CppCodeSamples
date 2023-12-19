@@ -2,7 +2,7 @@ SHELL:=bash
 CC:=gcc
 CFLAGS:=-ansi -pedantic -Wvla -Wextra -Werror -D_GNU_SOURCE
 
-all: ./build/common.o ./build/master.o ./build/alimentazione.o ./build/atomo.o ./build/attivatore.o ./build/inibitore.o ./bin/master.out ./bin/alimentazione.out ./bin/atomo.out ./bin/attivatore.out ./bin/inibitore.out
+all: ./build/common.o ./build/master.o ./build/alimentazione.o ./build/atomo.o ./build/attivatore.o ./build/inibitore.o ./build/console.o ./bin/master.out ./bin/alimentazione.out ./bin/atomo.out ./bin/attivatore.out ./bin/inibitore.out ./bin/console.out
 
 ./build/common.o: ./src/common.c ./include/common.h
 	${CC} ${CFLAGS} -c $< -o $@ 
@@ -36,3 +36,9 @@ all: ./build/common.o ./build/master.o ./build/alimentazione.o ./build/atomo.o .
 
 ./bin/inibitore.out: ./build/inibitore.o ./build/common.o
 	${CC} ./build/inibitore.o ./build/common.o -o $@ -lm
+
+./build/console.o: ./src/console.c
+	${CC} ${CFLAGS} -c $< -o $@
+
+./bin/console.out: ./build/console.o 
+	${CC} ./build/console.o  -o $@ 
