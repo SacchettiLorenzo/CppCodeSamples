@@ -6,9 +6,11 @@ int sharedMemorySemId;
 int shared_mem_id;
 struct SharedMemory *SM;
 int masterPid;
+char buff[40];
+FILE *config;
 int main(int argc, char *argv[])
 {
-    init();
+    init(argc,argv);
     ready();
     waitForParentStartSimulation();
 
@@ -20,8 +22,12 @@ int main(int argc, char *argv[])
     }
 }
 
-void init()
+void init(int argc, char *argv[])
 {
+    if (argc > 1)
+    {
+        getValueFromConfigFile(argv[1]);
+    }
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600);
 
     /*Shared Memory SEM -------------------------*/
@@ -75,4 +81,18 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     default:
         break;
     }
+}
+
+void getValueFromConfigFile(char *path)
+{
+    config = fopen(path, "r");
+    if(config == NULL){
+         Write(1, "Unable to open config file\n", 27, Master);
+         exit(EXIT_FAILURE);
+    }
+    while (fgets(buff, sizeof(buff), config))
+    {
+        sscanf(buff, "N_ATOM_MAX %d", &N_ATOM_MAX);
+    }
+    fclose(config);
 }

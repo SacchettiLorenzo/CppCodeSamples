@@ -27,24 +27,22 @@
 #define SHARED_MEM_NUM_RES 1
 #define ID_READ_WRITE 0
 
-
 /*IPC Message Queue Keys */
 #define N_ATOM_QUEUE_KEY 0x222221
 
 /*IPC Shared Memory Keys*/
 #define SHARED_MEM_KEY 0X333331
 
-#define N_ATOMI_INIT 5
+
 
 /*max number of atoms*/ 
-#define N_ATOM_MAX 10000 /*REVIEW - controllare i nomi sul documento*/
+
 
 #define N_SERVICE_PROCESS 3	/*Attivatore, Alimentazioni, Inibitore*/
 
 #define WRITE_BUFFER_LEN 128
 
 /*max nAtomo to generate*/
-#define NATOM_MAX 3000 /*REVIEW - controllare i nomi sul documento*/
 
 /*  Lenght of the message that deliver nAtom
 *   6 char msg + 8 byte mtype 
@@ -112,6 +110,8 @@ static char writeBuffer[WRITE_BUFFER_LEN];
 void handle_signals(int signal,siginfo_t* info, void* v);
 
 void Write(int fd, const void* buff, size_t len, processType pType);
+
+void getValueFromConfigFile(char *path);
 
 
 /*

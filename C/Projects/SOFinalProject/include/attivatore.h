@@ -1,14 +1,15 @@
 #include "common.h"
 
-#define ACTIVATION_PER_SECOND 3
-int startSimulationSemId;
+int ACTIVATION_PER_SECOND;
+int N_ATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
+int NATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
 
 /*
 * Initialization of.
 * -signal handler
 * -IPC 
 */
-void init();
+void init(int argc, char *argv[]);
 
 /*
 * operating on the ID_READY semaphore 

@@ -4,10 +4,14 @@
 /*IPC Message Queue type the atom use for sending*/
 #define MASTER_QUE_TYPE 1
 
-#define ACTIVATION_PROBABILTY 0.9
+float ACTIVATION_PROBABILTY;
 
-#define MIN_N_ATOMICO 10
+int MIN_N_ATOMICO;
 
+int N_ATOMI_INIT;
+
+int N_ATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
+int NATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
 
 /*
 * Initialization of.
@@ -15,7 +19,7 @@
 * -IPC 
 * -Get nAtom
 */
-void init();
+void init(int argc, char *argv[]);
 
 /*
 * operating on the ID_READY semaphore 

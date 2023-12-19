@@ -12,11 +12,6 @@ void Write(int fd, const void *buff, size_t len, processType pType)
 
 int normalDistributionNumberGenerator(int n_atom_max)
 {
-    if (n_atom_max == 0)
-    {
-        n_atom_max = NATOM_MAX;
-    }
-
     /*Using Box-Muller Transformation*/
     randomAtomNumber = 0;
     while (randomAtomNumber < 1 || randomAtomNumber > n_atom_max)
@@ -25,9 +20,9 @@ int normalDistributionNumberGenerator(int n_atom_max)
         random2 = (double)rand() / (double)RAND_MAX;
         if ((int)random1 + (int)random2 % 2 == 0)
         {
-            randomAtomNumber = (NATOM_MAX / 2) + abs((int)(100 * (sqrt(-2 * log(random1)) * cos(2 * 3.14 * random2))));
+            randomAtomNumber = (n_atom_max / 2) + abs((int)(100 * (sqrt(-2 * log(random1)) * cos(2 * 3.14 * random2))));
         }else{
-            randomAtomNumber = (NATOM_MAX / 2) - abs((int)(100 * (sqrt(-2 * log(random1)) * cos(2 * 3.14 * random2))));
+            randomAtomNumber = (n_atom_max / 2) - abs((int)(100 * (sqrt(-2 * log(random1)) * cos(2 * 3.14 * random2))));
         }
     }
 

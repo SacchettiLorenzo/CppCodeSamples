@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
         write(1, "called master on new terminal\n", 30);
     }else{
         write(1, "you need to start the master to perform any operation\n", 54);
-    }else{
     }
 
     /*print menu now*/

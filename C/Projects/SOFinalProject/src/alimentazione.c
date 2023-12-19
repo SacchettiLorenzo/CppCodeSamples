@@ -17,9 +17,10 @@ int sharedMemorySemId;
 int shared_mem_id;
 struct SharedMemory *SM;
 int masterPid;
+FILE *config;
 int main(int argc, char *argv[])
 {
-    init();
+    init(argc, argv);
     ready();
     waitForParentStartSimulation();
 
@@ -29,12 +30,16 @@ int main(int argc, char *argv[])
     }
 }
 
-void init()
+void init(int argc, char *argv[])
 {
+    if (argc > 1)
+    {
+        getValueFromConfigFile(argv[1]);
+    }
+
     nAtom_Queue = msgget(N_ATOM_QUEUE_KEY, 0600 | IPC_CREAT);
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600);
 
-    
     /*Shared Memory SEM -------------------------*/
     sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
     semctl(sharedMemorySemId, 0, SETVAL, 1);
@@ -64,7 +69,6 @@ void init()
     atomGenerationTimer.it_value.tv_sec = STEP;
     atomGenerationTimer.it_value.tv_nsec = 0;
     atomGenerationTimer.it_interval = atomGenerationTimer.it_value;
-    
 }
 
 void ready()
@@ -90,7 +94,6 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     {
     case SIGINT:
         Write(1, "Alimentazione Handling SIGINT\n", 30, Alimentazione);
-        killpg(masterPid, SIGINT);
         exit(EXIT_SUCCESS);
         break;
     case SIGUSR1:
@@ -118,14 +121,14 @@ void generateNewAtoms()
             if (execve(args_0[0], args_0, NULL) == -1)
             {
                 Write(1, "Error calling Atomo\n", 20, Master);
-                Write(1, "meltdown\n",9 , Alimentazione);
+                Write(1, "meltdown\n", 9, Alimentazione);
                 exit(EXIT_FAILURE);
             }
             exit(EXIT_SUCCESS);
             break;
         default:
             AtomMsgSnd.mtype = forkResult;
-            snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
+            snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(NATOM_MAX));
             bzero(buff, 40);
             snprintf(buff, 40, "alim create atom %d with %d\n", forkResult, atoi(AtomMsgSnd.mtext));
             Write(1, buff, 40, Alimentazione);
@@ -136,4 +139,30 @@ void generateNewAtoms()
             break;
         }
     }
+}
+
+void getValueFromConfigFile(char *path)
+{
+    config = fopen(path, "r");
+    if(config == NULL){
+         Write(1, "Unable to open config file\n", 27, Master);
+         exit(EXIT_FAILURE);
+    }
+    while (fgets(buff, sizeof(buff), config))
+    {
+        sscanf(buff, "STEP %d", &STEP);
+    }
+    while (fgets(buff, sizeof(buff), config))
+    {
+        sscanf(buff, "N_NUOVI_ATOMI %d", &N_NUOVI_ATOMI);
+    }
+    while (fgets(buff, sizeof(buff), config))
+    {
+        sscanf(buff, "N_ATOM_MAX %d", &N_ATOM_MAX);
+    }
+    while (fgets(buff, sizeof(buff), config))
+    {
+        sscanf(buff, "NATOM_MAX %d", &NATOM_MAX);
+    }
+    fclose(config);
 }

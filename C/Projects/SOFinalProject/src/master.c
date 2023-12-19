@@ -6,10 +6,11 @@ struct ServiceProcessData service_process[N_SERVICE_PROCESS];
 struct sembuf sops;
 pid_t childPid;
 int i, j;
-char *args_0[] = {"./attivatore.out", (char *)0};
-char *args_1[] = {"./alimentazione.out", (char *)0};
-char *args_2[] = {"./inibitore.out", (char *)0};
-char *args_3[] = {"./atomo.out", (char *)0};
+
+char *args_0[] = {"./attivatore.out", "../config/config_0.txt", (char *)0};
+char *args_1[] = {"./alimentazione.out", "../config/config_0.txt", (char *)0};
+char *args_2[] = {"./inibitore.out", "../config/config_0.txt", (char *)0};
+char *args_3[] = {"./atomo.out", "../config/config_0.txt", (char *)0};
 
 struct AtomMsgbuf AtomMsgRcv;
 struct AtomMsgbuf AtomMsgSnd;
@@ -25,7 +26,7 @@ struct sigevent sigInt;
 int simulation_Sem;
 int nAtom_Queue;
 
-int totalChild = N_ATOMI_INIT + N_SERVICE_PROCESS;
+int totalChild;
 
 int shared_mem_id;
 
@@ -40,12 +41,13 @@ char buff[128];
 
 bool simulation = false;
 
+FILE *config;
 FILE *memoryDump;
-
+char* DEFAULT_CONFIG_FILE = "../config/config_0.txt";
 int main(int argc, char *argv[])
 {
 
-    init();
+    init(argc, argv);
     for (i = 0; i < totalChild; i++)
     {
         switch (forkResult = fork())
@@ -127,7 +129,7 @@ int main(int argc, char *argv[])
             if (i >= N_SERVICE_PROCESS)
             {
                 AtomMsgSnd.mtype = forkResult;
-                snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(0));
+                snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(NATOM_MAX));
                 msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0);
             }
             break;
@@ -147,8 +149,19 @@ int main(int argc, char *argv[])
     }
 }
 
-void init()
+void init(int argc, char *argv[])
 {
+    if (argc > 1)
+    {
+        /*TODO - add function to get the config file from args*/
+        /*problem passing config file to the other process*/
+        /*check config file parameter in atom splitting function*/
+        /*getValueFromConfigFile(argv[1]);*/
+    }
+
+    getValueFromConfigFile(DEFAULT_CONFIG_FILE);
+    totalChild = N_ATOMI_INIT + N_SERVICE_PROCESS;
+
     srand(time(NULL));
     bzero(&SMHBuffer, sizeof(struct SharedMemHeader));
 
@@ -237,14 +250,17 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     {
     case SIGINT:
 
-        if (info->si_pid != getpid())
+        if (info->si_pid != getpid() && info->si_pid != 1)
         {
             Write(1, "Process terminated by the user\n", 31, Master);
+            printf("%d",info->si_pid);
         }
         else
         {
             Write(1, "timeout\n", 8, Master);
         }
+
+        killpg(getpid(), SIGINT);
 
         semctl(simulation_Sem, 0, IPC_RMID);
         semctl(sharedMemorySemId, 0, IPC_RMID);
@@ -271,7 +287,6 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         shmctl(shared_mem_id, IPC_RMID, NULL);
         shmdt(SM);
 
-        killpg(getpid(), SIGINT);
 
         exit(EXIT_SUCCESS);
         break;
@@ -326,7 +341,7 @@ void dumpMemory()
     }
 
     fprintf(memoryDump, "-Total- ATOMI: %d SCORIE: %d SCISSIONI: %d ENERGIA PRODOTTA:%d ENERGIA CONSUMATA: %d ENERGIA ASSORBITA: %d\n\n",
-                     SM->SMH.n_atomi, SM->SMH.scorie, SM->SMH.ATTIVAZIONI, SM->SMH.ENERGIA_PRODOTTA, SM->SMH.ENERGIA_CONSUMATA, SM->SMH.ENERGIA_ASSORBITA);
+            SM->SMH.n_atomi, SM->SMH.scorie, SM->SMH.ATTIVAZIONI, SM->SMH.ENERGIA_PRODOTTA, SM->SMH.ENERGIA_CONSUMATA, SM->SMH.ENERGIA_ASSORBITA);
 
     for (i = 0; i < SM->SMH.n_atomi; i++)
     {
@@ -334,4 +349,24 @@ void dumpMemory()
     }
 
     fclose(memoryDump);
+}
+
+void getValueFromConfigFile(char *path)
+{
+    config = fopen(path, "r");
+    if(config == NULL){
+         Write(1, "Unable to open config file\n", 27, Master);
+         exit(EXIT_FAILURE);
+    }
+    while (fgets(buff, sizeof(buff), config))
+    {
+        sscanf(buff, "N_ATOMI_INIT %d", &N_ATOMI_INIT);
+        sscanf(buff, "ENERGY_DEMAND %d", &ENERGY_DEMAND);
+        sscanf(buff, "SIM_DURATION %d", &SIM_DURATION);
+        sscanf(buff, "ENERGY_EXPLODE_THRESHOLD %d", &ENERGY_EXPLODE_THRESHOLD);
+        sscanf(buff, "N_ATOM_MAX %d", &N_ATOM_MAX);
+        sscanf(buff, "NATOM_MAX %d", &NATOM_MAX);
+    }
+    
+    fclose(config);
 }

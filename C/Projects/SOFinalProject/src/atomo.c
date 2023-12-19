@@ -14,7 +14,7 @@ int sharedMemorySemId;
 int nAtom_Queue;
 
 int forkResult;
-char *args_0[] = {"./atomo.out", (char *)0};
+char *args_0[] = {"./atomo.out","../config/config_0.txt", (char *)0};
 
 int shared_mem_id;
 int shared_mem_atom_position;
@@ -26,18 +26,25 @@ int i;
 char buff[60];
 int masterPid;
 int energy;
+FILE *config;
 
 int main(int argc, char *argv[])
 {
-    init();
+    init(argc,argv);
     while (1)
     {
         pause();
     }
 }
 
-void init()
+void init(int argc, char *argv[])
 {
+    
+    if(argc > 1){
+        getValueFromConfigFile(argv[1]);
+    }
+      
+
     srand(time(NULL));
     atomo.nAtom = 0;
     atomo.parentPid = getppid();
@@ -244,4 +251,18 @@ int calculateEnergy(int nAtom1, int nAtom2)
     {
         return nAtom1 * nAtom2 - nAtom2;
     }
+}
+
+void getValueFromConfigFile(char *path)
+{
+    config = fopen(path, "r");
+    while (fgets(buff, sizeof(buff), config))
+    {
+        sscanf(buff, "N_ATOMI_INIT %d", &N_ATOMI_INIT);
+        sscanf(buff, "ACTIVATION_PROBABILTY %f", &ACTIVATION_PROBABILTY);
+        sscanf(buff, "MIN_N_ATOMICO %d", &MIN_N_ATOMICO);
+        sscanf(buff, "N_ATOM_MAX %d", &N_ATOM_MAX);
+        sscanf(buff, "NATOM_MAX %d", &NATOM_MAX);
+    }
+    fclose(config);
 }

@@ -14,9 +14,11 @@ timer_t activationtimer;
 struct sigevent sigalarm;
 char buff[60];
 int masterPid;
+int startSimulationSemId;
+FILE *config;
 int main(int argc, char *argv[])
 {
-    init();
+    init(argc,argv);
     ready();
     waitForParentStartSimulation();
 
@@ -26,8 +28,12 @@ int main(int argc, char *argv[])
     }
 }
 
-void init()
+void init(int argc, char *argv[])
 {
+    if(argc > 1){
+        getValueFromConfigFile(argv[1]);
+    }
+
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600);
     srand(time(NULL));
     bzero(&sa, sizeof(sa));
@@ -96,7 +102,6 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     {
     case SIGINT:
         Write(1, "Attivatore Handling SIGINT\n", 27, Attivatore);
-        killpg(masterPid, SIGINT);
         exit(EXIT_SUCCESS);
         break;
     case SIGUSR1:
@@ -134,4 +139,17 @@ void choseAndSignal()
     sops.sem_num = ID_READ_WRITE;
     sops.sem_op = 1;
     semop(sharedMemorySemId, &sops, 1);
+}
+
+void getValueFromConfigFile(char *path)
+{
+    config = fopen(path, "r");
+    while (fgets(buff, sizeof(buff), config))
+    {
+        sscanf(buff, "ACTIVATION_PER_SECOND %d", &ACTIVATION_PER_SECOND);
+        sscanf(buff, "N_ATOM_MAX %d", &N_ATOM_MAX);
+    }
+
+
+    fclose(config);
 }

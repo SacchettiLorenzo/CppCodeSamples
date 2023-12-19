@@ -6,11 +6,12 @@
 /*IPC Message Queue type the master use for reading*/
 #define MASTER_QUE_TYPE 1
 
-#define ENERGY_DEMAND 30
-
-#define SIM_DURATION 200
-
-#define ENERGY_EXPLODE_THRESHOLD 10000000
+int N_ATOMI_INIT;
+int ENERGY_DEMAND;
+int SIM_DURATION;
+int ENERGY_EXPLODE_THRESHOLD;
+int N_ATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
+int NATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
 
 struct ServiceProcessData{
     pid_t pid;
@@ -24,7 +25,7 @@ struct ServiceProcessData{
 * -IPC 
 * -timer
 */
-void init();
+void init(int argc,char *argv[]);
 
 /*
 * wait for all the child process to

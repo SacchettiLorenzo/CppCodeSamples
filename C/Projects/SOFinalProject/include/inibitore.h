@@ -1,13 +1,14 @@
 #include "common.h"
 
 int startSimulationSemId;
-
+int N_ATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
+int NATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
 /*
 * Initialization of.
 * -signal handler
 * -IPC 
 */
-void init();
+void init(int argc, char *argv[]);
 
 /*
 * operating on the ID_READY semaphore 
