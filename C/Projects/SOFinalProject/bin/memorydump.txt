@@ -1,0 +1,20 @@
+-Total- ATOMI: 18 SCORIE: 0 SCISSIONI: 0 ENERGIA PRODOTTA:3785561 ENERGIA CONSUMATA: 210 ENERGIA ASSORBITA: 0
+
+pid: 6612, parent pid: 6604, scoria: 0, inibito: 0
+pid: 6613, parent pid: 6604, scoria: 0, inibito: 0
+pid: 6609, parent pid: 6604, scoria: 0, inibito: 0
+pid: 6615, parent pid: 6604, scoria: 0, inibito: 0
+pid: 6610, parent pid: 6604, scoria: 0, inibito: 0
+pid: 6614, parent pid: 6604, scoria: 0, inibito: 0
+pid: 6611, parent pid: 6604, scoria: 0, inibito: 0
+pid: 6626, parent pid: 6612, scoria: 0, inibito: 0
+pid: 6628, parent pid: 6612, scoria: 0, inibito: 0
+pid: 6629, parent pid: 6615, scoria: 0, inibito: 0
+pid: 6631, parent pid: 6609, scoria: 0, inibito: 0
+pid: 6630, parent pid: 6611, scoria: 0, inibito: 0
+pid: 6638, parent pid: 6631, scoria: 0, inibito: 0
+pid: 6637, parent pid: 6628, scoria: 0, inibito: 0
+pid: 6636, parent pid: 6614, scoria: 0, inibito: 0
+pid: 6639, parent pid: 6614, scoria: 0, inibito: 0
+pid: 6640, parent pid: 6630, scoria: 0, inibito: 0
+pid: 6641, parent pid: 6631, scoria: 0, inibito: 0
