@@ -9,14 +9,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <signal.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/sem.h>
 #include <sys/wait.h>
 #include <sys/shm.h>
-#include <signal.h>
 #include <time.h>
 #include <math.h>
+
 
 #define START_SIMULATION_SEM_KEY 0x111111
 #define START_SIMULATION_NUM_RES  2 /*ID_READY ID_GO*/
@@ -29,6 +30,7 @@
 
 /*IPC Message Queue Keys */
 #define N_ATOM_QUEUE_KEY 0x222221
+#define SPLIT_REQUEST_KEY  0x222222
 
 /*IPC Shared Memory Keys*/
 #define SHARED_MEM_KEY 0X333331
@@ -45,11 +47,9 @@
 /*max nAtomo to generate*/
 
 /*  Lenght of the message that deliver nAtom
-*   6 char msg + 8 byte mtype 
+*   6 char msg
 */
-#define ATOM_MSG_LEN 6 + 8 
-
-#define RADOM_MSG_LEN 4 + 8 /*numbers from 0 to 1000 (4 chat) + 8 byte mtype*/
+#define ATOM_MSG_LEN 6
 
 #define TEST_ERROR    if (errno) {fprintf(stderr, \
 					  "%s:%d: PID=%5d: Error %d (%s) %s\n", \
@@ -64,7 +64,6 @@ typedef enum {false,true} bool;
 
 static struct sigaction sa;
 
-typedef enum {Low,Normal,High} precisionLevel;
 typedef enum {Master,Atomo,Attivatore,Alimentazione,Inibitore} processType;
 static char* colors[5] = {
 	"91m","92m","96m","33m","93m"
@@ -76,17 +75,25 @@ struct AtomMsgbuf
     char mtext[ATOM_MSG_LEN];
 };
 
+struct SplitMsgbuf
+{
+    long mtype;
+	pid_t pid;
+	int nAtom;
+	bool split;
+};
+
 struct SharedMemHeader{
 	int n_atomi;
 	bool simulation;
+	bool inibitore;
     pid_t masterPid;
+	pid_t inibitorePid;
 	int ATTIVAZIONI;
 	int ENERGIA_PRODOTTA;
 	int ENERGIA_CONSUMATA;
 	int ENERGIA_ASSORBITA;
 	int scorie;
-	char lastInibition[100];/*ultima operazione di bilanciamento*/
-	precisionLevel logPrecisionLevel; 
 };
 
 struct Atomo{

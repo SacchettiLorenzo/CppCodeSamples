@@ -1,21 +1,26 @@
 #include "../include/attivatore.h"
 
+/*SEMAPHORES*/
 struct sembuf sops;
 int startSimulationSemId;
-int shared_mem_id;
 int sharedMemorySemId;
+
+/*SHARED MEMORY*/
+int shared_mem_id;
 struct SharedMemory *SM;
 
-int i;
-int randomNumber;
-
+/*TIMERS*/
 struct itimerspec activationTimer;
 timer_t activationtimer;
 struct sigevent sigalarm;
-char buff[60];
+
+/*MISC*/
+int i;
+int randomNumber;
+char buff[40];
 int masterPid;
-int startSimulationSemId;
 FILE *config;
+
 int main(int argc, char *argv[])
 {
     init(argc,argv);
@@ -149,7 +154,5 @@ void getValueFromConfigFile(char *path)
         sscanf(buff, "ACTIVATION_PER_SECOND %d", &ACTIVATION_PER_SECOND);
         sscanf(buff, "N_ATOM_MAX %d", &N_ATOM_MAX);
     }
-
-
     fclose(config);
 }

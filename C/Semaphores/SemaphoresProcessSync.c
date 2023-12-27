@@ -55,6 +55,7 @@ semctl(sem_id, ID_READY, SETVAL, 0);
     sops.sem_num = ID_READY;
 	sops.sem_op = -NUM_PROC;
 	semop(sem_id, &sops, 1);
+    
     write(1,"ALL PROCESS READY\n,",18);
     
     //start the child 

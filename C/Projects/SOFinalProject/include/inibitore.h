@@ -1,8 +1,9 @@
 #include "common.h"
 
-int startSimulationSemId;
 int N_ATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
 int NATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
+int ENERGY_EXPLODE_THRESHOLD;
+int ENERGY_ABSORPTION;
 /*
 * Initialization of.
 * -signal handler
@@ -21,3 +22,5 @@ void ready();
 * start simulation using ID_GO
 */
 void waitForParentStartSimulation();
+
+int calculateEnergy(int nAtom1, int nAtom2);

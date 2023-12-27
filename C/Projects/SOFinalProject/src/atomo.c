@@ -1,36 +1,41 @@
 #include "../include/atomo.h"
-struct sembuf sops;
-int startSimulationSemId;
 
-struct Atomo atomo;
-
-siginfo_t si;
-
-struct AtomMsgbuf AtomMsgSnd;
-struct AtomMsgbuf AtomMsgRcv;
-
+/*SEMAPHORES*/
 int startSimulationSemId;
 int sharedMemorySemId;
+struct sembuf sops;
+
+/*QUEUES*/
 int nAtom_Queue;
+int splitting_Queue;
+struct AtomMsgbuf AtomMsgSnd;
+struct AtomMsgbuf AtomMsgRcv;
+struct SplitMsgbuf SplitMsgSnd;
+struct SplitMsgbuf SplitMsgRcv;
 
-int forkResult;
-char *args_0[] = {"./atomo.out","../config/config_0.txt", (char *)0};
-
+/*SHARED MEMEORY*/
 int shared_mem_id;
-int shared_mem_atom_position;
 struct SharedMemory *SM;
-struct shmid_ds shm_info;
-int atomPositionInSharedMem;
+
+/*MISC*/
+struct Atomo atomo;
+int shared_mem_atom_position;
 int masterPid;
 int i;
-char buff[60];
+char buff[40];
 int masterPid;
 int energy;
 FILE *config;
+int forkResult;
+char *args_0[] = {"./atomo.out", "../config/config_0.txt", (char *)0};
+
+/*siginfo_t si;*/ /*REVIEW - CHECK IF CLEAR FOR DELETE*/
+/*struct shmid_ds shm_info;*//*REVIEW - CHECK IF CLEAR FOR DELETE*/
+/*int atomPositionInSharedMem;*//*REVIEW - CHECK IF CLEAR FOR DELETE*/
 
 int main(int argc, char *argv[])
 {
-    init(argc,argv);
+    init(argc, argv);
     while (1)
     {
         pause();
@@ -39,11 +44,11 @@ int main(int argc, char *argv[])
 
 void init(int argc, char *argv[])
 {
-    
-    if(argc > 1){
+
+    if (argc > 1)
+    {
         getValueFromConfigFile(argv[1]);
     }
-      
 
     srand(time(NULL));
     atomo.nAtom = 0;
@@ -58,11 +63,11 @@ void init(int argc, char *argv[])
     shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
-        Write(1, "Error shmget\n", 12, Master);
+        Write(1, "Error shmget\n", 13, Atomo);
         TEST_ERROR;
     }
     SM = shmat(shared_mem_id, NULL, 0);
-    shmctl(shared_mem_id, IPC_STAT, &shm_info);
+    /*shmctl(shared_mem_id, IPC_STAT, &shm_info);*//*REVIEW - CHECK IF CLEAR FOR DELETE*/
     /*-------------------------------------------*/
 
     /*Shared Memory SEM -------------------------*/
@@ -81,6 +86,13 @@ void init(int argc, char *argv[])
 
     /*nAtom message queue*/
     nAtom_Queue = msgget(N_ATOM_QUEUE_KEY, 0600);
+    /*-------------------------------------------*/
+
+    /*splitting request message queue*/
+    splitting_Queue = msgget(SPLIT_REQUEST_KEY, 0600);
+    if(splitting_Queue == -1){
+        Write(1, "Error msgget\n", 13, Atomo);
+    }
     /*-------------------------------------------*/
 
     /*get nAtom from message queue. The sender is the parent*/
@@ -167,9 +179,34 @@ void split()
 
     if ((int)rand() % 1000 > 1000 * ACTIVATION_PROBABILTY)
     {
-        Write(1, "Not spliting\n", 22, Atomo);
+        /*Write(1, "Not spliting\n", 22, Atomo);*/
         return;
     }
+    /*
+    */
+    if (SM->SMH.inibitore == true)
+    {
+        SplitMsgSnd.mtype = 1;
+        SplitMsgSnd.pid = getpid();
+        SplitMsgSnd.nAtom = atomo.nAtom;
+        SplitMsgSnd.split = false;
+        if(msgsnd(splitting_Queue, &SplitMsgSnd,(int)(sizeof(struct SplitMsgbuf) - sizeof(long)), 0) == -1){
+        Write(1,"cannot send message to inibitore\n",33,Atomo);
+        }
+        if (msgrcv(splitting_Queue, &SplitMsgRcv, sizeof(struct SplitMsgbuf) - sizeof(long), getpid(), 0) > 0)
+        {
+            if(SplitMsgRcv.split == false){
+                Write(1,"NO SPLIT\n",9,Atomo);
+                return;
+            }
+        }
+    }
+    /*
+     * check in shared memory if inibitore is on DONE
+     * if true send a request in message queue and wait for response DONE
+     * in the request i should send the nAtom to let the inibitore absorb some energy
+     * check the response and spit or not
+     */
 
     switch (forkResult = fork())
     {
@@ -179,7 +216,7 @@ void split()
         break;
     case 0:
 
-        Write(1, "Splitting Atomo\n", 16, Atomo);
+        /*Write(1, "Splitting Atomo\n", 16, Atomo);*/
         if (execve(args_0[0], args_0, NULL) == -1)
         {
             Write(1, "Error splitting Atomo\n", 22, Atomo);

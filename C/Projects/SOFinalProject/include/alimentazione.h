@@ -1,11 +1,12 @@
 #include "common.h"
 
-int startSimulationSemId;
-
 int STEP;
 int N_NUOVI_ATOMI;
 int N_ATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
 int NATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
+
+
+
 /*
 * Initialization of.
 * -signal handler
@@ -25,4 +26,7 @@ void ready();
 */
 void waitForParentStartSimulation();
 
+/*
+* generate N_NUOVI_ATOMI every STEP seconds
+*/
 void generateNewAtoms();

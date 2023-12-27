@@ -12,6 +12,7 @@ int SIM_DURATION;
 int ENERGY_EXPLODE_THRESHOLD;
 int N_ATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
 int NATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
+int inibitore;
 
 struct ServiceProcessData{
     pid_t pid;

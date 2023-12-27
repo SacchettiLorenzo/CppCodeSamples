@@ -1,6 +1,6 @@
 SHELL:=bash
 CC:=gcc
-CFLAGS:=-ansi -pedantic -Wvla -Wextra -Werror -D_GNU_SOURCE
+CFLAGS:=-ansi -pedantic -Wvla -Wextra -Werror -D_GNU_SOURCE 
 
 all: ./build/common.o ./build/master.o ./build/alimentazione.o ./build/atomo.o ./build/attivatore.o ./build/inibitore.o ./build/console.o ./bin/master.out ./bin/alimentazione.out ./bin/atomo.out ./bin/attivatore.out ./bin/inibitore.out ./bin/console.out
 

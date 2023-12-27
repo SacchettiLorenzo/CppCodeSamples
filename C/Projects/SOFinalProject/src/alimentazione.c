@@ -1,23 +1,31 @@
 #include "../include/alimentazione.h"
 
+/*SEMAPHORES*/
+int startSimulationSemId;
+int sharedMemorySemId;
 struct sembuf sops;
 
+/*QUEUES*/
+int nAtom_Queue;
+struct AtomMsgbuf AtomMsgSnd;
+
+/*SHARED MEMORY*/
+int shared_mem_id;
+struct SharedMemory *SM;
+
+/*TIMERS*/
 struct itimerspec atomGenerationTimer;
 timer_t atomgenerationtimer;
 struct sigevent sigusr;
-struct AtomMsgbuf AtomMsgSnd;
 
-int startSimulationSemId;
-int i;
-char *args_0[] = {"./atomo.out", (char *)0};
-int forkResult;
-int nAtom_Queue;
-char buff[40];
-int sharedMemorySemId;
-int shared_mem_id;
-struct SharedMemory *SM;
+/*MISC*/
 int masterPid;
+char *args_0[] = {"./atomo.out", (char *)0};
+int i;
+int forkResult;
+char buff[40];
 FILE *config;
+
 int main(int argc, char *argv[])
 {
     init(argc, argv);
