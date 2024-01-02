@@ -20,7 +20,7 @@ struct sigevent sigusr;
 
 /*MISC*/
 int masterPid;
-char *args_0[] = {"./atomo.out", (char *)0};
+char *args_0[] = {"./atomo.out","", (char *)0};
 int i;
 int forkResult;
 char buff[40];
@@ -28,6 +28,9 @@ FILE *config;
 
 int main(int argc, char *argv[])
 {
+     if(argc > 1){
+        args_0[1] = argv[1];
+    }
     init(argc, argv);
     ready();
     waitForParentStartSimulation();

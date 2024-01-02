@@ -19,6 +19,7 @@ int masterPid;
 char buff[40];
 FILE *config;
 int energy;
+char bufff[100];
 
 /*TIMERS*/
 struct itimerspec recurrentWorkTimerSpec;
@@ -55,10 +56,21 @@ int main(int argc, char *argv[])
             {
                 SplitMsgSnd.split = true;
             }
-            SplitMsgSnd.mtype = SplitMsgRcv.pid;
+            if (SplitMsgRcv.pid == 0)
+            {
+                continue;
+            }
+            else
+            {
+                SplitMsgSnd.mtype = SplitMsgRcv.pid;
+            }
             if (msgsnd(splitting_Queue, &SplitMsgSnd, (int)(sizeof(struct SplitMsgbuf) - sizeof(long)), 0) == -1)
             {
                 Write(1, "cannot send message to atomo\n", 29, Inibitore);
+                bzero(bufff, 100);
+                snprintf(bufff, 100, "mtype:%ld, split: %d\n", SplitMsgSnd.mtype, (int)SplitMsgSnd.split);
+                Write(1, bufff, 100, Inibitore);
+                /*TODO - add error log*/
             }
         }
 
@@ -76,6 +88,7 @@ void init(int argc, char *argv[])
 
     /*splitting request message queue*/
     splitting_Queue = msgget(SPLIT_REQUEST_KEY, 0600);
+    SplitMsgSnd.pid = 0;
     /*-------------------------------------------*/
 
     /*Shared Memory SEM -------------------------*/
@@ -140,7 +153,7 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         sops.sem_flg = 0;
         semop(sharedMemorySemId, &sops, 1);
 
-        SM->SMH.ENERGIA_ASSORBITA =+ENERGY_ABSORPTION;
+        SM->SMH.ENERGIA_ASSORBITA = +ENERGY_ABSORPTION;
 
         sops.sem_num = ID_READ_WRITE;
         sops.sem_op = 1;

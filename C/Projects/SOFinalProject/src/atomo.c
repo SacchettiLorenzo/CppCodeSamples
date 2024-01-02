@@ -27,7 +27,7 @@ int masterPid;
 int energy;
 FILE *config;
 int forkResult;
-char *args_0[] = {"./atomo.out", "../config/config_0.txt", (char *)0};
+char *args_0[] = {"./atomo.out", "", (char *)0};
 
 /*siginfo_t si;*/ /*REVIEW - CHECK IF CLEAR FOR DELETE*/
 /*struct shmid_ds shm_info;*//*REVIEW - CHECK IF CLEAR FOR DELETE*/
@@ -35,6 +35,9 @@ char *args_0[] = {"./atomo.out", "../config/config_0.txt", (char *)0};
 
 int main(int argc, char *argv[])
 {
+    if(argc > 1){
+        args_0[1] = argv[1];
+    }
     init(argc, argv);
     while (1)
     {
@@ -258,6 +261,7 @@ void split()
         SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader)); /*REVIEW - check if i have to do this operation every time or just put it in the init */
         (SM->atomi + (shared_mem_atom_position))->nAtom = atomo.nAtom;
         SM->SMH.ENERGIA_PRODOTTA += energy;
+        SM->SMH.ATTIVAZIONI++;
         energy = 0;
 
         sops.sem_num = ID_READ_WRITE;

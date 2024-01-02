@@ -1,20 +1,70 @@
--Total- ATOMI: 18 SCORIE: 0 SCISSIONI: 0 ENERGIA PRODOTTA:3785561 ENERGIA CONSUMATA: 210 ENERGIA ASSORBITA: 0
+-Total- ATOMI: 68 SCORIE: 0 SCISSIONI: 61 ENERGIA PRODOTTA:5888004 ENERGIA CONSUMATA: 130000 ENERGIA ASSORBITA: 5000
 
-pid: 6612, parent pid: 6604, scoria: 0, inibito: 0
-pid: 6613, parent pid: 6604, scoria: 0, inibito: 0
-pid: 6609, parent pid: 6604, scoria: 0, inibito: 0
-pid: 6615, parent pid: 6604, scoria: 0, inibito: 0
-pid: 6610, parent pid: 6604, scoria: 0, inibito: 0
-pid: 6614, parent pid: 6604, scoria: 0, inibito: 0
-pid: 6611, parent pid: 6604, scoria: 0, inibito: 0
-pid: 6626, parent pid: 6612, scoria: 0, inibito: 0
-pid: 6628, parent pid: 6612, scoria: 0, inibito: 0
-pid: 6629, parent pid: 6615, scoria: 0, inibito: 0
-pid: 6631, parent pid: 6609, scoria: 0, inibito: 0
-pid: 6630, parent pid: 6611, scoria: 0, inibito: 0
-pid: 6638, parent pid: 6631, scoria: 0, inibito: 0
-pid: 6637, parent pid: 6628, scoria: 0, inibito: 0
-pid: 6636, parent pid: 6614, scoria: 0, inibito: 0
-pid: 6639, parent pid: 6614, scoria: 0, inibito: 0
-pid: 6640, parent pid: 6630, scoria: 0, inibito: 0
-pid: 6641, parent pid: 6631, scoria: 0, inibito: 0
+pid: 15675, nAtom: 203 parent pid: 15669, scoria: 0, inibito: 0
+pid: 15677, nAtom: 1685 parent pid: 15669, scoria: 0, inibito: 0
+pid: 15676, nAtom: 98 parent pid: 15669, scoria: 0, inibito: 0
+pid: 15674, nAtom: 800 parent pid: 15669, scoria: 0, inibito: 0
+pid: 15673, nAtom: 416 parent pid: 15669, scoria: 0, inibito: 0
+pid: 15679, nAtom: 102 parent pid: 15669, scoria: 0, inibito: 0
+pid: 15678, nAtom: 96 parent pid: 15669, scoria: 0, inibito: 0
+pid: 15685, nAtom: 195 parent pid: 15676, scoria: 0, inibito: 0
+pid: 15686, nAtom: 96 parent pid: 15678, scoria: 0, inibito: 0
+pid: 15684, nAtom: 204 parent pid: 15679, scoria: 0, inibito: 0
+pid: 15690, nAtom: 51 parent pid: 15679, scoria: 0, inibito: 0
+pid: 15691, nAtom: 48 parent pid: 15678, scoria: 0, inibito: 0
+pid: 15695, nAtom: 203 parent pid: 15679, scoria: 0, inibito: 0
+pid: 15699, nAtom: 102 parent pid: 15679, scoria: 0, inibito: 0
+pid: 15700, nAtom: 25 parent pid: 15676, scoria: 0, inibito: 0
+pid: 15701, nAtom: 49 parent pid: 15685, scoria: 0, inibito: 0
+pid: 15705, nAtom: 95 parent pid: 15691, scoria: 0, inibito: 0
+pid: 15706, nAtom: 26 parent pid: 15690, scoria: 0, inibito: 0
+pid: 15712, nAtom: 191 parent pid: 15686, scoria: 0, inibito: 0
+pid: 15710, nAtom: 48 parent pid: 15691, scoria: 0, inibito: 0
+pid: 15711, nAtom: 405 parent pid: 15675, scoria: 0, inibito: 0
+pid: 15717, nAtom: 98 parent pid: 15701, scoria: 0, inibito: 0
+pid: 15716, nAtom: 98 parent pid: 15700, scoria: 0, inibito: 0
+pid: 15718, nAtom: 101 parent pid: 15706, scoria: 0, inibito: 0
+pid: 15722, nAtom: 95 parent pid: 15712, scoria: 0, inibito: 0
+pid: 15723, nAtom: 96 parent pid: 15678, scoria: 0, inibito: 0
+pid: 15724, nAtom: 195 parent pid: 15676, scoria: 0, inibito: 0
+pid: 15728, nAtom: 405 parent pid: 15711, scoria: 0, inibito: 0
+pid: 15730, nAtom: 48 parent pid: 15678, scoria: 0, inibito: 0
+pid: 15729, nAtom: 25 parent pid: 15701, scoria: 0, inibito: 0
+pid: 15736, nAtom: 13 parent pid: 15700, scoria: 0, inibito: 0
+pid: 15735, nAtom: 195 parent pid: 15685, scoria: 0, inibito: 0
+pid: 15734, nAtom: 25 parent pid: 15701, scoria: 0, inibito: 0
+pid: 15741, nAtom: 48 parent pid: 15691, scoria: 0, inibito: 0
+pid: 15740, nAtom: 95 parent pid: 15722, scoria: 0, inibito: 0
+pid: 15745, nAtom: 25 parent pid: 15700, scoria: 0, inibito: 0
+pid: 15746, nAtom: 190 parent pid: 15686, scoria: 0, inibito: 0
+pid: 15751, nAtom: 97 parent pid: 15676, scoria: 0, inibito: 0
+pid: 15750, nAtom: 406 parent pid: 15684, scoria: 0, inibito: 0
+pid: 15756, nAtom: 24 parent pid: 15734, scoria: 0, inibito: 0
+pid: 15755, nAtom: 97 parent pid: 15716, scoria: 0, inibito: 0
+pid: 15760, nAtom: 48 parent pid: 15736, scoria: 0, inibito: 0
+pid: 15761, nAtom: 95 parent pid: 15686, scoria: 0, inibito: 0
+pid: 15762, nAtom: 405 parent pid: 15675, scoria: 0, inibito: 0
+pid: 15766, nAtom: 24 parent pid: 15736, scoria: 0, inibito: 0
+pid: 15767, nAtom: 26 parent pid: 15706, scoria: 0, inibito: 0
+pid: 15768, nAtom: 831 parent pid: 15673, scoria: 0, inibito: 0
+pid: 15772, nAtom: 25 parent pid: 15767, scoria: 0, inibito: 0
+pid: 15773, nAtom: 101 parent pid: 15690, scoria: 0, inibito: 0
+pid: 15777, nAtom: 24 parent pid: 15730, scoria: 0, inibito: 0
+pid: 15781, nAtom: 47 parent pid: 15710, scoria: 0, inibito: 0
+pid: 15782, nAtom: 24 parent pid: 15745, scoria: 0, inibito: 0
+pid: 15786, nAtom: 48 parent pid: 15729, scoria: 0, inibito: 0
+pid: 15787, nAtom: 51 parent pid: 15690, scoria: 0, inibito: 0
+pid: 15788, nAtom: 24 parent pid: 15700, scoria: 0, inibito: 0
+pid: 15792, nAtom: 416 parent pid: 15673, scoria: 0, inibito: 0
+pid: 15793, nAtom: 102 parent pid: 15675, scoria: 0, inibito: 0
+pid: 15798, nAtom: 25 parent pid: 15706, scoria: 0, inibito: 0
+pid: 15797, nAtom: 49 parent pid: 15717, scoria: 0, inibito: 0
+pid: 15803, nAtom: 95 parent pid: 15723, scoria: 0, inibito: 0
+pid: 15804, nAtom: 95 parent pid: 15705, scoria: 0, inibito: 0
+pid: 15802, nAtom: 800 parent pid: 15674, scoria: 0, inibito: 0
+pid: 15808, nAtom: 23 parent pid: 15777, scoria: 0, inibito: 0
+pid: 15810, nAtom: 203 parent pid: 15684, scoria: 0, inibito: 0
+pid: 15809, nAtom: 101 parent pid: 15793, scoria: 0, inibito: 0
+pid: 15815, nAtom: 24 parent pid: 15729, scoria: 0, inibito: 0
+pid: 15814, nAtom: 12 parent pid: 15736, scoria: 0, inibito: 0
+pid: 15819, nAtom: 48 parent pid: 15797, scoria: 0, inibito: 0

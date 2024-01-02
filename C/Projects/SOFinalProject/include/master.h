@@ -45,4 +45,6 @@ void startSimulation();
 */
 void dumpMemory();
 
+void stopSimulation();
+
 
