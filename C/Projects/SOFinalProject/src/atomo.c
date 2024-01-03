@@ -57,20 +57,31 @@ void init(int argc, char *argv[])
 
     /*Start simulation SEM ----------------------*/
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600 | IPC_CREAT);
+    if(startSimulationSemId == -1){
+        Write(1, "Cannot get simulation semaphore\n", 32, Atomo);
+        TEST_ERROR;
+        exit(EXIT_FAILURE);
+    }
     /*-------------------------------------------*/
 
     /*Shared Memory -----------------------------*/
     shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
-        Write(1, "Error shmget\n", 13, Atomo);
+        Write(1, "Cannot get shared memory segment\n", 33, Atomo);
         TEST_ERROR;
+        exit(EXIT_FAILURE);
     }
     SM = shmat(shared_mem_id, NULL, 0);
     /*-------------------------------------------*/
 
     /*Shared Memory SEM -------------------------*/
     sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
+    if(sharedMemorySemId == -1){
+        Write(1, "Cannot get shared memory semaphore\n", 35, Atomo);
+        TEST_ERROR;
+        exit(EXIT_FAILURE);
+    }
     semctl(sharedMemorySemId, 0, SETVAL, 1);
     /*-------------------------------------------*/
 
@@ -85,13 +96,21 @@ void init(int argc, char *argv[])
 
     /*nAtom message queue*/
     nAtom_Queue = msgget(N_ATOM_QUEUE_KEY, 0600);
+    if (nAtom_Queue == -1)
+    {
+        Write(1, "Cannot get nAtom message queue\n", 31, Atomo);
+        TEST_ERROR;
+        exit(EXIT_FAILURE);
+    }
     /*-------------------------------------------*/
 
     /*splitting request message queue*/
     splitting_Queue = msgget(SPLIT_REQUEST_KEY, 0600);
     if (splitting_Queue == -1)
     {
-        Write(1, "Error msgget\n", 13, Atomo);
+        Write(1, "Cannot get splitting message queue\n", 35, Atomo);
+        TEST_ERROR
+        exit(EXIT_FAILURE);
     }
     /*-------------------------------------------*/
 

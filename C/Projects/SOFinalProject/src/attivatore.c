@@ -23,7 +23,7 @@ FILE *config;
 
 int main(int argc, char *argv[])
 {
-    init(argc,argv);
+    init(argc, argv);
     ready();
     waitForParentStartSimulation();
 
@@ -35,11 +35,20 @@ int main(int argc, char *argv[])
 
 void init(int argc, char *argv[])
 {
-    if(argc > 1){
+    if (argc > 1)
+    {
         getValueFromConfigFile(argv[1]);
     }
 
+    /*Start simulation SEM ----------------------*/
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600);
+    if (startSimulationSemId == -1)
+    {
+        Write(1, "Cannot get simulation semaphore\n", 32, Master);
+        TEST_ERROR;
+        exit(EXIT_FAILURE);
+    }
+    /*-------------------------------------------*/
     srand(time(NULL));
     bzero(&sa, sizeof(sa));
     sa.sa_sigaction = handle_signals;
@@ -49,6 +58,12 @@ void init(int argc, char *argv[])
 
     /*Shared Memory SEM -------------------------*/
     sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
+    if (sharedMemorySemId == -1)
+    {
+        Write(1, "Cannot get shared memory semaphore\n", 35, Attivatore);
+        TEST_ERROR;
+        exit(EXIT_FAILURE);
+    }
     semctl(sharedMemorySemId, 0, SETVAL, 1);
     /*-------------------------------------------*/
 
@@ -56,8 +71,9 @@ void init(int argc, char *argv[])
     shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
-        Write(1, "Error creating shared memory segment\n", 36, Master);
+        Write(1, "Cannot get shared memory segment\n", 33, Attivatore);
         TEST_ERROR;
+        exit(EXIT_FAILURE);
     }
     SM = shmat(shared_mem_id, NULL, 0);
 
@@ -72,14 +88,13 @@ void init(int argc, char *argv[])
     sops.sem_op = 1;
     semop(sharedMemorySemId, &sops, 1);
     /*-------------------------------------------*/
-    
+
     sigalarm.sigev_signo = SIGUSR1;
     sigalarm.sigev_value.sival_ptr = &activationtimer;
     timer_create(CLOCK_REALTIME, &sigalarm, &activationtimer);
     activationTimer.it_value.tv_sec = 1;
     activationTimer.it_value.tv_nsec = 0;
     activationTimer.it_interval = activationTimer.it_value;
-    
 }
 
 void ready()

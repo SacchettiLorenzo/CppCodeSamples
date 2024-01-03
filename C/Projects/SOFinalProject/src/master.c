@@ -1,7 +1,8 @@
 #include "../include/master.h"
 
+/*TODO - send id of semaphores - message queues - shared memory to child using pipes*/
 /*SEMAPHORES*/
-int simulation_Sem;
+int startSimulationSemId;
 int sharedMemorySemId;
 struct sembuf sops;
 
@@ -125,6 +126,7 @@ int main(int argc, char *argv[])
                 {
                     Write(1, "Error calling Atomo\n", 20, Master);
                     Write(1, "meltdown\n", 9, Master);
+                    /*TEST_ERROR;*/
                     exit(EXIT_FAILURE);
                 }
                 exit(EXIT_SUCCESS);
@@ -201,38 +203,53 @@ void init(int argc, char *argv[])
     /*-------------------------------------------*/
 
     /*Start simulation SEM ----------------------*/
-    simulation_Sem = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600 | IPC_CREAT);
+    startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600 | IPC_CREAT);
+    if(startSimulationSemId == -1){
+        Write(1, "Cannot get simulation semaphore\n", 32, Master);
+        TEST_ERROR;
+        exit(EXIT_FAILURE);
+    }
 
-    semctl(simulation_Sem, ID_READY, SETVAL, 0);
-    semctl(simulation_Sem, ID_GO, SETVAL, 0);
+    semctl(startSimulationSemId, ID_READY, SETVAL, 0);
+    semctl(startSimulationSemId, ID_GO, SETVAL, 0);
+    /*-------------------------------------------*/
+
+    /*Shared Memory SEM -------------------------*/
+    sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
+    if(sharedMemorySemId == -1){
+        Write(1, "Cannot get shared memory semaphore\n", 35, Master);
+        TEST_ERROR;
+        exit(EXIT_FAILURE);
+    }
+    semctl(sharedMemorySemId, 0, SETVAL, 1);
     /*-------------------------------------------*/
 
     /*nAtom message queue*/
     nAtom_Queue = msgget(N_ATOM_QUEUE_KEY, 0600 | IPC_CREAT);
     if (nAtom_Queue == -1)
     {
-        Write(1, "Error on nAtom message queue\n", 35, Master);
+        Write(1, "Cannot get nAtom message queue\n", 31, Master);
+        TEST_ERROR;
+        exit(EXIT_FAILURE);
     }
     /*-------------------------------------------*/
     /*splitting request message queue*/
     splitting_Queue = msgget(SPLIT_REQUEST_KEY, 0600 | IPC_CREAT);
     if (splitting_Queue == -1)
     {
-        Write(1, "Error on nAtom message queue\n", 35, Master);
+        Write(1, "Cannot get splitting message queue\n", 35, Master);
+        TEST_ERROR
+        exit(EXIT_FAILURE);
     }
-    /*-------------------------------------------*/
-
-    /*Shared Memory SEM -------------------------*/
-    sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
-    semctl(sharedMemorySemId, 0, SETVAL, 1);
     /*-------------------------------------------*/
 
     /*Shared Memory -----------------------------*/
     shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
-        Write(1, "Error creating shared memory segment\n", 36, Master);
+        Write(1, "Cannot get shared memory segment\n", 33, Master);
         TEST_ERROR;
+        exit(EXIT_FAILURE);
     }
     SM = shmat(shared_mem_id, NULL, 0);
 
@@ -272,7 +289,7 @@ void waitForChildReady()
     sops.sem_num = ID_READY;
     sops.sem_op = -totalChild;
     sops.sem_flg = 0;
-    semop(simulation_Sem, &sops, 1);
+    semop(startSimulationSemId, &sops, 1);
     Write(1, "All process ready: starting simulation\n", 39, Master);
     startSimulation();
 }
@@ -281,7 +298,7 @@ void startSimulation()
 {
     sops.sem_num = ID_GO;
     sops.sem_op = N_SERVICE_PROCESS;
-    semop(simulation_Sem, &sops, 1);
+    semop(startSimulationSemId, &sops, 1);
     timer_settime(recurrentWork_timer, 0, &recurrentWorkTimerSpec, NULL);
     timer_settime(timeout_timer, 0, &timeoutTimerSpec, NULL);
     simulation = true;
@@ -353,9 +370,16 @@ void handle_signals(int signal, siginfo_t *info, void *v)
 
 void stopSimulation()
 {
+    /*semaphore to stop every shared memory usage in order to avoi core dump error during exiting functions
+    sops.sem_num = ID_READ_WRITE;
+    sops.sem_op = -1;
+    sops.sem_flg = 0;
+    semop(sharedMemorySemId, &sops, 1);
+    */
+
     simulation = false;
     killpg(getpid(), SIGINT);
-    semctl(simulation_Sem, 0, IPC_RMID);
+    semctl(startSimulationSemId, 0, IPC_RMID);
     semctl(sharedMemorySemId, 0, IPC_RMID);
 
     msgctl(nAtom_Queue, IPC_RMID, NULL);
@@ -409,6 +433,7 @@ void getValueFromConfigFile(char *path)
     if (config == NULL)
     {
         Write(1, "Unable to open config file\n", 27, Master);
+        TEST_ERROR;
         exit(EXIT_FAILURE);
     }
     while (fgets(buff, sizeof(buff), config))

@@ -20,7 +20,7 @@ struct sigevent sigusr;
 
 /*MISC*/
 int masterPid;
-char *args_0[] = {"./atomo.out","", (char *)0};
+char *args_0[] = {"./atomo.out", "", (char *)0};
 int i;
 int forkResult;
 char buff[40];
@@ -28,7 +28,8 @@ FILE *config;
 
 int main(int argc, char *argv[])
 {
-     if(argc > 1){
+    if (argc > 1)
+    {
         args_0[1] = argv[1];
     }
     init(argc, argv);
@@ -47,21 +48,43 @@ void init(int argc, char *argv[])
     {
         getValueFromConfigFile(argv[1]);
     }
-
+    /*nAtom message queue*/
     nAtom_Queue = msgget(N_ATOM_QUEUE_KEY, 0600 | IPC_CREAT);
+    if (nAtom_Queue == -1)
+    {
+        Write(1, "Cannot get nAtom message queue\n", 31, Alimentazione);
+        TEST_ERROR;
+        exit(EXIT_FAILURE);
+    }
+    /*-------------------------------------------*/
+
+    /*Start simulation SEM ----------------------*/
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600);
+    if (startSimulationSemId == -1)
+    {
+        Write(1, "Cannot get simulation semaphore\n", 32, Alimentazione);
+        TEST_ERROR;
+        exit(EXIT_FAILURE);
+    }
 
     /*Shared Memory SEM -------------------------*/
     sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
-    semctl(sharedMemorySemId, 0, SETVAL, 1);
+    if (sharedMemorySemId == -1)
+    {
+        Write(1, "Cannot get shared memory semaphore\n", 35, Alimentazione);
+        TEST_ERROR;
+        exit(EXIT_FAILURE);
+    }
+    semctl(sharedMemorySemId, 0, SETVAL, 1); /*REVIEW - check if this is removable*/
     /*-------------------------------------------*/
 
     /*Shared Memory -----------------------------*/
     shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
-        Write(1, "Error creating shared memory segment\n", 36, Master);
+        Write(1, "Cannot get shared memory segment\n", 33, Alimentazione);
         TEST_ERROR;
+        exit(EXIT_FAILURE);
     }
     SM = shmat(shared_mem_id, NULL, 0);
 
@@ -155,9 +178,10 @@ void generateNewAtoms()
 void getValueFromConfigFile(char *path)
 {
     config = fopen(path, "r");
-    if(config == NULL){
-         Write(1, "Unable to open config file\n", 27, Master);
-         exit(EXIT_FAILURE);
+    if (config == NULL)
+    {
+        Write(1, "Unable to open config file\n", 27, Master);
+        exit(EXIT_FAILURE);
     }
     while (fgets(buff, sizeof(buff), config))
     {
