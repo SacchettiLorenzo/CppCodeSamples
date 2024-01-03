@@ -10,8 +10,8 @@ int MIN_N_ATOMICO;
 
 int N_ATOMI_INIT;
 
-int N_ATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
-int NATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
+int N_ATOM_MAX; 
+int NATOM_MAX; 
 
 /*
 * Initialization of.

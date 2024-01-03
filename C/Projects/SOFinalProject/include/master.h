@@ -10,8 +10,8 @@ int N_ATOMI_INIT;
 int ENERGY_DEMAND;
 int SIM_DURATION;
 int ENERGY_EXPLODE_THRESHOLD;
-int N_ATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
-int NATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
+int N_ATOM_MAX; 
+int NATOM_MAX; 
 int inibitore;
 
 struct ServiceProcessData{

@@ -94,6 +94,7 @@ struct SharedMemHeader{
 	int ENERGIA_CONSUMATA;
 	int ENERGIA_ASSORBITA;
 	int scorie;
+	int last_scoria;
 };
 
 struct Atomo{

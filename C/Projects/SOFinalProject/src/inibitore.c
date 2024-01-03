@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
                 bzero(bufff, 100);
                 snprintf(bufff, 100, "mtype:%ld, split: %d\n", SplitMsgSnd.mtype, (int)SplitMsgSnd.split);
                 Write(1, bufff, 100, Inibitore);
-                /*TODO - add error log*/
+                
             }
         }
 

@@ -29,13 +29,10 @@ FILE *config;
 int forkResult;
 char *args_0[] = {"./atomo.out", "", (char *)0};
 
-/*siginfo_t si;*/ /*REVIEW - CHECK IF CLEAR FOR DELETE*/
-/*struct shmid_ds shm_info;*//*REVIEW - CHECK IF CLEAR FOR DELETE*/
-/*int atomPositionInSharedMem;*//*REVIEW - CHECK IF CLEAR FOR DELETE*/
-
 int main(int argc, char *argv[])
 {
-    if(argc > 1){
+    if (argc > 1)
+    {
         args_0[1] = argv[1];
     }
     init(argc, argv);
@@ -70,7 +67,6 @@ void init(int argc, char *argv[])
         TEST_ERROR;
     }
     SM = shmat(shared_mem_id, NULL, 0);
-    /*shmctl(shared_mem_id, IPC_STAT, &shm_info);*//*REVIEW - CHECK IF CLEAR FOR DELETE*/
     /*-------------------------------------------*/
 
     /*Shared Memory SEM -------------------------*/
@@ -81,7 +77,7 @@ void init(int argc, char *argv[])
     /*Signal Handler ----------------------------*/
     bzero(&sa, sizeof(sa));
     sa.sa_sigaction = handle_signals;
-    sa.sa_flags = SA_SIGINFO | SA_NOMASK;
+    sa.sa_flags = SA_NOMASK;
 
     sigaction(SIGINT, &sa, NULL);
     sigaction(SIGUSR1, &sa, NULL);
@@ -93,7 +89,8 @@ void init(int argc, char *argv[])
 
     /*splitting request message queue*/
     splitting_Queue = msgget(SPLIT_REQUEST_KEY, 0600);
-    if(splitting_Queue == -1){
+    if (splitting_Queue == -1)
+    {
         Write(1, "Error msgget\n", 13, Atomo);
     }
     /*-------------------------------------------*/
@@ -110,7 +107,13 @@ void init(int argc, char *argv[])
     sops.sem_flg = 0;
     semop(sharedMemorySemId, &sops, 1);
 
+    if (SM->SMH.last_scoria != 0)
+    {
+        shared_mem_atom_position = SM->SMH.last_scoria;
+        SM->SMH.last_scoria = 0;
+    }else{
     shared_mem_atom_position = SM->SMH.n_atomi;
+    }
     SM->SMH.n_atomi = SM->SMH.n_atomi + 1;
     masterPid = SM->SMH.masterPid;
     setUpdateSharedMemory();
@@ -160,8 +163,9 @@ void handle_signals(int signal, siginfo_t *info, void *v)
                 sops.sem_flg = 0;
                 semop(sharedMemorySemId, &sops, 1);
 
-                SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader)); /*REVIEW - check if i have to do this operation every time or just put it in the init */
+                SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader)); 
                 (SM->atomi + (shared_mem_atom_position))->scoria = atomo.scoria;
+                SM->SMH.last_scoria = shared_mem_atom_position;
                 SM->SMH.scorie++;
 
                 sops.sem_num = ID_READ_WRITE;
@@ -186,20 +190,22 @@ void split()
         return;
     }
     /*
-    */
+     */
     if (SM->SMH.inibitore == true)
     {
         SplitMsgSnd.mtype = 1;
         SplitMsgSnd.pid = getpid();
         SplitMsgSnd.nAtom = atomo.nAtom;
         SplitMsgSnd.split = false;
-        if(msgsnd(splitting_Queue, &SplitMsgSnd,(int)(sizeof(struct SplitMsgbuf) - sizeof(long)), 0) == -1){
-        Write(1,"cannot send message to inibitore\n",33,Atomo);
+        if (msgsnd(splitting_Queue, &SplitMsgSnd, (int)(sizeof(struct SplitMsgbuf) - sizeof(long)), 0) == -1)
+        {
+            Write(1, "cannot send message to inibitore\n", 33, Atomo);
         }
         if (msgrcv(splitting_Queue, &SplitMsgRcv, sizeof(struct SplitMsgbuf) - sizeof(long), getpid(), 0) > 0)
         {
-            if(SplitMsgRcv.split == false){
-                Write(1,"NO SPLIT\n",9,Atomo);
+            if (SplitMsgRcv.split == false)
+            {
+                Write(1, "NO SPLIT\n", 9, Atomo);
                 return;
             }
         }
@@ -251,15 +257,13 @@ void split()
             exit(EXIT_FAILURE);
         }
 
-        /*TODO - send on message queue to the master the energy value produced by the splitting*/
-
         sops.sem_num = ID_READ_WRITE;
         sops.sem_op = -1;
         sops.sem_flg = 0;
         semop(sharedMemorySemId, &sops, 1);
 
-        SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader)); /*REVIEW - check if i have to do this operation every time or just put it in the init */
-        (SM->atomi + (shared_mem_atom_position))->nAtom = atomo.nAtom;
+        SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader)); 
+        
         SM->SMH.ENERGIA_PRODOTTA += energy;
         SM->SMH.ATTIVAZIONI++;
         energy = 0;
@@ -276,7 +280,7 @@ void setUpdateSharedMemory()
 {
     SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
     (SM->atomi + (shared_mem_atom_position))->pid = getpid();
-    (SM->atomi + (shared_mem_atom_position))->nAtom = atomo.nAtom;
+    
     (SM->atomi + (shared_mem_atom_position))->parentPid = atomo.parentPid;
     (SM->atomi + (shared_mem_atom_position))->scoria = atomo.scoria;
     (SM->atomi + (shared_mem_atom_position))->inibito = atomo.inibito;

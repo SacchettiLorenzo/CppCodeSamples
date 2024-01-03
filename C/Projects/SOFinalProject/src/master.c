@@ -43,23 +43,25 @@ bool simulation = false;
 FILE *config;
 FILE *memoryDump;
 
-
 int main(int argc, char *argv[])
 {
-    if(argc > 1){
-    args_0[1] = argv[1];
-    args_1[1] = argv[1];
-    args_2[1] = argv[1];
-    args_3[1] = argv[1];
-    }else{
-    args_0[1] = DEFAULT_CONFIG_FILE;
-    args_1[1] = DEFAULT_CONFIG_FILE;
-    args_2[1] = DEFAULT_CONFIG_FILE;
-    args_3[1] = DEFAULT_CONFIG_FILE;
+    if (argc > 1)
+    {
+        args_0[1] = argv[1];
+        args_1[1] = argv[1];
+        args_2[1] = argv[1];
+        args_3[1] = argv[1];
+    }
+    else
+    {
+        args_0[1] = DEFAULT_CONFIG_FILE;
+        args_1[1] = DEFAULT_CONFIG_FILE;
+        args_2[1] = DEFAULT_CONFIG_FILE;
+        args_3[1] = DEFAULT_CONFIG_FILE;
     }
 
     init(argc, argv);
-    
+
     for (i = 0; i < totalChild; i++)
     {
         switch (forkResult = fork())
@@ -153,8 +155,9 @@ int main(int argc, char *argv[])
             {
                 AtomMsgSnd.mtype = forkResult;
                 snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(NATOM_MAX));
-                if(msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0) == -1){
-                     Write(1, "Cannot sent nAtom\n", 18, Master);
+                if (msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0) == -1)
+                {
+                    Write(1, "Cannot sent nAtom\n", 18, Master);
                 }
             }
             break;
@@ -178,8 +181,10 @@ void init(int argc, char *argv[])
     if (argc > 1)
     {
         getValueFromConfigFile(argv[1]);
-    }else{
-    getValueFromConfigFile(DEFAULT_CONFIG_FILE);
+    }
+    else
+    {
+        getValueFromConfigFile(DEFAULT_CONFIG_FILE);
     }
 
     totalChild = N_ATOMI_INIT + N_SERVICE_PROCESS;
@@ -241,6 +246,7 @@ void init(int argc, char *argv[])
     SM->SMH.ENERGIA_CONSUMATA = 0;
     SM->SMH.ENERGIA_PRODOTTA = 0;
     SM->SMH.inibitore = (bool)inibitore;
+    SM->SMH.last_scoria = 0;
     /*-------------------------------------------*/
 
     /*Timer--------------------------------------*/
@@ -294,11 +300,13 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         }
         else
         {
-            Write(1, "timeout\n", 8, Master);
+            if (simulation)
+            {
+                Write(1, "timeout\n", 8, Master);
+            }
         }
         stopSimulation();
 
-       
         break;
     case SIGUSR1:
         if (simulation)
@@ -326,12 +334,10 @@ void handle_signals(int signal, siginfo_t *info, void *v)
                      SM->SMH.n_atomi, SM->SMH.scorie, SM->SMH.ATTIVAZIONI, SM->SMH.ENERGIA_PRODOTTA, SM->SMH.ENERGIA_CONSUMATA, SM->SMH.ENERGIA_ASSORBITA);
             Write(1, buff, 128, Master);
 
-/*
             bzero(buff, 128);
             snprintf(buff, 128, "-Partial- NUOVO ATOMI: %d NUOVE SCORIE: %d SCISSIONI: %d ENERGIA PRODOTTA:%d ENERGIA CONSUMATA: %d ENERGIA ASSORBITA: %d\n",
                      SM->SMH.n_atomi - SMHBuffer.n_atomi, SM->SMH.scorie - SMHBuffer.scorie, SM->SMH.ATTIVAZIONI - SMHBuffer.ATTIVAZIONI, SM->SMH.ENERGIA_PRODOTTA - SMHBuffer.ENERGIA_PRODOTTA, SM->SMH.ENERGIA_CONSUMATA - SMHBuffer.ENERGIA_CONSUMATA, SM->SMH.ENERGIA_ASSORBITA - SMHBuffer.ENERGIA_ASSORBITA);
             Write(1, buff, 128, Master);
-*/
 
             memcpy(&SMHBuffer, &SM->SMH, sizeof(struct SharedMemHeader));
 
@@ -345,36 +351,37 @@ void handle_signals(int signal, siginfo_t *info, void *v)
     }
 }
 
-void stopSimulation(){
- killpg(getpid(), SIGINT);
+void stopSimulation()
+{
+    simulation = false;
+    killpg(getpid(), SIGINT);
+    semctl(simulation_Sem, 0, IPC_RMID);
+    semctl(sharedMemorySemId, 0, IPC_RMID);
 
-        semctl(simulation_Sem, 0, IPC_RMID);
-        semctl(sharedMemorySemId, 0, IPC_RMID);
+    msgctl(nAtom_Queue, IPC_RMID, NULL);
+    msgctl(splitting_Queue, IPC_RMID, NULL);
 
-        msgctl(nAtom_Queue, IPC_RMID, NULL);
-        msgctl(splitting_Queue, IPC_RMID, NULL);
+    sops.sem_num = ID_READ_WRITE;
+    sops.sem_op = -1;
+    sops.sem_flg = 0;
+    semop(sharedMemorySemId, &sops, 1);
 
-        sops.sem_num = ID_READ_WRITE;
-        sops.sem_op = -1;
-        sops.sem_flg = 0;
-        semop(sharedMemorySemId, &sops, 1);
+    SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
+    for (i = 0; i < SM->SMH.n_atomi; i++)
+    {
+        waitpid((SM->atomi + i)->pid, &status, 0);
+    }
 
-        SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
-        for (i = 0; i < SM->SMH.n_atomi; i++)
-        {
-            waitpid((SM->atomi + i)->pid, &status, 0);
-        }
+    dumpMemory();
 
-        dumpMemory();
+    sops.sem_num = ID_READ_WRITE;
+    sops.sem_op = 1;
+    semop(sharedMemorySemId, &sops, 1);
 
-        sops.sem_num = ID_READ_WRITE;
-        sops.sem_op = 1;
-        semop(sharedMemorySemId, &sops, 1);
+    shmctl(shared_mem_id, IPC_RMID, NULL);
+    shmdt(SM);
 
-        shmctl(shared_mem_id, IPC_RMID, NULL);
-        shmdt(SM);
-
-        exit(EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
 void dumpMemory()
@@ -390,7 +397,7 @@ void dumpMemory()
 
     for (i = 0; i < SM->SMH.n_atomi; i++)
     {
-        fprintf(memoryDump, "pid: %d, nAtom: %d parent pid: %d, scoria: %d, inibito: %d\n", (SM->atomi + i)->pid,(SM->atomi + i)->nAtom, (SM->atomi + i)->parentPid, (SM->atomi + i)->scoria, (SM->atomi + i)->inibito);
+        fprintf(memoryDump, "pid: %d, parent pid: %d, scoria: %d, inibito: %d\n", (SM->atomi + i)->pid, (SM->atomi + i)->parentPid, (SM->atomi + i)->scoria, (SM->atomi + i)->inibito);
     }
 
     fclose(memoryDump);

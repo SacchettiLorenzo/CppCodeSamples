@@ -2,8 +2,8 @@
 
 int STEP;
 int N_NUOVI_ATOMI;
-int N_ATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
-int NATOM_MAX; /*REVIEW - controllare i nomi sul documento*/
+int N_ATOM_MAX; 
+int NATOM_MAX; 
 
 
 
