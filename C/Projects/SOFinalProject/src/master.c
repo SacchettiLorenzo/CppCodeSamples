@@ -1,6 +1,7 @@
 #include "../include/master.h"
 
 /*TODO - send id of semaphores - message queues - shared memory to child using pipes*/
+/*TODO - change write output 1 -> 2 where handling errors*/
 /*SEMAPHORES*/
 int startSimulationSemId;
 int sharedMemorySemId;
