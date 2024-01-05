@@ -35,14 +35,12 @@
 /*IPC Shared Memory Keys*/
 #define SHARED_MEM_KEY 0X333331
 
-
-
-/*max number of atoms*/ 
-
+/* 	ENVIRONMENT VARIABLE LIST
+*/
 
 #define N_SERVICE_PROCESS 3	/*Attivatore, Alimentazioni, Inibitore*/
 
-#define WRITE_BUFFER_LEN 128
+#define WRITE_BUFFER_LEN 256
 
 /*max nAtomo to generate*/
 
@@ -94,7 +92,6 @@ struct SharedMemHeader{
 	int ENERGIA_CONSUMATA;
 	int ENERGIA_ASSORBITA;
 	int scorie;
-	int last_scoria;
 };
 
 struct Atomo{
@@ -127,7 +124,6 @@ void getValueFromConfigFile(char *path);
 *   the number in generated with a normal distributed probabilty
 */
 int normalDistributionNumberGenerator(int n_atom_max);
-
 
 
 #endif /* COMMON_H*/

@@ -25,6 +25,8 @@ int i;
 int forkResult;
 char buff[40];
 FILE *config;
+FILE *tmp;
+int tmpI;
 
 int main(int argc, char *argv[])
 {
@@ -79,7 +81,7 @@ void init(int argc, char *argv[])
     /*-------------------------------------------*/
 
     /*Shared Memory -----------------------------*/
-    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
         Write(1, "Cannot get shared memory segment\n", 33, Alimentazione);
@@ -132,7 +134,10 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         break;
     case SIGUSR1:
         Write(1, "Alimentazione generate new atoms\n", 33, Alimentazione);
-        generateNewAtoms();
+        if (SM->SMH.n_atomi + N_NUOVI_ATOMI < NATOM_MAX)
+        {
+            generateNewAtoms();
+        }
         break;
 
     default:
@@ -147,14 +152,14 @@ void generateNewAtoms()
         switch (forkResult = fork())
         {
         case -1:
-            fprintf(stderr, "Error #%03d: %s\n", errno, strerror(errno));
+            Write(1, "Error forking\n", 14, Alimentazione);
             break;
 
         case 0:
             Write(1, "calling Atomo\n", 14, Alimentazione);
             if (execve(args_0[0], args_0, NULL) == -1)
             {
-                Write(1, "Error calling Atomo\n", 20, Master);
+                Write(1, "Error calling Atomo\n", 20, Alimentazione);
                 Write(1, "meltdown\n", 9, Alimentazione);
                 exit(EXIT_FAILURE);
             }
@@ -162,7 +167,7 @@ void generateNewAtoms()
             break;
         default:
             AtomMsgSnd.mtype = forkResult;
-            snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(NATOM_MAX));
+            snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(N_ATOM_MAX));
             bzero(buff, 40);
             snprintf(buff, 40, "alim create atom %d with %d\n", forkResult, atoi(AtomMsgSnd.mtext));
             Write(1, buff, 40, Alimentazione);
@@ -200,4 +205,19 @@ void getValueFromConfigFile(char *path)
         sscanf(buff, "NATOM_MAX %d", &NATOM_MAX);
     }
     fclose(config);
+
+    tmp = fopen("../tmp/limits.txt", "r");
+    if (tmp == NULL)
+    {
+        Write(1, "Unable to open limits file\n", 25, Alimentazione);
+        TEST_ERROR;
+    }
+    else
+    {
+        while (fgets(buff, sizeof(buff), tmp))
+        {
+            sscanf(buff, "process %d", &tmpI);
+            if(tmpI >NATOM_MAX)NATOM_MAX = tmpI;
+        }
+    }
 }

@@ -18,8 +18,10 @@ struct SharedMemory *SM;
 int masterPid;
 char buff[40];
 FILE *config;
+FILE *tmp;
 int energy;
 char bufff[100];
+int tmpI;
 
 /*TIMERS*/
 struct itimerspec recurrentWorkTimerSpec;
@@ -31,8 +33,6 @@ int main(int argc, char *argv[])
     init(argc, argv);
     ready();
     waitForParentStartSimulation();
-
-    /*TODO - select ATOM_INIBITION_NUMBER atoms and cgange the value in the shared memory*/
 
     while (1)
     {
@@ -48,14 +48,24 @@ int main(int argc, char *argv[])
                 energy = calculateEnergy(SplitMsgRcv.nAtom, SplitMsgRcv.nAtom - 1);
             }
 
-            if (SM->SMH.ENERGIA_PRODOTTA - SM->SMH.ENERGIA_CONSUMATA - SM->SMH.ENERGIA_ASSORBITA + energy > ENERGY_EXPLODE_THRESHOLD)
+            if ((SM->SMH.ENERGIA_PRODOTTA - SM->SMH.ENERGIA_CONSUMATA - SM->SMH.ENERGIA_ASSORBITA + energy) >= ENERGY_EXPLODE_THRESHOLD)
             {
                 SplitMsgSnd.split = false;
+                /*TODO - select ATOM_INIBITION_NUMBER atoms and CHANGE the value in the shared memory*/
             }
             else
             {
                 SplitMsgSnd.split = true;
             }
+
+            if (SM->SMH.n_atomi == NATOM_MAX - 1)
+            {
+                SplitMsgSnd.split = false;
+                /*TODO - select ATOM_INIBITION_NUMBER atoms and CHANGE the value in the shared memory*/
+            }
+
+            
+
             if (SplitMsgRcv.pid == 0)
             {
                 continue;
@@ -70,7 +80,6 @@ int main(int argc, char *argv[])
                 bzero(bufff, 100);
                 snprintf(bufff, 100, "mtype:%ld, split: %d\n", SplitMsgSnd.mtype, (int)SplitMsgSnd.split);
                 Write(1, bufff, 100, Inibitore);
-                
             }
         }
 
@@ -86,7 +95,8 @@ void init(int argc, char *argv[])
     }
     /*Start simulation SEM ----------------------*/
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600);
-    if(startSimulationSemId == -1){
+    if (startSimulationSemId == -1)
+    {
         Write(1, "Cannot get simulation semaphore\n", 32, Inibitore);
         TEST_ERROR;
         exit(EXIT_FAILURE);
@@ -95,7 +105,7 @@ void init(int argc, char *argv[])
 
     /*splitting request message queue*/
     splitting_Queue = msgget(SPLIT_REQUEST_KEY, 0600);
-     if (splitting_Queue == -1)
+    if (splitting_Queue == -1)
     {
         Write(1, "Cannot get splitting message queue\n", 35, Inibitore);
         TEST_ERROR
@@ -106,7 +116,8 @@ void init(int argc, char *argv[])
 
     /*Shared Memory SEM -------------------------*/
     sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
-    if(sharedMemorySemId == -1){
+    if (sharedMemorySemId == -1)
+    {
         Write(1, "Cannot get shared memory semaphore\n", 35, Inibitore);
         TEST_ERROR;
         exit(EXIT_FAILURE);
@@ -115,7 +126,7 @@ void init(int argc, char *argv[])
     /*-------------------------------------------*/
 
     /*Shared Memory -----------------------------*/
-    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
         Write(1, "Cannot get shared memory segment\n", 33, Inibitore);
@@ -172,7 +183,7 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         sops.sem_flg = 0;
         semop(sharedMemorySemId, &sops, 1);
 
-        SM->SMH.ENERGIA_ASSORBITA = +ENERGY_ABSORPTION;
+        SM->SMH.ENERGIA_ASSORBITA += ENERGY_ABSORPTION;
 
         sops.sem_num = ID_READ_WRITE;
         sops.sem_op = 1;
@@ -198,6 +209,22 @@ void getValueFromConfigFile(char *path)
         sscanf(buff, "ENERGY_ABSORPTION %d", &ENERGY_ABSORPTION);
     }
     fclose(config);
+
+    tmp = fopen("../tmp/limits.txt", "r");
+    if (tmp == NULL)
+    {
+        Write(1, "Unable to open limits file\n", 25, Inibitore);
+        TEST_ERROR;
+    }
+    else
+    {
+        while (fgets(buff, sizeof(buff), tmp))
+        {
+            sscanf(buff, "process %d", &tmpI);
+            if (tmpI > NATOM_MAX)
+                NATOM_MAX = tmpI;
+        }
+    }
 }
 
 int calculateEnergy(int nAtom1, int nAtom2)

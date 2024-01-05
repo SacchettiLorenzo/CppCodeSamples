@@ -57,7 +57,8 @@ void init(int argc, char *argv[])
 
     /*Start simulation SEM ----------------------*/
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600 | IPC_CREAT);
-    if(startSimulationSemId == -1){
+    if (startSimulationSemId == -1)
+    {
         Write(1, "Cannot get simulation semaphore\n", 32, Atomo);
         TEST_ERROR;
         exit(EXIT_FAILURE);
@@ -65,7 +66,7 @@ void init(int argc, char *argv[])
     /*-------------------------------------------*/
 
     /*Shared Memory -----------------------------*/
-    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
         Write(1, "Cannot get shared memory segment\n", 33, Atomo);
@@ -77,7 +78,8 @@ void init(int argc, char *argv[])
 
     /*Shared Memory SEM -------------------------*/
     sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
-    if(sharedMemorySemId == -1){
+    if (sharedMemorySemId == -1)
+    {
         Write(1, "Cannot get shared memory semaphore\n", 35, Atomo);
         TEST_ERROR;
         exit(EXIT_FAILURE);
@@ -126,13 +128,7 @@ void init(int argc, char *argv[])
     sops.sem_flg = 0;
     semop(sharedMemorySemId, &sops, 1);
 
-    if (SM->SMH.last_scoria != 0)
-    {
-        shared_mem_atom_position = SM->SMH.last_scoria;
-        SM->SMH.last_scoria = 0;
-    }else{
     shared_mem_atom_position = SM->SMH.n_atomi;
-    }
     SM->SMH.n_atomi = SM->SMH.n_atomi + 1;
     masterPid = SM->SMH.masterPid;
     setUpdateSharedMemory();
@@ -169,7 +165,10 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         /*if possible split and generate new atom, if not become a scoria*/
         if (atomo.nAtom > MIN_N_ATOMICO)
         {
-            split();
+            if ((SM->atomi + (shared_mem_atom_position))->inibito == false)
+            {
+                split();
+            }
         }
         else
         {
@@ -182,9 +181,8 @@ void handle_signals(int signal, siginfo_t *info, void *v)
                 sops.sem_flg = 0;
                 semop(sharedMemorySemId, &sops, 1);
 
-                SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader)); 
+                SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
                 (SM->atomi + (shared_mem_atom_position))->scoria = atomo.scoria;
-                SM->SMH.last_scoria = shared_mem_atom_position;
                 SM->SMH.scorie++;
 
                 sops.sem_num = ID_READ_WRITE;
@@ -281,8 +279,8 @@ void split()
         sops.sem_flg = 0;
         semop(sharedMemorySemId, &sops, 1);
 
-        SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader)); 
-        
+        SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
+
         SM->SMH.ENERGIA_PRODOTTA += energy;
         SM->SMH.ATTIVAZIONI++;
         energy = 0;
@@ -299,7 +297,7 @@ void setUpdateSharedMemory()
 {
     SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
     (SM->atomi + (shared_mem_atom_position))->pid = getpid();
-    
+
     (SM->atomi + (shared_mem_atom_position))->parentPid = atomo.parentPid;
     (SM->atomi + (shared_mem_atom_position))->scoria = atomo.scoria;
     (SM->atomi + (shared_mem_atom_position))->inibito = atomo.inibito;

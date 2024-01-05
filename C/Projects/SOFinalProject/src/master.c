@@ -1,4 +1,5 @@
 #include "../include/master.h"
+#include <fcntl.h>
 
 /*TODO - send id of semaphores - message queues - shared memory to child using pipes*/
 /*TODO - change write output 1 -> 2 where handling errors*/
@@ -40,10 +41,12 @@ char *args_1[] = {"./alimentazione.out", "", (char *)0};
 char *args_2[] = {"./inibitore.out", "", (char *)0};
 char *args_3[] = {"./atomo.out", "", (char *)0};
 int current_atom_quantity;
-char buff[128];
+char buff[256];
 bool simulation = false;
 FILE *config;
 FILE *memoryDump;
+FILE *tmp;
+int tmpI;
 
 int main(int argc, char *argv[])
 {
@@ -69,7 +72,8 @@ int main(int argc, char *argv[])
         switch (forkResult = fork())
         {
         case -1:
-            fprintf(stderr, "Error #%03d: %s\n", errno, strerror(errno));
+            Write(1, "Error on fork\n", 14, Master);
+            TEST_ERROR;
             break;
 
         case 0:
@@ -157,7 +161,7 @@ int main(int argc, char *argv[])
             if (i >= N_SERVICE_PROCESS)
             {
                 AtomMsgSnd.mtype = forkResult;
-                snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(NATOM_MAX));
+                snprintf(AtomMsgSnd.mtext, ATOM_MSG_LEN, "%d", normalDistributionNumberGenerator(N_ATOM_MAX));
                 if (msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0) == -1)
                 {
                     Write(1, "Cannot sent nAtom\n", 18, Master);
@@ -205,7 +209,8 @@ void init(int argc, char *argv[])
 
     /*Start simulation SEM ----------------------*/
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600 | IPC_CREAT);
-    if(startSimulationSemId == -1){
+    if (startSimulationSemId == -1)
+    {
         Write(1, "Cannot get simulation semaphore\n", 32, Master);
         TEST_ERROR;
         exit(EXIT_FAILURE);
@@ -217,7 +222,8 @@ void init(int argc, char *argv[])
 
     /*Shared Memory SEM -------------------------*/
     sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
-    if(sharedMemorySemId == -1){
+    if (sharedMemorySemId == -1)
+    {
         Write(1, "Cannot get shared memory semaphore\n", 35, Master);
         TEST_ERROR;
         exit(EXIT_FAILURE);
@@ -245,7 +251,7 @@ void init(int argc, char *argv[])
     /*-------------------------------------------*/
 
     /*Shared Memory -----------------------------*/
-    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + N_ATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
         Write(1, "Cannot get shared memory segment\n", 33, Master);
@@ -264,7 +270,6 @@ void init(int argc, char *argv[])
     SM->SMH.ENERGIA_CONSUMATA = 0;
     SM->SMH.ENERGIA_PRODOTTA = 0;
     SM->SMH.inibitore = (bool)inibitore;
-    SM->SMH.last_scoria = 0;
     /*-------------------------------------------*/
 
     /*Timer--------------------------------------*/
@@ -314,7 +319,7 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         if (info->si_pid != getpid() && info->si_pid != 1)
         {
             Write(1, "Process terminated by the user\n", 31, Master);
-            printf("%d", info->si_pid);
+            /*printf("%d", info->si_pid);*/
         }
         else
         {
@@ -347,15 +352,15 @@ void handle_signals(int signal, siginfo_t *info, void *v)
             }
 
             SM->SMH.ENERGIA_CONSUMATA += ENERGY_DEMAND;
-            bzero(buff, 128);
-            snprintf(buff, 128, "-Total- ATOMI: %d SCORIE: %d SCISSIONI: %d ENERGIA PRODOTTA:%d ENERGIA CONSUMATA: %d ENERGIA ASSORBITA: %d\n",
+            bzero(buff, 256);
+            snprintf(buff, 256, "-Total- ATOMI: %d SCORIE: %d SCISSIONI: %d ENERGIA PRODOTTA:%d ENERGIA CONSUMATA: %d ENERGIA ASSORBITA: %d\n",
                      SM->SMH.n_atomi, SM->SMH.scorie, SM->SMH.ATTIVAZIONI, SM->SMH.ENERGIA_PRODOTTA, SM->SMH.ENERGIA_CONSUMATA, SM->SMH.ENERGIA_ASSORBITA);
-            Write(1, buff, 128, Master);
+            Write(1, buff, 256, Master);
 
-            bzero(buff, 128);
-            snprintf(buff, 128, "-Partial- NUOVO ATOMI: %d NUOVE SCORIE: %d SCISSIONI: %d ENERGIA PRODOTTA:%d ENERGIA CONSUMATA: %d ENERGIA ASSORBITA: %d\n",
+            bzero(buff, 256);
+            snprintf(buff, 256, "-Partial- NUOVO ATOMI: %d NUOVE SCORIE: %d SCISSIONI: %d ENERGIA PRODOTTA:%d ENERGIA CONSUMATA: %d ENERGIA ASSORBITA: %d\n",
                      SM->SMH.n_atomi - SMHBuffer.n_atomi, SM->SMH.scorie - SMHBuffer.scorie, SM->SMH.ATTIVAZIONI - SMHBuffer.ATTIVAZIONI, SM->SMH.ENERGIA_PRODOTTA - SMHBuffer.ENERGIA_PRODOTTA, SM->SMH.ENERGIA_CONSUMATA - SMHBuffer.ENERGIA_CONSUMATA, SM->SMH.ENERGIA_ASSORBITA - SMHBuffer.ENERGIA_ASSORBITA);
-            Write(1, buff, 128, Master);
+            Write(1, buff, 256, Master);
 
             memcpy(&SMHBuffer, &SM->SMH, sizeof(struct SharedMemHeader));
 
@@ -411,7 +416,7 @@ void stopSimulation()
 
 void dumpMemory()
 {
-    memoryDump = fopen("memorydump.txt", "w");
+    memoryDump = fopen("../output/memorydump.txt", "w");
     if (memoryDump == NULL)
     {
         Write(1, "Error opening memory dump file\n", 31, Master);
@@ -449,4 +454,21 @@ void getValueFromConfigFile(char *path)
     }
 
     fclose(config);
+
+    system("ulimit -a > ../tmp/limits.txt");
+    tmp = fopen("../tmp/limits.txt", "r");
+    if (tmp == NULL)
+    {
+        Write(1, "Unable to open limits file\n", 25, Master);
+        TEST_ERROR;
+    }
+    else
+    {
+        while (fgets(buff, sizeof(buff), tmp))
+        {
+            sscanf(buff, "process %d", &tmpI);
+            if(tmpI >NATOM_MAX)NATOM_MAX = tmpI;
+        }
+    }
 }
+
