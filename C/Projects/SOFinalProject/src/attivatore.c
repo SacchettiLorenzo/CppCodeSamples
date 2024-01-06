@@ -44,7 +44,7 @@ void init(int argc, char *argv[])
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600);
     if (startSimulationSemId == -1)
     {
-        Write(1, "Cannot get simulation semaphore\n", 32, Master);
+        Write(2, "Cannot get simulation semaphore\n", 32, Master);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -60,7 +60,7 @@ void init(int argc, char *argv[])
     sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
     if (sharedMemorySemId == -1)
     {
-        Write(1, "Cannot get shared memory semaphore\n", 35, Attivatore);
+        Write(2, "Cannot get shared memory semaphore\n", 35, Attivatore);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -71,7 +71,7 @@ void init(int argc, char *argv[])
     shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
-        Write(1, "Cannot get shared memory segment\n", 33, Attivatore);
+        Write(2, "Cannot get shared memory segment\n", 33, Attivatore);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }

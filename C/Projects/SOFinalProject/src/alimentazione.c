@@ -54,7 +54,7 @@ void init(int argc, char *argv[])
     nAtom_Queue = msgget(N_ATOM_QUEUE_KEY, 0600 | IPC_CREAT);
     if (nAtom_Queue == -1)
     {
-        Write(1, "Cannot get nAtom message queue\n", 31, Alimentazione);
+        Write(2, "Cannot get nAtom message queue\n", 31, Alimentazione);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -64,7 +64,7 @@ void init(int argc, char *argv[])
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600);
     if (startSimulationSemId == -1)
     {
-        Write(1, "Cannot get simulation semaphore\n", 32, Alimentazione);
+        Write(2, "Cannot get simulation semaphore\n", 32, Alimentazione);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -73,7 +73,7 @@ void init(int argc, char *argv[])
     sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
     if (sharedMemorySemId == -1)
     {
-        Write(1, "Cannot get shared memory semaphore\n", 35, Alimentazione);
+        Write(2, "Cannot get shared memory semaphore\n", 35, Alimentazione);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -84,7 +84,7 @@ void init(int argc, char *argv[])
     shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
-        Write(1, "Cannot get shared memory segment\n", 33, Alimentazione);
+        Write(2, "Cannot get shared memory segment\n", 33, Alimentazione);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -133,7 +133,7 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         exit(EXIT_SUCCESS);
         break;
     case SIGUSR1:
-        Write(1, "Alimentazione generate new atoms\n", 33, Alimentazione);
+        /*Write(1, "Alimentazione generate new atoms\n", 33, Alimentazione);*/
         if (SM->SMH.n_atomi + N_NUOVI_ATOMI < NATOM_MAX)
         {
             generateNewAtoms();
@@ -152,14 +152,14 @@ void generateNewAtoms()
         switch (forkResult = fork())
         {
         case -1:
-            Write(1, "Error forking\n", 14, Alimentazione);
+            Write(2, "Error forking\n", 14, Alimentazione);
             break;
 
         case 0:
-            Write(1, "calling Atomo\n", 14, Alimentazione);
+            Write(2, "calling Atomo\n", 14, Alimentazione);
             if (execve(args_0[0], args_0, NULL) == -1)
             {
-                Write(1, "Error calling Atomo\n", 20, Alimentazione);
+                Write(2, "Error calling Atomo\n", 20, Alimentazione);
                 Write(1, "meltdown\n", 9, Alimentazione);
                 exit(EXIT_FAILURE);
             }
@@ -173,7 +173,7 @@ void generateNewAtoms()
             Write(1, buff, 40, Alimentazione);
             if (msgsnd(nAtom_Queue, &AtomMsgSnd, ATOM_MSG_LEN, 0) == -1)
             {
-                Write(1, "Cannot send message to new atom\n", 32, Alimentazione);
+                Write(2, "Cannot send message to new atom\n", 32, Alimentazione);
             }
             break;
         }
@@ -185,7 +185,7 @@ void getValueFromConfigFile(char *path)
     config = fopen(path, "r");
     if (config == NULL)
     {
-        Write(1, "Unable to open config file\n", 27, Master);
+        Write(2, "Unable to open config file\n", 27, Master);
         exit(EXIT_FAILURE);
     }
     while (fgets(buff, sizeof(buff), config))
@@ -209,7 +209,7 @@ void getValueFromConfigFile(char *path)
     tmp = fopen("../tmp/limits.txt", "r");
     if (tmp == NULL)
     {
-        Write(1, "Unable to open limits file\n", 25, Alimentazione);
+        Write(2, "Unable to open limits file\n", 25, Alimentazione);
         TEST_ERROR;
     }
     else

@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader), 0600);
     if (shared_mem_id == -1)
     {
-        write(1, "error getting shared memory\n", 29);
+        write(2, "error getting shared memory\n", 29);
     }
     SMH = shmat(shared_mem_id, NULL, 0);
     masterPid = SMH->masterPid;

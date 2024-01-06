@@ -48,8 +48,15 @@ int main(int argc, char *argv[])
                 energy = calculateEnergy(SplitMsgRcv.nAtom, SplitMsgRcv.nAtom - 1);
             }
 
+            sops.sem_num = ID_READ_WRITE;
+            sops.sem_op = -1;
+            sops.sem_flg = 0;
+
+            semop(sharedMemorySemId, &sops, 1);
+
             if ((SM->SMH.ENERGIA_PRODOTTA - SM->SMH.ENERGIA_CONSUMATA - SM->SMH.ENERGIA_ASSORBITA + energy) >= ENERGY_EXPLODE_THRESHOLD)
             {
+                SM->SMH.ENERGIA_ASSORBITA += ((SM->SMH.ENERGIA_PRODOTTA - SM->SMH.ENERGIA_CONSUMATA - SM->SMH.ENERGIA_ASSORBITA + energy) -ENERGY_EXPLODE_THRESHOLD);
                 SplitMsgSnd.split = false;
                 /*TODO - select ATOM_INIBITION_NUMBER atoms and CHANGE the value in the shared memory*/
             }
@@ -64,7 +71,9 @@ int main(int argc, char *argv[])
                 /*TODO - select ATOM_INIBITION_NUMBER atoms and CHANGE the value in the shared memory*/
             }
 
-            
+            sops.sem_num = ID_READ_WRITE;
+            sops.sem_op = 1;
+            semop(sharedMemorySemId, &sops, 1);
 
             if (SplitMsgRcv.pid == 0)
             {
@@ -76,7 +85,7 @@ int main(int argc, char *argv[])
             }
             if (msgsnd(splitting_Queue, &SplitMsgSnd, (int)(sizeof(struct SplitMsgbuf) - sizeof(long)), 0) == -1)
             {
-                Write(1, "cannot send message to atomo\n", 29, Inibitore);
+                Write(2, "cannot send message to atomo\n", 29, Inibitore);
                 bzero(bufff, 100);
                 snprintf(bufff, 100, "mtype:%ld, split: %d\n", SplitMsgSnd.mtype, (int)SplitMsgSnd.split);
                 Write(1, bufff, 100, Inibitore);
@@ -97,7 +106,7 @@ void init(int argc, char *argv[])
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600);
     if (startSimulationSemId == -1)
     {
-        Write(1, "Cannot get simulation semaphore\n", 32, Inibitore);
+        Write(2, "Cannot get simulation semaphore\n", 32, Inibitore);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -107,7 +116,7 @@ void init(int argc, char *argv[])
     splitting_Queue = msgget(SPLIT_REQUEST_KEY, 0600);
     if (splitting_Queue == -1)
     {
-        Write(1, "Cannot get splitting message queue\n", 35, Inibitore);
+        Write(2, "Cannot get splitting message queue\n", 35, Inibitore);
         TEST_ERROR
         exit(EXIT_FAILURE);
     }
@@ -118,7 +127,7 @@ void init(int argc, char *argv[])
     sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
     if (sharedMemorySemId == -1)
     {
-        Write(1, "Cannot get shared memory semaphore\n", 35, Inibitore);
+        Write(2, "Cannot get shared memory semaphore\n", 35, Inibitore);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -129,7 +138,7 @@ void init(int argc, char *argv[])
     shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
-        Write(1, "Cannot get shared memory segment\n", 33, Inibitore);
+        Write(2, "Cannot get shared memory segment\n", 33, Inibitore);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -199,7 +208,7 @@ void getValueFromConfigFile(char *path)
     config = fopen(path, "r");
     if (config == NULL)
     {
-        Write(1, "Unable to open config file\n", 27, Master);
+        Write(2, "Unable to open config file\n", 27, Master);
         exit(EXIT_FAILURE);
     }
     while (fgets(buff, sizeof(buff), config))
@@ -213,7 +222,7 @@ void getValueFromConfigFile(char *path)
     tmp = fopen("../tmp/limits.txt", "r");
     if (tmp == NULL)
     {
-        Write(1, "Unable to open limits file\n", 25, Inibitore);
+        Write(2, "Unable to open limits file\n", 25, Inibitore);
         TEST_ERROR;
     }
     else

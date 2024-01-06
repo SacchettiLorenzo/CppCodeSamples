@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
                 Write(1, "calling Attivatore\n", 19, Master);
                 if (execve(args_0[0], args_0, NULL) == -1)
                 {
-                    Write(1, "Error calling Attivatore\n", 25, Master);
+                    Write(2, "Error calling Attivatore\n", 25, Master);
                     TEST_ERROR;
                     exit(EXIT_FAILURE);
                 }
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
                 Write(1, "calling Alimentazione\n", 22, Master);
                 if (execve(args_1[0], args_1, NULL) == -1)
                 {
-                    Write(1, "Error calling Alimentazione\n", 28, Master);
+                    Write(2, "Error calling Alimentazione\n", 28, Master);
                     TEST_ERROR;
                     exit(EXIT_FAILURE);
                 }
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
 
                 if (execve(args_2[0], args_2, NULL) == -1)
                 {
-                    Write(1, "Error calling Inibitore\n", 24, Master);
+                    Write(2, "Error calling Inibitore\n", 24, Master);
                     TEST_ERROR;
                     exit(EXIT_FAILURE);
                 }
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
                 Write(1, "calling Atomo\n", 14, Master);
                 if (execve(args_3[0], args_3, NULL) == -1)
                 {
-                    Write(1, "Error calling Atomo\n", 20, Master);
+                    Write(2, "Error calling Atomo\n", 20, Master);
                     Write(1, "meltdown\n", 9, Master);
                     /*TEST_ERROR;*/
                     exit(EXIT_FAILURE);
@@ -211,7 +211,7 @@ void init(int argc, char *argv[])
     startSimulationSemId = semget(START_SIMULATION_SEM_KEY, START_SIMULATION_NUM_RES, 0600 | IPC_CREAT);
     if (startSimulationSemId == -1)
     {
-        Write(1, "Cannot get simulation semaphore\n", 32, Master);
+        Write(2, "Cannot get simulation semaphore\n", 32, Master);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -224,7 +224,7 @@ void init(int argc, char *argv[])
     sharedMemorySemId = semget(SHARED_MEM_SEM_KEY, SHARED_MEM_NUM_RES, 0600 | IPC_CREAT);
     if (sharedMemorySemId == -1)
     {
-        Write(1, "Cannot get shared memory semaphore\n", 35, Master);
+        Write(2, "Cannot get shared memory semaphore\n", 35, Master);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -235,7 +235,7 @@ void init(int argc, char *argv[])
     nAtom_Queue = msgget(N_ATOM_QUEUE_KEY, 0600 | IPC_CREAT);
     if (nAtom_Queue == -1)
     {
-        Write(1, "Cannot get nAtom message queue\n", 31, Master);
+        Write(2, "Cannot get nAtom message queue\n", 31, Master);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -244,7 +244,7 @@ void init(int argc, char *argv[])
     splitting_Queue = msgget(SPLIT_REQUEST_KEY, 0600 | IPC_CREAT);
     if (splitting_Queue == -1)
     {
-        Write(1, "Cannot get splitting message queue\n", 35, Master);
+        Write(2, "Cannot get splitting message queue\n", 35, Master);
         TEST_ERROR
         exit(EXIT_FAILURE);
     }
@@ -254,7 +254,7 @@ void init(int argc, char *argv[])
     shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
-        Write(1, "Cannot get shared memory segment\n", 33, Master);
+        Write(2, "Cannot get shared memory segment\n", 33, Master);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -416,10 +416,10 @@ void stopSimulation()
 
 void dumpMemory()
 {
-    memoryDump = fopen("../output/memorydump.txt", "w");
+    memoryDump = fopen("../output/memorydump.log", "w");
     if (memoryDump == NULL)
     {
-        Write(1, "Error opening memory dump file\n", 31, Master);
+        Write(2, "Error opening memory dump file\n", 31, Master);
     }
 
     fprintf(memoryDump, "-Total- ATOMI: %d SCORIE: %d SCISSIONI: %d ENERGIA PRODOTTA:%d ENERGIA CONSUMATA: %d ENERGIA ASSORBITA: %d\n\n",
