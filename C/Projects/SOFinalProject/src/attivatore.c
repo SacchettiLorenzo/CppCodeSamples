@@ -129,6 +129,7 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         break;
 
     default:
+        Write(1, "Attivatore received some signal\n", 32, Attivatore);
         break;
     }
 }
@@ -138,27 +139,38 @@ void choseAndSignal()
     sops.sem_num = ID_READ_WRITE;
     sops.sem_op = -1;
     sops.sem_flg = 0;
-    semop(sharedMemorySemId, &sops, 1);
-    SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
-
-    for (i = 0; i < ACTIVATION_PER_SECOND; i++)
+    if (semop(sharedMemorySemId, &sops, 1))
     {
-        randomNumber = (int)rand() % (SM->SMH.n_atomi);
-        if ((SM->atomi + (randomNumber))->scoria != true)
+        Write(2, "Error on SEM Attivatore (1)\n", 28, Attivatore);
+    }
+
+    SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
+    if (SM->SMH.n_atomi != SM->SMH.scorie)
+    {
         {
-            if ((SM->atomi + (randomNumber))->pid != 0)
+            randomNumber = (int)rand() % (SM->SMH.n_atomi);
+            if ((SM->atomi + (randomNumber))->scoria != true)
             {
-                kill((SM->atomi + (randomNumber))->pid, SIGUSR1);
+                if ((SM->atomi + (randomNumber))->pid != 0 && (SM->atomi + (randomNumber))->parentPid != 0)
+                {
+                    kill((SM->atomi + (randomNumber))->pid, SIGUSR1);
+                }
+            }
+            else
+            {
+                i--;
             }
         }
-        else
-        {
-            i--;
-        }
     }
-    sops.sem_num = ID_READ_WRITE;
+
+    for (i = 0; i < ACTIVATION_PER_SECOND; i++)
+
+        sops.sem_num = ID_READ_WRITE;
     sops.sem_op = 1;
-    semop(sharedMemorySemId, &sops, 1);
+    if (semop(sharedMemorySemId, &sops, 1) == -1)
+    {
+        Write(2, "Error on SEM Attivatore (2)\n", 28, Attivatore);
+    }
 }
 
 void getValueFromConfigFile(char *path)

@@ -337,7 +337,10 @@ void handle_signals(int signal, siginfo_t *info, void *v)
             sops.sem_num = ID_READ_WRITE;
             sops.sem_op = -1;
             sops.sem_flg = 0;
-            semop(sharedMemorySemId, &sops, 1);
+            if (semop(sharedMemorySemId, &sops, 1) == -1)
+            {
+                Write(2, "Error on SEM Master (1)\n", 24, Master);
+            }
 
             if (SM->SMH.ENERGIA_PRODOTTA - SM->SMH.ENERGIA_CONSUMATA - SM->SMH.ENERGIA_ASSORBITA > ENERGY_EXPLODE_THRESHOLD)
             {
@@ -351,14 +354,19 @@ void handle_signals(int signal, siginfo_t *info, void *v)
                 stopSimulation();
             }
 
+            if(SM->SMH.n_atomi == SM->SMH.scorie){
+                Write(1, "blackout\n", 8, Master);
+                stopSimulation();
+            }
+
             SM->SMH.ENERGIA_CONSUMATA += ENERGY_DEMAND;
             bzero(buff, 256);
-            snprintf(buff, 256, "-Total- ATOMI: %d SCORIE: %d SCISSIONI: %d ENERGIA PRODOTTA:%d ENERGIA CONSUMATA: %d ENERGIA ASSORBITA: %d\n",
+            snprintf(buff, 256, "[Total] ATOMI: %d |SCORIE: %d |SCISSIONI: %d |ENERGIA PRODOTTA: %d |ENERGIA CONSUMATA: %d |ENERGIA ASSORBITA: %d\n",
                      SM->SMH.n_atomi, SM->SMH.scorie, SM->SMH.ATTIVAZIONI, SM->SMH.ENERGIA_PRODOTTA, SM->SMH.ENERGIA_CONSUMATA, SM->SMH.ENERGIA_ASSORBITA);
             Write(1, buff, 256, Master);
 
             bzero(buff, 256);
-            snprintf(buff, 256, "-Partial- NUOVO ATOMI: %d NUOVE SCORIE: %d SCISSIONI: %d ENERGIA PRODOTTA:%d ENERGIA CONSUMATA: %d ENERGIA ASSORBITA: %d\n",
+            snprintf(buff, 256, "[Partial] NUOVO ATOMI: %d |NUOVE SCORIE: %d |SCISSIONI: %d |ENERGIA PRODOTTA:%d |ENERGIA CONSUMATA: %d |ENERGIA ASSORBITA: %d\n",
                      SM->SMH.n_atomi - SMHBuffer.n_atomi, SM->SMH.scorie - SMHBuffer.scorie, SM->SMH.ATTIVAZIONI - SMHBuffer.ATTIVAZIONI, SM->SMH.ENERGIA_PRODOTTA - SMHBuffer.ENERGIA_PRODOTTA, SM->SMH.ENERGIA_CONSUMATA - SMHBuffer.ENERGIA_CONSUMATA, SM->SMH.ENERGIA_ASSORBITA - SMHBuffer.ENERGIA_ASSORBITA);
             Write(1, buff, 256, Master);
 
@@ -366,7 +374,10 @@ void handle_signals(int signal, siginfo_t *info, void *v)
 
             sops.sem_num = ID_READ_WRITE;
             sops.sem_op = 1;
-            semop(sharedMemorySemId, &sops, 1);
+            if (semop(sharedMemorySemId, &sops, 1) == -1)
+            {
+                Write(2, "Error on SEM Master (2)\n", 24, Master);
+            }
         }
         break;
     default:
@@ -385,16 +396,14 @@ void stopSimulation()
 
     simulation = false;
     killpg(getpid(), SIGINT);
-    semctl(startSimulationSemId, 0, IPC_RMID);
-    semctl(sharedMemorySemId, 0, IPC_RMID);
-
-    msgctl(nAtom_Queue, IPC_RMID, NULL);
-    msgctl(splitting_Queue, IPC_RMID, NULL);
 
     sops.sem_num = ID_READ_WRITE;
     sops.sem_op = -1;
     sops.sem_flg = 0;
-    semop(sharedMemorySemId, &sops, 1);
+    if (semop(sharedMemorySemId, &sops, 1) == -1)
+    {
+        Write(2, "Error on SEM Master (3)\n", 24, Master);
+    }
 
     SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
     for (i = 0; i < SM->SMH.n_atomi; i++)
@@ -406,15 +415,22 @@ void stopSimulation()
 
     sops.sem_num = ID_READ_WRITE;
     sops.sem_op = 1;
-    semop(sharedMemorySemId, &sops, 1);
+    if (semop(sharedMemorySemId, &sops, 1) == -1)
+    {
+        Write(2, "Error on SEM Master (4)\n", 24, Master);
+    }
 
+    msgctl(nAtom_Queue, IPC_RMID, NULL);
+    msgctl(splitting_Queue, IPC_RMID, NULL);
+    semctl(startSimulationSemId, 0, IPC_RMID);
+    semctl(sharedMemorySemId, 0, IPC_RMID);
     shmctl(shared_mem_id, IPC_RMID, NULL);
     shmdt(SM);
 
     exit(EXIT_SUCCESS);
 }
 
-void dumpMemory()
+void  dumpMemory()
 {
     memoryDump = fopen("../output/memorydump.log", "w");
     if (memoryDump == NULL)
@@ -438,7 +454,7 @@ void getValueFromConfigFile(char *path)
     config = fopen(path, "r");
     if (config == NULL)
     {
-        Write(1, "Unable to open config file\n", 27, Master);
+        Write(2, "Unable to open config file\n", 27, Master);
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
@@ -467,8 +483,8 @@ void getValueFromConfigFile(char *path)
         while (fgets(buff, sizeof(buff), tmp))
         {
             sscanf(buff, "process %d", &tmpI);
-            if(tmpI >NATOM_MAX)NATOM_MAX = tmpI;
+            if (tmpI > NATOM_MAX)
+                NATOM_MAX = tmpI;
         }
     }
 }
-
