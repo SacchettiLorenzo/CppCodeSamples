@@ -4,8 +4,8 @@ data(kbytes)         unlimited
 stack(kbytes)        8192
 coredump(blocks)     0
 memory(kbytes)       unlimited
-locked memory(kbytes) 1010880
-process              31291
+locked memory(kbytes) 999840
+process              30946
 nofiles              1024
 vmemory(kbytes)      unlimited
 locks                unlimited

@@ -165,10 +165,11 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         /*if possible split and generate new atom, if not become a scoria*/
         if (atomo.nAtom > MIN_N_ATOMICO)
         {
-            if ((SM->atomi + (shared_mem_atom_position))->inibito == false)
+            if ((SM->atomi + (shared_mem_atom_position))->inibito == 0)
             {
-                split();
             }
+                split();
+            /*FIXME - porcoddio*/
         }
         else
         {
