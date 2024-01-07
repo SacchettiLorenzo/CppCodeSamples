@@ -251,7 +251,7 @@ void init(int argc, char *argv[])
     /*-------------------------------------------*/
 
     /*Shared Memory -----------------------------*/
-    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct SharedAtomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
         Write(2, "Cannot get shared memory segment\n", 33, Master);
@@ -262,7 +262,7 @@ void init(int argc, char *argv[])
 
     SM->SMH.n_atomi = 0;
     SM->SMH.masterPid = getpid();
-    SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
+    SM->atomi = (struct SharedAtomo *)((int *)SM + sizeof(struct SharedMemHeader));
     SM->SMH.simulation = false;
     SM->SMH.inibitore = false;
     SM->SMH.ATTIVAZIONI = 0;
@@ -348,14 +348,14 @@ void handle_signals(int signal, siginfo_t *info, void *v)
                 stopSimulation();
             }
 
-            if (SM->SMH.ENERGIA_PRODOTTA < SM->SMH.ENERGIA_CONSUMATA)
+            if (SM->SMH.ENERGIA_PRODOTTA < SM->SMH.ENERGIA_CONSUMATA + SM->SMH.ENERGIA_ASSORBITA)
             {
-                Write(1, "blackout\n", 8, Master);
+                Write(1, "blackout (1)\n", 8, Master);
                 stopSimulation();
             }
 
             if(SM->SMH.n_atomi == SM->SMH.scorie){
-                Write(1, "blackout\n", 8, Master);
+                Write(1, "blackout  (2)\n", 8, Master);
                 stopSimulation();
             }
 
@@ -387,25 +387,21 @@ void handle_signals(int signal, siginfo_t *info, void *v)
 
 void stopSimulation()
 {
-    /*semaphore to stop every shared memory usage in order to avoi core dump error during exiting functions
-    sops.sem_num = ID_READ_WRITE;
-    sops.sem_op = -1;
-    sops.sem_flg = 0;
-    semop(sharedMemorySemId, &sops, 1);
-    */
 
     simulation = false;
     killpg(getpid(), SIGINT);
-
-    sops.sem_num = ID_READ_WRITE;
+    
+    /*sops.sem_num = ID_READ_WRITE;
     sops.sem_op = -1;
     sops.sem_flg = 0;
     if (semop(sharedMemorySemId, &sops, 1) == -1)
     {
         Write(2, "Error on SEM Master (3)\n", 24, Master);
     }
+    */
+    
 
-    SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
+    SM->atomi = (struct SharedAtomo *)((int *)SM + sizeof(struct SharedMemHeader));
     for (i = 0; i < SM->SMH.n_atomi; i++)
     {
         waitpid((SM->atomi + i)->pid, &status, 0);
@@ -413,19 +409,21 @@ void stopSimulation()
 
     dumpMemory();
 
+    /*
     sops.sem_num = ID_READ_WRITE;
     sops.sem_op = 1;
     if (semop(sharedMemorySemId, &sops, 1) == -1)
     {
         Write(2, "Error on SEM Master (4)\n", 24, Master);
     }
+    */
 
     msgctl(nAtom_Queue, IPC_RMID, NULL);
     msgctl(splitting_Queue, IPC_RMID, NULL);
     semctl(startSimulationSemId, 0, IPC_RMID);
     semctl(sharedMemorySemId, 0, IPC_RMID);
-    shmctl(shared_mem_id, IPC_RMID, NULL);
     shmdt(SM);
+    shmctl(shared_mem_id, IPC_RMID, NULL);
 
     exit(EXIT_SUCCESS);
 }

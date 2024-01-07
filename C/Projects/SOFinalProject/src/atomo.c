@@ -84,7 +84,7 @@ void init(int argc, char *argv[])
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
-    semctl(sharedMemorySemId, 0, SETVAL, 1);
+    
     /*-------------------------------------------*/
 
     /*Signal Handler ----------------------------*/
@@ -178,7 +178,7 @@ void handle_signals(int signal, siginfo_t *info, void *v)
                 sops.sem_flg = 0;
                 semop(sharedMemorySemId, &sops, 1);
 
-                SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
+                SM->atomi = (struct SharedAtomo *)((int *)SM + sizeof(struct SharedMemHeader));
                 (SM->atomi + (shared_mem_atom_position))->scoria = atomo.scoria;
                 SM->SMH.scorie++;
 
@@ -197,8 +197,8 @@ void handle_signals(int signal, siginfo_t *info, void *v)
 
 void split()
 {
-
-    if ((int)rand() % 1000 > 1000 * ACTIVATION_PROBABILTY)
+    
+    if (SM->SMH.ATTIVAZIONI != 0 && (int)rand() % 1000 > 1000 * ACTIVATION_PROBABILTY)
     {
         /*Write(1, "Not spliting\n", 22, Atomo);*/
         return;
@@ -219,7 +219,7 @@ void split()
         {
             if (SplitMsgRcv.split == false)
             {
-                Write(1, "NO SPLIT\n", 9, Atomo);
+             /*  Write(1, "NO SPLIT\n", 9, Atomo);*/
                 return;
             }
         }
@@ -276,7 +276,7 @@ void split()
         sops.sem_flg = 0;
         semop(sharedMemorySemId, &sops, 1);
 
-        SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
+        SM->atomi = (struct SharedAtomo *)((int *)SM + sizeof(struct SharedMemHeader));
 
         SM->SMH.ENERGIA_PRODOTTA += energy;
         SM->SMH.ATTIVAZIONI++;
@@ -292,7 +292,7 @@ void split()
 
 void setUpdateSharedMemory()
 {
-    SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
+    SM->atomi = (struct SharedAtomo *)((int *)SM + sizeof(struct SharedMemHeader));
     (SM->atomi + (shared_mem_atom_position))->pid = getpid();
 
     (SM->atomi + (shared_mem_atom_position))->parentPid = atomo.parentPid;

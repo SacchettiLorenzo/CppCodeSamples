@@ -102,9 +102,16 @@ struct Atomo{
     bool inibito;
 };
 
+struct SharedAtomo{
+    pid_t pid;
+    pid_t parentPid;
+    bool scoria;
+    bool inibito;
+};
+
 struct SharedMemory{
 	struct SharedMemHeader SMH;
-	struct Atomo* atomi;
+	struct SharedAtomo* atomi;
 };
 
 static char precolor[5] = "\033[";

@@ -64,11 +64,11 @@ void init(int argc, char *argv[])
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
-    semctl(sharedMemorySemId, 0, SETVAL, 1);
+    
     /*-------------------------------------------*/
 
     /*Shared Memory -----------------------------*/
-    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct SharedAtomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
         Write(2, "Cannot get shared memory segment\n", 33, Attivatore);
@@ -144,7 +144,8 @@ void choseAndSignal()
         Write(2, "Error on SEM Attivatore (1)\n", 28, Attivatore);
     }
 
-    SM->atomi = (struct Atomo *)((int *)SM + sizeof(struct SharedMemHeader));
+    SM->atomi = (struct SharedAtomo *)((int *)SM + sizeof(struct SharedMemHeader));
+    for (i = 0; i < ACTIVATION_PER_SECOND; i++)
     if (SM->SMH.n_atomi != SM->SMH.scorie)
     {
         {
@@ -163,9 +164,8 @@ void choseAndSignal()
         }
     }
 
-    for (i = 0; i < ACTIVATION_PER_SECOND; i++)
 
-        sops.sem_num = ID_READ_WRITE;
+    sops.sem_num = ID_READ_WRITE;
     sops.sem_op = 1;
     if (semop(sharedMemorySemId, &sops, 1) == -1)
     {

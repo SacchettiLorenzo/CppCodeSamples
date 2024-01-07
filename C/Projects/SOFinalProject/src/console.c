@@ -176,7 +176,10 @@ void readKeyboard()
 
 void helpMenu()
 {
-    write(1, "help menu\n", 11);
+    write(1, "help menu:\n", 11);
+    write(1, "sim_end\n", 8);
+    write(1, "inibitore_on\n", 13);
+    write(1, "inibitore_off\n", 14);
 }
 
 void startSimulation()

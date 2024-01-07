@@ -52,13 +52,14 @@ int main(int argc, char *argv[])
             sops.sem_op = -1;
             sops.sem_flg = 0;
 
-            semop(sharedMemorySemId, &sops, 1);
+            if(semop(sharedMemorySemId, &sops, 1)){
+                Write(2, "Error on SEM Inibitore (1)\n", 27, Inibitore);
+            }
 
-            if ((SM->SMH.ENERGIA_PRODOTTA - SM->SMH.ENERGIA_CONSUMATA - SM->SMH.ENERGIA_ASSORBITA + energy) >= ENERGY_EXPLODE_THRESHOLD)
+            if ((SM->SMH.ENERGIA_PRODOTTA - SM->SMH.ENERGIA_CONSUMATA - SM->SMH.ENERGIA_ASSORBITA + energy) >= ENERGY_EXPLODE_THRESHOLD && SM->SMH.inibitore == true)
             {
-                SM->SMH.ENERGIA_ASSORBITA += ((SM->SMH.ENERGIA_PRODOTTA - SM->SMH.ENERGIA_CONSUMATA - SM->SMH.ENERGIA_ASSORBITA + energy) -ENERGY_EXPLODE_THRESHOLD);
+                SM->SMH.ENERGIA_ASSORBITA += ((SM->SMH.ENERGIA_PRODOTTA - SM->SMH.ENERGIA_CONSUMATA - SM->SMH.ENERGIA_ASSORBITA + energy) - ENERGY_EXPLODE_THRESHOLD);
                 SplitMsgSnd.split = false;
-                /*TODO - select ATOM_INIBITION_NUMBER atoms and CHANGE the value in the shared memory*/
             }
             else
             {
@@ -68,12 +69,13 @@ int main(int argc, char *argv[])
             if (SM->SMH.n_atomi == NATOM_MAX - 1)
             {
                 SplitMsgSnd.split = false;
-                /*TODO - select ATOM_INIBITION_NUMBER atoms and CHANGE the value in the shared memory*/
             }
 
             sops.sem_num = ID_READ_WRITE;
             sops.sem_op = 1;
-            semop(sharedMemorySemId, &sops, 1);
+            if(semop(sharedMemorySemId, &sops, 1)){
+                Write(2, "Error on SEM Inibitore (2)\n", 27, Inibitore);
+            }
 
             if (SplitMsgRcv.pid == 0)
             {
@@ -131,11 +133,11 @@ void init(int argc, char *argv[])
         TEST_ERROR;
         exit(EXIT_FAILURE);
     }
-    semctl(sharedMemorySemId, 0, SETVAL, 1);
+    
     /*-------------------------------------------*/
 
     /*Shared Memory -----------------------------*/
-    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct Atomo), 0600 | IPC_CREAT);
+    shared_mem_id = shmget(SHARED_MEM_KEY, sizeof(struct SharedMemHeader) + NATOM_MAX * sizeof(struct SharedAtomo), 0600 | IPC_CREAT);
     if (shared_mem_id == -1)
     {
         Write(2, "Cannot get shared memory segment\n", 33, Inibitore);
@@ -192,7 +194,10 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         sops.sem_flg = 0;
         semop(sharedMemorySemId, &sops, 1);
 
-        SM->SMH.ENERGIA_ASSORBITA += ENERGY_ABSORPTION;
+        if (SM->SMH.inibitore == true)
+        {
+            SM->SMH.ENERGIA_ASSORBITA += ENERGY_ABSORPTION;
+        }
 
         sops.sem_num = ID_READ_WRITE;
         sops.sem_op = 1;
