@@ -25,7 +25,7 @@
 #define ID_GO 1 /*used to tell the child to start execute*/
 
 #define SHARED_MEM_SEM_KEY 0X111112
-#define SHARED_MEM_NUM_RES 1
+#define SHARED_MEM_NUM_RES 1 /*ID_READ_WRITE*/
 #define ID_READ_WRITE 0
 
 /*IPC Message Queue Keys */
@@ -49,6 +49,10 @@
 */
 #define ATOM_MSG_LEN 6
 
+/*
+* print the details about the occurred error
+* this function was taken by one of the examples provided during the lessons
+*/
 #define TEST_ERROR    if (errno) {fprintf(stderr, \
 					  "%s:%d: PID=%5d: Error %d (%s) %s\n", \
 					  __FILE__,			\
@@ -62,10 +66,6 @@ typedef enum {false,true} bool;
 
 static struct sigaction sa;
 
-typedef enum {Master,Atomo,Attivatore,Alimentazione,Inibitore} processType;
-static char* colors[5] = {
-	"91m","92m","96m","33m","93m"
-};
 
 struct AtomMsgbuf
 {
@@ -114,15 +114,29 @@ struct SharedMemory{
 	struct SharedAtomo* atomi;
 };
 
-static char precolor[5] = "\033[";
-static char blank[7] = "\033[0m";
 
-static char writeBuffer[WRITE_BUFFER_LEN];
-
+/*
+* signal handler function
+*/
 void handle_signals(int signal,siginfo_t* info, void* v);
 
+typedef enum {Master,Atomo,Attivatore,Alimentazione,Inibitore} processType;
+static char* colors[5] = {
+	"91m","92m","96m","33m","93m"
+};
+static char precolor[5] = "\033[";
+static char blank[7] = "\033[0m";
+static char writeBuffer[WRITE_BUFFER_LEN];
+
+/*
+* write function wrapper for prettier log
+*/
 void Write(int fd, const void* buff, size_t len, processType pType);
 
+/*
+* read the config file to fetch
+* constant for simulation control
+*/
 void getValueFromConfigFile(char *path);
 
 

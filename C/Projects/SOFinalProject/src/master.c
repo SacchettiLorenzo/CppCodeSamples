@@ -270,6 +270,7 @@ void init(int argc, char *argv[])
     SM->SMH.ENERGIA_CONSUMATA = 0;
     SM->SMH.ENERGIA_PRODOTTA = 0;
     SM->SMH.inibitore = (bool)inibitore;
+    SM->SMH.scorie = 0;
     /*-------------------------------------------*/
 
     /*Timer--------------------------------------*/

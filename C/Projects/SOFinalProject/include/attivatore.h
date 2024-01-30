@@ -22,5 +22,9 @@ void ready();
 */
 void waitForParentStartSimulation();
 
+/*
+* select ACTIVATION_PER_SECOND atoms from
+* shared memory and send signal
+*/
 void choseAndSignal();
 

@@ -45,6 +45,13 @@ void startSimulation();
 */
 void dumpMemory();
 
+/*
+* send SINGINT to every process
+* call dumpMemory()
+* wait for all the process to terminate
+* close all IPC channel
+* close the master
+*/
 void stopSimulation();
 
 

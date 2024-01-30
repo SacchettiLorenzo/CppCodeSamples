@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
             {
                 SM->SMH.ENERGIA_ASSORBITA += ((SM->SMH.ENERGIA_PRODOTTA - SM->SMH.ENERGIA_CONSUMATA - SM->SMH.ENERGIA_ASSORBITA + energy) - ENERGY_EXPLODE_THRESHOLD);
                 SplitMsgSnd.split = false;
+                Write(2, "Splitting not permitted and major energy absorption\n", 52, Inibitore);
             }
             else
             {
@@ -69,6 +70,7 @@ int main(int argc, char *argv[])
             if (SM->SMH.n_atomi == NATOM_MAX - 1)
             {
                 SplitMsgSnd.split = false;
+                Write(2, "Splitting not permitted\n", 27, Inibitore);
             }
 
             sops.sem_num = ID_READ_WRITE;
@@ -189,19 +191,19 @@ void handle_signals(int signal, siginfo_t *info, void *v)
         exit(EXIT_SUCCESS);
         break;
     case SIGUSR1:
-        sops.sem_num = ID_READ_WRITE;
+        /*sops.sem_num = ID_READ_WRITE;
         sops.sem_op = -1;
         sops.sem_flg = 0;
-        semop(sharedMemorySemId, &sops, 1);
+        semop(sharedMemorySemId, &sops, 1);*/
 
         if (SM->SMH.inibitore == true)
         {
             SM->SMH.ENERGIA_ASSORBITA += ENERGY_ABSORPTION;
         }
 
-        sops.sem_num = ID_READ_WRITE;
+        /*sops.sem_num = ID_READ_WRITE;
         sops.sem_op = 1;
-        semop(sharedMemorySemId, &sops, 1);
+        semop(sharedMemorySemId, &sops, 1);*/
         break;
     default:
         break;

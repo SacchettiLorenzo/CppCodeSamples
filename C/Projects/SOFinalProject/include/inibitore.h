@@ -23,4 +23,7 @@ void ready();
 */
 void waitForParentStartSimulation();
 
+/*
+* calculate energy from the splitting using provided equation
+*/
 int calculateEnergy(int nAtom1, int nAtom2);
