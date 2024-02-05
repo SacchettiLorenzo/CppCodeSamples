@@ -1,0 +1,20 @@
+// Inline Functions.cpp : Questo file contiene la funzione 'main', in cui inizia e termina l'esecuzione del programma.
+//
+
+#include <iostream>
+
+inline void printSomething() {
+    std::cout << "printing something" << std::endl;
+}
+
+int main()
+{
+    printSomething();
+}
+
+/*
+* C++ provides inline functions to reduce the function call overhead. 
+An inline function is a function that is expanded in line when it is called. 
+When the inline function is called whole code of the inline function gets inserted or substituted at the point of the inline function call. 
+This substitution is performed by the C++ compiler at compile time. An inline function may increase efficiency if it is small.
+*/

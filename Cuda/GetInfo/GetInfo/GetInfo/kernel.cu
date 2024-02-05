@@ -37,6 +37,12 @@ int main()
 
 	cout << "shared memory per block : " << props.sharedMemPerBlock<< endl;
 	cout << "shared memory per multiprocessor : " << props.sharedMemPerMultiprocessor << endl;
+
+	cout << "L2 cache size: " << props.l2CacheSize << endl;
+	cout << "persisting L2 cache max size: " << props.persistingL2CacheMaxSize << endl;
+	cout << "access policy max window size: " << props.accessPolicyMaxWindowSize << endl;
+	
+
 	
 
 
