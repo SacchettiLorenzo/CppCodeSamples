@@ -19,6 +19,8 @@ __global__ void __device__Access();
 
 void page_locked_memory();
 
+__global__ void stackAllocation(int);
+
 int main() {
 	//try page 28 code
 	/*linear memory access */
@@ -26,6 +28,8 @@ int main() {
 
 	__constant__access();
 	__device__access();
+	page_locked_memory();
+	stackAllocation << <1, 1 >> > (10);
 }
 
 void __constant__access() {
@@ -108,3 +112,22 @@ void page_locked_memory() {
 	//Free the L1 and L2 cache after writing so this memory should be used only for writing because it makes reading worse
 	cudaHostAlloc(&ptr, sizeof(float), cudaHostAllocWriteCombined);
 }
+
+__global__ void stackAllocation(int size) {
+	/*allocate memory in the stack frame of the caller
+	* the allocation could cause overflow if not managed accordingly to the caller memory properties
+	* the memory is 16 byte alligned
+	*/
+	
+	int4* ptr = (int4*)alloca(size * sizeof(int4));
+
+	/*the memory is automatically freed when the caller return*/
+}
+
+
+
+
+
+
+
+

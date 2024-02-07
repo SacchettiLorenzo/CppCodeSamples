@@ -10,11 +10,16 @@ using namespace std;
 
 struct Neuron;
 
+/*this sample use self-inheritance to create groups of neurons*/
+
+/*SomeNeurons is a generic group of neurons. could be 1 or more neuron. it can connect neurons in 1to1 - 1toN - Nto1 - NtoN way*/
 template <typename Self>
 	struct SomeNeurons {
-		template<typename T> void connect_to(T& other) {
-			for (Neuron& from : *static_cast<Self*>(this)) {
-				for (Neuron& to : other) {
+		template<typename T> //the template enable use of the same class for connecting sigle neuron and layers in the same way
+		void connect_to(T& other) {
+			for (Neuron& from : *static_cast<Self*>(this)) { //"this" could be a single neuron or a layer
+				for (Neuron& to : other) { //the neuron or layer to be connected to
+					//each neuron is connected with each other neuron in both ways
 					from.out.push_back(&to);
 					to.in.push_back(&from);
 				}
@@ -22,6 +27,8 @@ template <typename Self>
 		}
 	};
 
+//single neuron as subclass of a genric group of neurons
+//this class hold the connection with the other neurons
 struct Neuron : SomeNeurons<Neuron>{
 	
 	vector<Neuron*> in, out;
@@ -37,6 +44,7 @@ struct Neuron : SomeNeurons<Neuron>{
 	
 };
 
+//list of neurons as subclass of generic group of neurons. treted as a vector
 struct NeuronLayer : vector<Neuron> , SomeNeurons<NeuronLayer> {
 	NeuronLayer(int count) {
 		while (count-- > 0) {

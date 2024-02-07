@@ -8,13 +8,14 @@
 #include <string.h>
 
 	__global__ void kernel(int*, int);
+
 int main() {
 	const int nStreams = 2;
 	int streamSize = 64;
 	int blockSize = 16;
 	int* d_a;
-	cudaMalloc(&d_a, sizeof(int));
-	int* a = (int*)malloc(sizeof(int));
+	cudaMalloc(&d_a, nStreams * streamSize * sizeof(int));
+	int* a = (int*)malloc(nStreams * streamSize * sizeof(int));
 	int streamBytes = 0;
 	cudaStream_t stream[nStreams];
 	for (int i = 0; i < nStreams; i++)
@@ -44,6 +45,8 @@ __global__ void kernel(int* d_a, int) {
 	//do somethig 
 	*d_a = 10;
 }
+
+
 	/*some operation can be executed at the sime time
 	* for example computation on the host, computation on the device and
 	* memory tranfer can operate concurrently

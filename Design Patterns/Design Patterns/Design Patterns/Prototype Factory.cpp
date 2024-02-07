@@ -23,11 +23,11 @@ struct EmployeeFactory {
 	
 
 	static unique_ptr<Contact> NewMainOfficeEmplyee(string name, int suite) {
-		return NewEmployee(name, suite, first);
+		return NewEmployee(name, suite, first); //using prototype
 	}
 
 	static unique_ptr<Contact> NewAuxOfficeEmployee(string name, int suite) {
-		return NewEmployee(name, suite, second);
+		return NewEmployee(name, suite, second); //using prototype
 	}
 
 private: 
@@ -35,7 +35,7 @@ private:
 		auto result = make_unique<Contact>(proto);
 		result->name = name;
 		result->address->suite = suite;
-		return result;
+		return result; //returning object based on prototype with new informations
 	}
 
 };

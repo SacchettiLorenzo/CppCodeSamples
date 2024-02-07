@@ -42,6 +42,7 @@ int main()
 	cout << "persisting L2 cache max size: " << props.persistingL2CacheMaxSize << endl;
 	cout << "access policy max window size: " << props.accessPolicyMaxWindowSize << endl;
 	
+	cout << "compute capability: " << props.computeMode << endl;
 
 	
 

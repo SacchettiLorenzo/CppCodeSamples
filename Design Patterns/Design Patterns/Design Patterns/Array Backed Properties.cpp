@@ -8,6 +8,8 @@ class Creature {
 	enum Abilities { str, agl, ints, count };
 	array<int, count> abilities;
 public:
+
+	//specific get and set
 	int get_strength() const {
 		return abilities[str];
 	}
@@ -15,6 +17,17 @@ public:
 	int set_strength(int value) {
 		abilities[str] = value;
 	}
+
+	//generic get and set
+	int getAbilityValue(enum Abilities ability) const {
+		return abilities[ability];
+	}
+
+	int setAbilityValue(enum Abilities ability, int value) {
+		abilities[ability] = value;
+	}
+
+
 
 	int sum() const {
 		int sum = 0;

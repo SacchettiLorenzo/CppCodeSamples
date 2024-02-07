@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?><DEFECTS><DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\Lorenzo\Documents\GitHub\CppCodeSamples\Design Patterns\Design Patterns\Design Patterns\</FILEPATH>
+      <FILENAME>FluentBuilder.cpp</FILENAME>
+      <LINE>10</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>La variabile 'StringBuilder::number' non è inizializzata. Inizializzare sempre una variabile membro (type.6).</DESCRIPTION>
+    <FUNCTION>StringBuilder::{ctor}</FUNCTION>
+    <DECORATED>??0StringBuilder@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z</DECORATED>
+    <FUNCLINE>10</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>StringBuilder::number</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT></DEFECTS>

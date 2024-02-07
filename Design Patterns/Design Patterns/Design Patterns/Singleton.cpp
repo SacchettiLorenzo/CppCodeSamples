@@ -41,7 +41,7 @@ int main() {
 
 /* Singleton
 *	Sometimes in the program there is the necessity to instanciate only one time a class (for example for a connection to a database)
-*	To prevent the call of a con tructor more than one time the class shold be designed as a singleton
+*	To prevent the call of a constructor more than one time the class shold be designed as a singleton
 *	In the class there in only the static member that rapresent the instance of the class and the only methon is a get() method that return a 
 *   reference to that static instance
 *	All the various contructor are deleted to prevent any stealthy call

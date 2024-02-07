@@ -13,34 +13,73 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Creational Patterns">
+      <UniqueIdentifier>{98bb376b-6191-4287-900a-eba854492ed2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Structural Patterns">
+      <UniqueIdentifier>{3078b042-2f67-4941-aa89-645ffab2d7c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Behavioral Patterns">
+      <UniqueIdentifier>{f4efd8d5-58f3-4711-b8cc-532a611a11d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Creational Patterns\Builder">
+      <UniqueIdentifier>{d8839de9-7ff9-4494-a8b8-e55d84b894d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Creational Patterns\Factory">
+      <UniqueIdentifier>{e4206145-a138-4659-966f-30783a85776c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Creational Patterns\Prototype">
+      <UniqueIdentifier>{0571223c-7c35-4434-92da-4cedbe8e6a09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Design Patterns.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Array Backed Properties.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Filter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FluentBuilder.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Creational Patterns\Builder</Filter>
     </ClCompile>
     <ClCompile Include="GroovyBuilder.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Creational Patterns\Builder</Filter>
     </ClCompile>
-    <ClCompile Include="Monostate.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Composite Builder.cpp">
+      <Filter>Creational Patterns\Builder</Filter>
     </ClCompile>
-    <ClCompile Include="Neural Network.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Factory.cpp">
+      <Filter>Creational Patterns\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Inner Factory.cpp">
+      <Filter>Creational Patterns\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Abstract Factory.cpp">
+      <Filter>Creational Patterns\Factory</Filter>
     </ClCompile>
     <ClCompile Include="Prototype Factory.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Creational Patterns\Prototype</Filter>
+    </ClCompile>
+    <ClCompile Include="Object duplication.cpp">
+      <Filter>Creational Patterns\Prototype</Filter>
     </ClCompile>
     <ClCompile Include="Singleton.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Creational Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="Monostate.cpp">
+      <Filter>Creational Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="Bridge.cpp">
+      <Filter>Structural Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="Array Backed Properties.cpp">
+      <Filter>Structural Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="Neural Network.cpp">
+      <Filter>Structural Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="Dynamic Decorator.cpp">
+      <Filter>Structural Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="Static Decorator.cpp">
+      <Filter>Structural Patterns</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -14,6 +14,8 @@ int value = 0;
 
 __global__ void arithmetics(int);
 
+__global__ void checkMemorySpace();
+
 
 int main() {
 	arithmetics << <1, 1 >> > (1);
@@ -49,6 +51,7 @@ int main() {
 	arithmetics << <1, 1 >> > (11);
 	cudaMemcpyFromSymbol(&value, Dvalue, sizeof(int));
 	std::cout << value << std::endl;
+	checkMemorySpace << <1, 1 >> > ();
 }
 
 __global__ void arithmetics(int count) {
@@ -92,4 +95,13 @@ __global__ void arithmetics(int count) {
 	default:
 		break;
 	}
+}
+
+__global__ void checkMemorySpace() {
+	/*check the address in from a specific memory space*/
+	__isGlobal(&Dvalue);
+	__isShared(&Dvalue);
+	__isConstant(&Dvalue);
+	//__isGridConstant(&Dvalue);
+	__isLocal(&Dvalue);
 }
