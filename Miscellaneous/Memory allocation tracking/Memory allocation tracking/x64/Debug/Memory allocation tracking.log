@@ -1,4 +1,0 @@
-﻿  Memory allocation tracking.cpp
-C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Miscellaneous\Memory allocation tracking\Memory allocation tracking\Memory allocation tracking.cpp(11,26): warning C4267: '+=': conversione da 'size_t' a 'int'. Possibile perdita di dati.
-C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Miscellaneous\Memory allocation tracking\Memory allocation tracking\Memory allocation tracking.cpp(17,26): warning C4267: '-=': conversione da 'size_t' a 'int'. Possibile perdita di dati.
-  Memory allocation tracking.vcxproj -> C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Miscellaneous\Memory allocation tracking\x64\Debug\Memory allocation tracking.exe

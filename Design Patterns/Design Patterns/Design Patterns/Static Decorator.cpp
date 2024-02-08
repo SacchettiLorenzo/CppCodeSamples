@@ -2,6 +2,8 @@
 #include <vector>
 #include <sstream>
 
+#define ALTERNATIVE 1
+
 using namespace std;
 
 /*	The idea is to enhance existing types without modifying the original type
@@ -13,8 +15,7 @@ using namespace std;
 	ColoredTransparentShape
 	In this way the number of derived classes increase with a huge ratio so we need to use the Decorator design pattern
 
-	In this example it is used the Dynamic Composition Decorator that allow the composition of something at runtime
-	it gives flexibility because the composition can happen in response of some input
+	In this example it is used the Static Composition Decorator. The object and his enhanchments are composed at compile time.
 
 	compose mean to create an object using a reference to a parent class and not only by inheriting his members
 */
@@ -25,6 +26,8 @@ struct Shape {
 
 struct Circle : Shape {
 	float radius;
+
+	Circle() {}
 
 	explicit Circle(const float radius) : radius{ radius } {}
 
@@ -42,6 +45,5 @@ struct Circle : Shape {
 
 
 int main() {
-	
 
 }

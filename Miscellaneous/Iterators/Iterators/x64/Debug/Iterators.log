@@ -1,3 +1,0 @@
-﻿  Iterators.cpp
-C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Miscellaneous\Iterators\Iterators\Iterators.cpp(64,15): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
-  Iterators.vcxproj -> C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Miscellaneous\Iterators\x64\Debug\Iterators.exe

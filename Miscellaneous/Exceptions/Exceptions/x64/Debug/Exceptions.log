@@ -1,4 +1,0 @@
-﻿  Exceptions.cpp
-C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Miscellaneous\Exceptions\Exceptions\Exceptions.cpp(15,5): warning C4297: 'foo': function assumed not to throw an exception but does
-C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Miscellaneous\Exceptions\Exceptions\Exceptions.cpp(15,5): message : __declspec(nothrow), throw(), noexcept(true), or noexcept was specified on the function
-  Exceptions.vcxproj -> C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Miscellaneous\Exceptions\x64\Debug\Exceptions.exe

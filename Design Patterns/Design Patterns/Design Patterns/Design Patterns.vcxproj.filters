@@ -31,6 +31,9 @@
     <Filter Include="Creational Patterns\Prototype">
       <UniqueIdentifier>{0571223c-7c35-4434-92da-4cedbe8e6a09}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Structural Patterns\Decorator">
+      <UniqueIdentifier>{237632ae-5ab9-498a-a542-36d00c4f932b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Filter.cpp">
@@ -76,9 +79,15 @@
       <Filter>Structural Patterns</Filter>
     </ClCompile>
     <ClCompile Include="Dynamic Decorator.cpp">
-      <Filter>Structural Patterns</Filter>
+      <Filter>Structural Patterns\Decorator</Filter>
     </ClCompile>
     <ClCompile Include="Static Decorator.cpp">
+      <Filter>Structural Patterns\Decorator</Filter>
+    </ClCompile>
+    <ClCompile Include="Functional Decorator.cpp">
+      <Filter>Structural Patterns\Decorator</Filter>
+    </ClCompile>
+    <ClCompile Include="Flyweight.cpp">
       <Filter>Structural Patterns</Filter>
     </ClCompile>
   </ItemGroup>
