@@ -7,7 +7,7 @@ using std::cout;
 using std::endl;
 using namespace cv;
 
-std::string image_path = "C:\\Users\\VGpc\\Pictures\\Image samples\\800x600\\image_2.jpg";
+std::string image_path = "..\\..\\images\\image-1.jpg";
 
 int main(int argc, char** argv)
 {

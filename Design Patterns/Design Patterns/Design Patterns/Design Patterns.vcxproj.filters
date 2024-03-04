@@ -34,6 +34,15 @@
     <Filter Include="Structural Patterns\Decorator">
       <UniqueIdentifier>{237632ae-5ab9-498a-a542-36d00c4f932b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Structural Patterns\Proxy">
+      <UniqueIdentifier>{63b55c88-ba55-497e-bc0e-6bde75911704}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Behavioral Patterns\Chain">
+      <UniqueIdentifier>{03c58ca4-22f1-48ef-9dc7-86062f02b609}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Behavioral Patterns\Command">
+      <UniqueIdentifier>{d0aa31f3-1336-43a8-b0fb-e1145f35c41d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Filter.cpp">
@@ -89,6 +98,36 @@
     </ClCompile>
     <ClCompile Include="Flyweight.cpp">
       <Filter>Structural Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="property Proxy.cpp">
+      <Filter>Structural Patterns\Proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="Virtual Proxy.cpp">
+      <Filter>Structural Patterns\Proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication Proxy.cpp">
+      <Filter>Structural Patterns\Proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="Broker Chain.cpp">
+      <Filter>Behavioral Patterns\Chain</Filter>
+    </ClCompile>
+    <ClCompile Include="Pointer Chain.cpp">
+      <Filter>Behavioral Patterns\Chain</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.cpp">
+      <Filter>Behavioral Patterns\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Composite Command.cpp">
+      <Filter>Behavioral Patterns\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Command Query Separation.cpp">
+      <Filter>Behavioral Patterns\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Binary Tree Iteration.cpp">
+      <Filter>Behavioral Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="Mediator.cpp">
+      <Filter>Behavioral Patterns</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

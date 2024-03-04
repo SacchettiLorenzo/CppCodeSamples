@@ -2,7 +2,6 @@
 
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 
-
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -15,11 +14,11 @@ void lookupTable();
 using namespace cv;
 using namespace std;
 
-string image_path = "C:\\Users\\VGpc\\Documents\\GitHub\\CppCodeSamples\\OpenCV\\OpenCVGeneral\\x64\\Debug\\image_0.jpg";
+string image_path = "..\\..\\images\\image-1.jpg";
 int main()
 {
-	//showImage();
-	//MatBasics();
+	showImage();
+	MatBasics();
 	lookupTable();
 }
 
@@ -40,7 +39,7 @@ void showImage() {
 *
 *  in the example A,B,C,D are referred to the same data, F,G are completely new
 *
-*  OpenCv cna store colors in differen forms, the famous RGB is stored as BGR
+*  OpenCv can store colors in differen forms, the famous RGB is stored as BGR
 *  while creating an image the type of data used must be specified and also the function used to populate each pixel
 *  for example CV_8UC3 means CV_[The number of bits per item][Signed or Unsigned][Type Prefix]C[The channel number]
 *  all of this types are predefined and can be found in the documentation
@@ -111,7 +110,7 @@ void lookupTable() {
 			p[j] = table[p[j]];
 		}
 	}
-	*/
+	
 
 
 

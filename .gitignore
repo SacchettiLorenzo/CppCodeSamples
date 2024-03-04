@@ -15,3 +15,6 @@
 *.json
 *.o
 *.zip
+*.png
+*.jpg
+*.dll

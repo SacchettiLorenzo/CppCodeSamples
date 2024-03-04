@@ -10,7 +10,7 @@
 using namespace std;
 using namespace cv;
 
-string image_path = "C:\\Users\\VGpc\\Pictures\\Image samples\\800x600\\image_1.jpg";
+string image_path = "..\\..\\images\\geometry.png";
 
 void Identity(Mat);
 void Ridge(Mat);
@@ -26,13 +26,13 @@ int main(int argc, char* argv[])
 	Mat src;
 	src = imread(image_path, IMREAD_COLOR);
 
-	Identity(src);
-	Ridge(src);
+	//Identity(src);
+	//Ridge(src);
 	EdgeDetection(src);
-	Sharpen(src);
-	BoxBlur(src);
-	GaussianBlur(src);
-	GaussianBlurBigger(src);
+	//Sharpen(src);
+	//BoxBlur(src);
+	//GaussianBlur(src);
+	//GaussianBlurBigger(src);
 
 	waitKey();
 	return EXIT_SUCCESS;

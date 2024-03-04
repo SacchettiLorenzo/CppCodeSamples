@@ -63,6 +63,11 @@ int main()
 
 	fillPoly(img, ppt, npt, 1, Scalar(0, 0, 255), LineTypes::LINE_AA);
 
+	//image, text, origin, font type, scale, color, text thickness
+	putText(img, "Testing text rendering", Point(20, 350), 0.8, 2, Scalar(0, 0, 255), 2, LineTypes::LINE_AA);
+
+	//in open cv it is possible to get the final text size before rendering it with the function getTextSize
+
 	//a poligon is a set of points, the fillPoly function need a pointer to the first element of the Point array, the number of points, scalar for the color, line type
 
 	imshow("#", img);
