@@ -129,5 +129,8 @@
     <ClCompile Include="Mediator.cpp">
       <Filter>Behavioral Patterns</Filter>
     </ClCompile>
+    <ClCompile Include="Memento.cpp">
+      <Filter>Behavioral Patterns</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
