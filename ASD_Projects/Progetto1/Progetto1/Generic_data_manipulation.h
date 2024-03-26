@@ -11,11 +11,11 @@
 size_t getline(char** lineptr, size_t* n, FILE* stream);
 #endif
 
-typedef enum _Type { T_int, T_string, T_double, T_float } Type;
+typedef enum _Type { T_int, T_string, T_double, T_float , T_bool, T_struct} Type;
 
 typedef struct _Var {
-	Type type;
-	union { int n; char* s; double d; float f;  } data;
+	Type type; 
+	union { int n; char* s; double d; float f; bool b; struct str; } data;
 } Var;
 
 typedef struct _Struct {
