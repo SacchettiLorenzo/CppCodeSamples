@@ -3,15 +3,12 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
-#define OS 'w'
 #define bufferSpan 16
 #define log 'log'
 
-#if OS == 'w'
 size_t getline(char** lineptr, size_t* n, FILE* stream);
-#endif
 
-typedef enum _Type { T_int, T_string, T_double, T_float , T_bool, T_struct} Type;
+typedef enum _Type { T_int, T_string, T_double, T_float , T_bool, T_struct, T_dataset} Type;
 
 typedef struct _Var {
 	Type type; 
@@ -23,6 +20,7 @@ typedef struct _Struct {
 }Struct;
 
 typedef struct _Dataset {
+	Type type;
 	int _Struct_size;
 	int last_inserted;
 	Struct* rows;
@@ -32,6 +30,7 @@ typedef struct _Dataset {
 typedef int (*FuncPtr)(Var,Var);
 
 int comparator(Var first, Var second, int num_comparation, ...) {
+
 	va_list ptr;
 	va_start(ptr, num_comparation);
 	int result = 0;
@@ -39,6 +38,7 @@ int comparator(Var first, Var second, int num_comparation, ...) {
 	for (size_t i = 0; i < num_comparation; i++)
 	{
 		FuncPtr func_ptr =  va_arg(ptr, FuncPtr);
+		//TODO: cast first e second alla variabile con tipo primitivo
 		result = (func_ptr)(first, second);
 		if (result != 0) break;
 	}
@@ -68,13 +68,23 @@ _Struct_functions* functions = NULL;
 Dataset* new_Dataset(int struct_size, int expected_rows, ...);
 void laod_from_file(FILE* fp, Dataset* dataset);
 
+void sort_records(FILE *infile, FILE *outfile, size_t field, size_t algo);
+
+void merge_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*));
+void quick_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*));
+
+
 struct generic_data_manipulation {
 	int length;
 	Dataset* dataset;
 	Dataset* (*new_Dataset)(int,int,...);
 	void(*load_from_file)(FILE* fp, Dataset* dataset);
 	void(*new_record_allocation_function)(Dataset* dataset);
-}GDM = { 0,{NULL},&new_Dataset, &laod_from_file, &new_record_allocation_function};
+	void(*comparator)(Var, Var, int, ...);
+	void(*SortRecords)(FILE, FILE, size_t, size_t);
+	void(*mergeSort)(void*,size_t,size_t,int*); //TODO - check if correct
+	void(*quickSort)(void*,size_t,size_t,int*); //TODO - check if correct
+}GDM = { 0,{NULL},&new_Dataset, &laod_from_file, &new_record_allocation_function,&comparator,&sort_records,&merge_sort,&quick_sort};
 
 Dataset* new_Dataset(int struct_size, int expected_rows,... /*variadic function for the functions*/) {
 	functions = (_Struct_functions*)malloc(struct_size * sizeof(_Struct_functions*));
@@ -97,6 +107,7 @@ Dataset* new_Dataset(int struct_size, int expected_rows,... /*variadic function 
 			(GDM.dataset + (GDM.length - 1))->_Struct_size = struct_size;
 			(GDM.dataset + (GDM.length - 1))->last_inserted = 0;
 			(GDM.dataset + (GDM.length - 1))->expected_rows = expected_rows;
+			(GDM.dataset + (GDM.length - 1))->type = T_dataset;
 			return GDM.dataset + (GDM.length - 1);
 		}
 	}
@@ -242,8 +253,6 @@ void laod_from_file(FILE* fp, Dataset* dataset) {
 	}
 }
 
-#if OS == 'w'
-
 size_t getline(char** lineptr, size_t* n, FILE* stream) {
 	char* bufptr = NULL;
 	char* p = bufptr;
@@ -297,4 +306,27 @@ size_t getline(char** lineptr, size_t* n, FILE* stream) {
 	return p - bufptr - 1;
 }
 
-#endif
+void sort_records(FILE *infile, FILE *outfile, size_t field, size_t algo){
+	switch (algo)
+	{
+	case 1:
+		//GDM.mergeSort
+		break;
+	case 2:
+		//GDM.quickSort
+	default:
+		break;
+	}
+}
+
+void merge_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*)){
+if(((Dataset*)base)->type == T_dataset){
+		//use the dataset as source of the data
+	//comparator(((Dataset*)base)->rows[0].fields[0], ((Dataset*)base)->rows[1].fields[0], 1, compar);
+	}else{
+		//use compar function
+	}
+}
+void quick_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*)){
+	
+}

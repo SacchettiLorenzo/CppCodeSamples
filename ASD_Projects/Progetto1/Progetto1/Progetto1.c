@@ -2,7 +2,7 @@
 
 void merge_sort(void* base, size_t nitems, size_t size, int (*compar)(const void*, const void*));
 
-int magg(Var a, Var b) {
+/* int magg(Var a, Var b) {
 	if (a.data.n > b.data.n) {
 		return 1;
 	}
@@ -14,7 +14,7 @@ int magg(Var a, Var b) {
 	if (a.data.n < b.data.n) {
 		return -1;
 	}
-}
+} */
 
 
 int main()
@@ -30,9 +30,6 @@ int main()
 	merge_sort(dataset, dataset->last_inserted, sizeof(dataset->rows->fields->data), &magg);
 }
 
-void merge_sort(void* base, size_t nitems, size_t size, int (*compar)(const void*,const void*)) {
-	int res = comparator(((Dataset*)base)->rows[0].fields[0], ((Dataset*)base)->rows[1].fields[0], 1, compar);
-	printf("%d\n", res);
-}
+
 
 
