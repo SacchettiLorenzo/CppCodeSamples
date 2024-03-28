@@ -5,7 +5,7 @@ using namespace std;
 
 void sort(int* array, int i, int j) {
 	int middle = (i + j) / 2;
-	if (j - 1 != i) {
+	if (i < j) {
 		sort(array, i, middle);
 		sort(array, middle + 1, j);
 	}
@@ -53,6 +53,11 @@ int main()
 {
 	int array[length] = { 7,4,1,8,2,3,6,5 };
 	sort(array, 0, length - 1);
+
+	for (size_t i = 0; i < length; i++)
+	{
+		cout << array[i] << " ";
+	}
 	cout << endl;
 }
 
