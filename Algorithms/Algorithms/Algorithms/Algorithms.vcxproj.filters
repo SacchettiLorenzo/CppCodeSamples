@@ -27,5 +27,20 @@
     <ClCompile Include="MergeSort.cpp">
       <Filter>Sort</Filter>
     </ClCompile>
+    <ClCompile Include="InsertionSort.cpp">
+      <Filter>Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectSort.cpp">
+      <Filter>Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="BubbleSort.cpp">
+      <Filter>Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Flag.cpp">
+      <Filter>Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="QuickSort.cpp">
+      <Filter>Sort</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

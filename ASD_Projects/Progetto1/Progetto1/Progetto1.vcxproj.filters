@@ -21,5 +21,8 @@
     <ClCompile Include="Generic_data_manipulation.h">
       <Filter>File di intestazione</Filter>
     </ClCompile>
+    <ClCompile Include="UnitTest.cpp">
+      <Filter>File di intestazione</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
