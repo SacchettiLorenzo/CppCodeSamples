@@ -15,14 +15,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Progetto1.c">
+    <ClCompile Include="Progetto2.c">
       <Filter>File di origine</Filter>
-    </ClCompile>
-    <ClCompile Include="Generic_data_manipulation.h">
-      <Filter>File di intestazione</Filter>
-    </ClCompile>
-    <ClCompile Include="UnitTest.h">
-      <Filter>File di intestazione</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
