@@ -4,6 +4,7 @@
 
 #define INT_MAX 2147483647 
 #define bufferSpan 16
+#define minimumMemory 4 //avoid  small chunck allocation fail
 #define expected_dictionary_length 661562
 #define printValueMatrix 0
 #define printArrowsMatrix 0
@@ -32,13 +33,13 @@ int main()
 {
 
 
-	const char* s1 = "do";
-	const char* s2 = "quando";
+	/*const char* s1 = "casa";
+	const char* s2 = "cassa";
 
-	/*int res = edit_distance(s1, s2);
-	printf("%d\n", res);*/
+	int res = edit_distance(s1, s2);
+	printf("%d\n", res);
 
-	/*res = edit_distance_dyn(s1, s2);
+	res = edit_distance_dyn(s1, s2);
 	printf("%d\n", res);*/
 
 	error = fopen_s(&to_be_corrected_file_ptr, "C:\\Users\\Lorenzo\\Desktop\\correctme.txt", "r");
@@ -89,7 +90,6 @@ int edit_distance_dyn(const char* s1, const char* s2) {
 	directions = (Dir*)malloc((strlen(s1) + 1) * (strlen(s2) + 1) * sizeof(Dir));
 	values = (int*)malloc((strlen(s1) + 1) * (strlen(s2) + 1) * sizeof(int));
 
-
 	if (values != NULL && directions != NULL) {
 		for (int i = 0; i < ((strlen(s1) + 1) * (strlen(s2) + 1)); i++)
 		{
@@ -108,8 +108,6 @@ int edit_distance_dyn(const char* s1, const char* s2) {
 			}
 		}
 	}
-
-
 
 	edit_distance_dyn_rec(s1, s2, 0, 0);
 
@@ -178,7 +176,7 @@ int edit_distance_dyn(const char* s1, const char* s2) {
 	int Icursor = strlen(s1) + 1;
 	int Jcursor = strlen(s2) + 1;
 
-	while (Icursor != 0 && Jcursor != 0)//check conditions ( might be Icursor != 1 || Jcursor != 1)
+	while (Icursor != 0 && Jcursor != 0)
 	{
 		if (directions[(Icursor - 1) * (strlen(s2) + 1) + (Jcursor)-1] == cross) {
 			
@@ -201,6 +199,8 @@ int edit_distance_dyn(const char* s1, const char* s2) {
 		}
 	}
 
+	free(directions);
+	free(values);
 	return res;
 }
 
@@ -231,8 +231,10 @@ void edit_distance_dyn_rec(const char* s1, const char* s2, int i, int j) {
 		printf("\n");
 	}*/
 
+	//j + 1 : offset to work with a matrix that has a dummy first row and column
+	//strlen(s2) + 1 : offset to work with a matrix that has a dummy first row and column
 
-
+	//distance path creation
 	if (i < (strlen(s1) + 1) && j < (strlen(s2) + 1)) {
 		if (s1[i - 1] == s2[j - 1]) {
 			if (i != 0 && j != 0) {
@@ -254,12 +256,7 @@ void edit_distance_dyn_rec(const char* s1, const char* s2, int i, int j) {
 				}
 			}
 		}
-
-
-
 	}
-
-
 
 	if (j < strlen(s2))
 		edit_distance_dyn_rec(s1, s2, i, j + 1);
@@ -274,10 +271,10 @@ void read_files(FILE* to_be_corrected_file_ptr, FILE* dictionary_file_ptr, char*
 	char* line = NULL;
 	size_t len = 0;
 	line = (char*)malloc(len * sizeof(char));
-	int read = 0;
+	size_t read = 0;
 	int index = 0;
 	
-	*unstructured_dictionary = (char**)malloc(expected_dictionary_length * sizeof(char*));
+	*unstructured_dictionary = (char**)malloc(expected_dictionary_length * sizeof(char*));  //todo: add a system to realocate chuck of memory
 	if (*unstructured_dictionary == NULL) {
 		printf("%s\n", "problems allocating memory");
 		exit(EXIT_FAILURE);
@@ -304,7 +301,17 @@ void read_files(FILE* to_be_corrected_file_ptr, FILE* dictionary_file_ptr, char*
 
 	while ((read = getline(&line, &len, dictionary_file_ptr)) != -1) {
 		line[read-1] = '\0';
-		(*unstructured_dictionary)[index] = (char*)malloc((read + 4) * sizeof(char));//todo: fix the +4 problem (with less than 4 char everything break)
+		if (read < bufferSpan) {
+
+		}
+
+		
+		if (read <= minimumMemory) { //avoid  small chunck allocation fail
+		(*unstructured_dictionary)[index] = (char*)malloc((read + minimumMemory) * sizeof(char));//todo: fix the +4 problem (with less than 4 char everything break)
+		}
+		else {
+			(*unstructured_dictionary)[index] = (char*)malloc((read) * sizeof(char));
+		}
 		if ((*unstructured_dictionary)[index] == NULL) {
 			printf("%s\n", "problems allocating memory");
 			exit(EXIT_FAILURE);
@@ -320,6 +327,7 @@ void correct(char* to_be_corrected_text, char** unstructured_dictionary) {
 	int right = 0;
 	char separator;
 	//to lowerCasefunction?
+	char* tmp = (char*)malloc(bufferSpan * sizeof(char));
 	while (right < text_length) {
 		while (to_be_corrected_text[right] != ' ' 
 			&& to_be_corrected_text[right] != ',' && to_be_corrected_text[right] != '.' 
@@ -329,7 +337,13 @@ void correct(char* to_be_corrected_text, char** unstructured_dictionary) {
 			right++;
 		}
 		
-		char* tmp = (char*)malloc((right - left + 1) / sizeof(char));
+		// realloc to prevent overflow
+		if ((right - left + 1) > bufferSpan) {
+			if (realloc(tmp, (bufferSpan + (right - left + 1))) == -1) {
+				printf("%s\n", "problems allocating memory");
+				exit(EXIT_FAILURE);
+			}
+		}
 
 		if (tmp == NULL) {
 			printf("%s\n", "problems allocating memory");
@@ -348,10 +362,11 @@ void correct(char* to_be_corrected_text, char** unstructured_dictionary) {
 				edit_distance = k;
 				correct_index = i;
 			}
+			if (edit_distance == 0)break;
 		}
 		printf("%s corrected with %s with edit distance %d\n",tmp, unstructured_dictionary[correct_index], edit_distance);
 		
-		for (int i = left; i < right; i++) {
+		for (int i = 0; i < right - left; i++) {
 			corrected_text[i] = tmp[i];
 		}
 
@@ -364,8 +379,8 @@ void correct(char* to_be_corrected_text, char** unstructured_dictionary) {
 			right++;
 		}
 		left = right;
-		
 	}
+		free(tmp);
 
 }
 
