@@ -238,6 +238,8 @@ int edit_distance_dyn(const char* s1, const char* s2) {
 		}
 	}
 
+	free(directions);
+	free(values);
 	return res;
 }
 
