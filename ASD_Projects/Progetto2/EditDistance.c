@@ -9,6 +9,9 @@
 #define printArrowsMatrix 0
 
 //todo: migliorare la parte del valore di ritorno della funzione correct_structured_word, rimuovere il trasferimento del risultato da correction_actual e correction_buffer
+//todo: add toLOwerCase function
+//todo: print out the correct sentence (change correct function)
+//todo: remove global variables and pointers
 
 typedef enum directions { null, up, left, cross } Dir;
 Dir* directions;
@@ -47,17 +50,110 @@ struct result_set{
 
 
 
-
+/**
+ * @brief Calculate edit distance between two words using recursion over word pieces
+ * 
+ * @param s1 string 1
+ * @param s2 string 2
+ * @addtogroup edit_distance_functions
+ * @return int
+ */
 int edit_distance(const char* s1, const char* s2);
+
+/**
+ * @brief Calculate edit distance between two words using dynamic programming
+ * 
+ * @param s1 string 1
+ * @param s2 string 2
+ * @addtogroup edit_distance_functions
+ * @return int 
+ */
 int edit_distance_dyn(const char* s1, const char* s2);
+
+/**
+ * @brief Actual dynamic programming recursive edit distance calculation
+ * 
+ * @param s1 string 1
+ * @param s2 string 2
+ * @param i index i
+ * @param j index j
+ * @addtogroup edit_distance_functions
+ */
 void edit_distance_dyn_rec(const char* s1, const char* s2, int i, int j);
+
+/**
+ * @brief read the files and load the text into the right data structure
+ * 
+ * @param to_be_corrected_file_ptr pointer to a file containing the text to correct
+ * @param dictionary_file_ptr pointer to a file containing the dictionary
+ * @param to_be_corrected_text pointer to a char array used to save the text to correct
+ * @param unstructured_dictionary pointer to a char* array used to store the dictionary
+ * @param head pointer to a word_length_node used to store the dictionary in a structured manner
+ */
 void read_files(FILE* to_be_corrected_file_ptr, FILE* dictionary_file_ptr, char** to_be_corrected_text, char*** unstructured_dictionary, WLN* head);
+
+/**
+ * @brief corect the words using the edit_distance function (non dynamic)
+ * 
+ * @param to_be_corrected_text pointer to a char array containing the words to be corrected
+ * @param unstructured_dictionary pointer to a char* containing the dictionary
+ * @addtogroup correction_functions
+ */
 void correct(char* to_be_corrected_text, char** unstructured_dictionary);
+
+/**
+ * @brief corect the words using the edit_distance_dyn function (dynamic)
+ * 
+ * @param to_be_corrected_text pointer to a char array containing the words to be corrected
+ * @param head pointer to a word_length_node used to store the dictionary in a structured manner
+ * @addtogroup correction_functions
+ */
 void correct_structured(char* to_be_corrected_text,WLN* head);
+
+/**
+ * @brief correct one word
+ * 
+ * @param word pointe to a char array with the work to look for
+ * @param head pointer to a word_length_node used to store the dictionary in a structured manner
+ * @return struct result_set 
+ * @addtogroup correction_functions
+ */
 struct result_set correct_structured_word(char* word,WLN* head);
+
+/**
+ * @brief read the file line by line
+ * 
+ * @param lineptr pointer to char* used to store the lines of the file
+ * @param n 
+ * @param stream pointer to file 
+ * @return size_t number of char read in one single line
+ */
 size_t getline_(char** lineptr, size_t* n, FILE* stream);
+
+/**
+ * @brief add a word to a structured dictionary
+ * 
+ * @param word pointer to the word that should be added
+ * @param head pointer to a word_length_node used to store the dictionary in a structured manner
+ */
 void new_word(char* word, WLN* head);
+
+/**
+ * @brief add a new node for word with specific length
+ * 
+ * @param prev node before this one
+ * @param next node next this one
+ * @param value word length
+ */
 void add_new_length_node(WLN* prev, WLN* next, int value);
+
+/**
+ * @brief add a new node for word with specific first letter
+ * 
+ * @param prev node before this one
+ * @param next node next this one
+ * @param value first letter of the word
+ */
 void add_new_alphabetic_node(AN* prev, AN* next, char value);
 int main()
 {
@@ -126,7 +222,7 @@ int edit_distance_dyn(const char* s1, const char* s2) {
 	directions = (Dir*)malloc((strlen(s1) + 1) * (strlen(s2) + 1) * sizeof(Dir));
 	values = (int*)malloc((strlen(s1) + 1) * (strlen(s2) + 1) * sizeof(int));
 
-
+	//directions and values matrices preparation
 	if (values != NULL && directions != NULL) {
 		for (int i = 0; i < ((strlen(s1) + 1) * (strlen(s2) + 1)); i++)
 		{
@@ -145,7 +241,6 @@ int edit_distance_dyn(const char* s1, const char* s2) {
 			}
 		}
 	}
-
 
 
 	edit_distance_dyn_rec(s1, s2, 0, 0);
@@ -215,7 +310,8 @@ int edit_distance_dyn(const char* s1, const char* s2) {
 	int Icursor = strlen(s1) + 1;
 	int Jcursor = strlen(s2) + 1;
 
-	while (Icursor != 0 && Jcursor != 0)//check conditions ( might be Icursor != 1 || Jcursor != 1)
+	//calculate the result of the edit distance algorithm
+	while (Icursor != 0 && Jcursor != 0)
 	{
 		if (directions[(Icursor - 1) * (strlen(s2) + 1) + (Jcursor)-1] == cross) {
 			
@@ -245,30 +341,9 @@ int edit_distance_dyn(const char* s1, const char* s2) {
 
 void edit_distance_dyn_rec(const char* s1, const char* s2, int i, int j) {
 
-	/*{
-		printf("   ");
-		for (int i = 0; i < (strlen(s2)); i++) {
-			printf(" %c", s2[i]);
-		}
-
-
-		for (int i = 0; i < ((strlen(s1) + 1) * (strlen(s2) + 1)); i++)
-		{
-			if (i % (strlen(s2) + 1) == 0) {
-
-				printf("\n");
-				if (i != 0) {
-					printf("%c ", s1[(i / strlen(s2)) - 1]);
-				}
-				else {
-					printf("  ");
-				}
-
-			}
-			printf("%d ", values[i]);
-		}
-		printf("\n");
-	}*/
+	//values and direction matrices have one column and one row more so
+	//(j+1) adjust the offset for the right calculation
+	//if j has no +1 it means that the original operation was (j+1)-1
 
 
 
@@ -316,6 +391,7 @@ void read_files(FILE* to_be_corrected_file_ptr, FILE* dictionary_file_ptr, char*
 	int read = 0;
 	int index = 0;
 	
+	//todo: add dynamic memory allocation
 	*unstructured_dictionary = (char**)malloc(expected_dictionary_length * sizeof(char*));
 	if (*unstructured_dictionary == NULL) {
 		printf("%s\n", "problems allocating memory");
@@ -351,12 +427,13 @@ void read_files(FILE* to_be_corrected_file_ptr, FILE* dictionary_file_ptr, char*
 		memcpy((*unstructured_dictionary)[index], line, read);
 		index++;
 
+		//if head exist add a new word to the data structure
         if(head != null){
             new_word(line,head );
         }
+	}
 
-}
-
+	//keep the head at the beginning of the list
     WLN* tmp = head;
 
     while (head->next != NULL){
@@ -374,7 +451,7 @@ void correct(char* to_be_corrected_text, char** unstructured_dictionary) {
 	int left = 0;
 	int right = 0;
 	char separator;
-	//to lowerCasefunction?
+	
 	while (right < text_length) {
 		while (to_be_corrected_text[right] != ' ' 
 			&& to_be_corrected_text[right] != ',' && to_be_corrected_text[right] != '.' 
@@ -419,7 +496,6 @@ void correct(char* to_be_corrected_text, char** unstructured_dictionary) {
 			right++;
 		}
 		left = right;
-		
 	}
 
 }
@@ -450,12 +526,15 @@ void correct_structured(char* to_be_corrected_text,WLN* head){
 
         WLN* head_ = head;
         int edit_distance = INT_MAX;
+
+		//go to the nearest word length
         while (strlen(tmp) > head_->value){
             head_ = head_->next;
         }
         struct result_set res;
+        
+		//search middle
         if(strlen(tmp) == head_->value){
-            //search center
             res = correct_structured_word(tmp,head_);
             if (res.edit_distance < edit_distance) {
                 strcpy(correction_actual,correction_buffer);
@@ -463,6 +542,7 @@ void correct_structured(char* to_be_corrected_text,WLN* head){
             }
         }
 
+		//search the nearest word in the lists one element further to left than right
         if(edit_distance != 0){
             WLN* head_left;
             WLN* head_right;
@@ -526,6 +606,8 @@ struct result_set correct_structured_word(char* word,WLN* head){
         return res;
     }
     AN* dictionary_ = head->alpphabet_order_dictionary_head->next;
+
+	//go to the nearest word by the first letter
     while ((int)word[0] > (int)dictionary_->value && dictionary_->next != NULL){
         dictionary_ = dictionary_->next;
     }
@@ -539,6 +621,8 @@ struct result_set correct_structured_word(char* word,WLN* head){
             }
         }
     }
+
+	//search the nearest word in the lists one element further to left than right
     if(edit_distance != 0){
         AN* dictionary_left;
         AN* dictionary_right;
@@ -644,7 +728,7 @@ void new_word(char* word, WLN* head){
 
 
     int length = strlen(word);
-    while( length > head->value){ //il while si ferma all'elemeto successivo rispetto a quello che deve essere inserito, devo riformulare l'aggiunta dei nodi
+    while( length > head->value){
         if(head->next == NULL){
             add_new_length_node(head, NULL, length);
         }
