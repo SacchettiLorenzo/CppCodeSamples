@@ -1,29 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define INT_MAX 2147483647 
 #define bufferSpan 16
 #define expected_dictionary_length 661562
 #define printValueMatrix 0
 #define printArrowsMatrix 0
+#define log 1
 
-//todo: migliorare la parte del valore di ritorno della funzione correct_structured_word, rimuovere il trasferimento del risultato da correction_actual e correction_buffer
+
 //todo: add toLOwerCase function
-//todo: print out the correct sentence (change correct function)
-//todo: remove global variables and pointers
 
 typedef enum directions { null, up, left, cross } Dir;
 Dir* directions;
 int* values;
 
 int text_length = 0;
-
+int word_analized = 0;
 char* corrected_text;
 int dictionary_length = 0;
-//char correction_buffer[40];
-//char correction_actual[40];
-
 
 typedef struct alphabetic_node{
     char value;
@@ -46,8 +43,6 @@ struct result_set{
     int edit_distance;
 };
 
-
-
 /**
  * @brief Calculate edit distance between two words using recursion over word pieces
  * 
@@ -56,7 +51,7 @@ struct result_set{
  * @addtogroup edit_distance_functions
  * @return int
  */
-int edit_distance(const char* s1, const char* s2);
+int edit_distance_rec(const char* s1, const char* s2);
 
 /**
  * @brief Calculate edit distance between two words using dynamic programming
@@ -91,13 +86,22 @@ void edit_distance_dyn_rec(const char* s1, const char* s2, int i, int j);
 void read_files(FILE* to_be_corrected_file_ptr, FILE* dictionary_file_ptr, char** to_be_corrected_text, char*** unstructured_dictionary, WLN* head);
 
 /**
- * @brief corect the words using the edit_distance function (non dynamic)
- * 
+ * @brief correct the words using the edit_distance function (non dynamic)
+ *
  * @param to_be_corrected_text pointer to a char array containing the words to be corrected
  * @param unstructured_dictionary pointer to a char* containing the dictionary
  * @addtogroup correction_functions
  */
 void correct(char* to_be_corrected_text, char** unstructured_dictionary);
+
+/**
+ * @brief correct the words using the edit_distance function (dynamic)
+ * 
+ * @param to_be_corrected_text pointer to a char array containing the words to be corrected
+ * @param unstructured_dictionary pointer to a char* containing the dictionary
+ * @addtogroup correction_functions
+ */
+void correct_dyn(char* to_be_corrected_text, char** unstructured_dictionary);
 
 /**
  * @brief corect the words using the edit_distance_dyn function (dynamic)
@@ -153,40 +157,74 @@ void add_new_length_node(WLN* prev, WLN* next, int value);
  * @param value first letter of the word
  */
 void add_new_alphabetic_node(AN* prev, AN* next, char value);
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc != 2) {
+        printf("Usage:\n1: recursive correction\n2: dynamic correction\n3: dynamic structured correction\n");
+        return 1;
+    }
+    double time_spent;
+    int selection = atoi(argv[1]);
 
     WLN* head = (WLN*)malloc(sizeof (struct word_length_node));
     FILE* to_be_corrected_file_ptr = NULL;
     FILE* dictionary_file_ptr = NULL;
     char* to_be_corrected_text;
     char** unstructured_dictionary;
-    /*
-	const char* s1 = "altro";
-	const char* s2 = "quando";
+
+	const char* s1 = "orizonte";
+	const char* s2 = "oriente";
     const char* s3 = "quanto";
 
-    new_word(s1,head);
-    new_word(s2,head);
-    new_word(s3,head);
-	 int res = edit_distance(s1, s2);
-	printf("%d\n", res);
+    int res;
+	// res = edit_distance(s1, s2);
+	//printf("%d\n", res);
 
-    res = edit_distance_dyn(s1, s2);
-    printf("%d\n", res);
-    */
+    //res = edit_distance_dyn(s1, s2);
+    //printf("%d\n", res);
+
+
     to_be_corrected_file_ptr = fopen("correctme.txt", "r");
     dictionary_file_ptr = fopen("dictionary.txt", "r");
     read_files(to_be_corrected_file_ptr, dictionary_file_ptr,&to_be_corrected_text,&unstructured_dictionary,head);
-	//correct(to_be_corrected_text, unstructured_dictionary);
-    correct_structured(to_be_corrected_text,head);
+
+    switch (selection) {
+        case 1:
+            word_analized = 0;
+            clock_t begin = clock();
+            correct(to_be_corrected_text, unstructured_dictionary);
+            clock_t end = clock();
+            time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+            printf("time spent in non dynamic correct function: %f\n",time_spent);
+            break;
+        case 2:
+            word_analized = 0;
+            clock_t begin_ = clock();
+            correct_dyn(to_be_corrected_text, unstructured_dictionary);
+            clock_t end_ = clock();
+            time_spent = (double)(end_ - begin_) / CLOCKS_PER_SEC;
+            printf("time spent in dynamic correct function: %f\n",time_spent);
+            break;
+        case 3:
+            word_analized = 0;
+            clock_t begin__ = clock();
+            correct_structured(to_be_corrected_text,head);
+            clock_t end__ = clock();
+            time_spent = (double)(end__- begin__) / CLOCKS_PER_SEC;
+            printf("time spent in dynamic structured correct function: %f\n",time_spent);
+            break;
+        default:return 1;
+    }
+
+
+    /*
 	//fclose(to_be_corrected_file_ptr);
 	//fclose(dictionary_file_ptr);
-
+    */
 }
 
 
-int edit_distance(const char* s1, const char* s2) {
+int edit_distance_rec(const char* s1, const char* s2) {
 
 	if (strlen(s1) == 0) {
 		return (int)strlen(s2);
@@ -197,15 +235,15 @@ int edit_distance(const char* s1, const char* s2) {
 
 	int d_no_op = 0;
 	if (s1[0] == s2[0]) {
-		d_no_op = edit_distance((s1 + 1), (s2 + 1));
+		d_no_op = edit_distance_rec((s1 + 1), (s2 + 1));
 	}
 	else {
 		d_no_op = INT_MAX;
 	}
 
-	int d_canc = 1 + edit_distance(s1, (s2 + 1));
+	int d_canc = 1 + edit_distance_rec(s1, (s2 + 1));
 
-	int d_ins = 1 + edit_distance((s1 + 1), s2);
+	int d_ins = 1 + edit_distance_rec((s1 + 1), s2);
 
 	int min_value = d_no_op;
 	if (d_canc < min_value) {
@@ -426,7 +464,7 @@ void read_files(FILE* to_be_corrected_file_ptr, FILE* dictionary_file_ptr, char*
 
 	while ((read = (int)getline_(&line, &len, dictionary_file_ptr)) != -1) {
 		line[read-1] = '\0';
-		(*unstructured_dictionary)[index] = (char*)malloc(read * sizeof(char));//todo: fix the +4 problem (with less than 4 char everything break)
+		(*unstructured_dictionary)[index] = (char*)malloc(read * sizeof(char));
 		if ((*unstructured_dictionary)[index] == NULL) {
 			printf("%s\n", "problems allocating memory");
 			exit(EXIT_FAILURE);
@@ -462,8 +500,8 @@ void correct(char* to_be_corrected_text, char** unstructured_dictionary) {
 		while (to_be_corrected_text[right] != ' ' 
 			&& to_be_corrected_text[right] != ',' && to_be_corrected_text[right] != '.' 
 			&& to_be_corrected_text[right] != ';' && to_be_corrected_text[right] != ':' 
-			&& to_be_corrected_text[right] != '?' && to_be_corrected_text[right] != '\n' 
-			&& to_be_corrected_text[right]!= '\0') {
+			&& to_be_corrected_text[right] != '?' && to_be_corrected_text[right] != '\''
+            && to_be_corrected_text[right] != '\n'&& to_be_corrected_text[right]!= '\0') {
 			right++;
 		}
 		
@@ -481,29 +519,93 @@ void correct(char* to_be_corrected_text, char** unstructured_dictionary) {
 		int correct_index;
 		for (int i = 0; i < dictionary_length && edit_distance != 0; i++)
 		{
-			int k = edit_distance_dyn(tmp, unstructured_dictionary[i]);
+			int k = edit_distance_rec(tmp, unstructured_dictionary[i]);
+            word_analized++;
 			if (k < edit_distance) {
 				edit_distance = k;
 				correct_index = i;
 			}
 		}
-		printf("%s corrected with %s with edit distance %d\n",tmp, unstructured_dictionary[correct_index], edit_distance);
-		
-		for (int i = left; i < right; i++) {
-			corrected_text[i] = tmp[i];
-		}
 
+#if log == 1
+		printf("%s --> %s , edit distance %d\n",tmp, unstructured_dictionary[correct_index], edit_distance);
+#endif
+
+        strcat(corrected_text,unstructured_dictionary[correct_index]);
+        char cToStr[2];
+        cToStr[1] = '\0';
 		while (to_be_corrected_text[right] == ' '
 			|| to_be_corrected_text[right] == ',' || to_be_corrected_text[right] == '.'
 			|| to_be_corrected_text[right] == ';' || to_be_corrected_text[right] == ':'
-			|| to_be_corrected_text[right] == '?' || to_be_corrected_text[right] == '\n'
-			|| to_be_corrected_text[right] == '\0') {
-			corrected_text[right] = to_be_corrected_text[right];
+			|| to_be_corrected_text[right] == '?' || to_be_corrected_text[right] == '\''
+            || to_be_corrected_text[right] == '\n'|| to_be_corrected_text[right] == '\0') {
+            cToStr[0] = to_be_corrected_text[right];
+            strcat(corrected_text,cToStr);
 			right++;
 		}
 		left = right;
 	}
+    printf("%s\n", to_be_corrected_text);
+    printf("%s\n", corrected_text);
+    printf("word analyzed: %d\n", word_analized);
+}
 
+void correct_dyn(char* to_be_corrected_text, char** unstructured_dictionary) {
+    int left = 0;
+    int right = 0;
+
+    while (right < text_length) {
+        while (to_be_corrected_text[right] != ' '
+               && to_be_corrected_text[right] != ',' && to_be_corrected_text[right] != '.'
+               && to_be_corrected_text[right] != ';' && to_be_corrected_text[right] != ':'
+               && to_be_corrected_text[right] != '?' && to_be_corrected_text[right] != '\''
+               && to_be_corrected_text[right] != '\n'&& to_be_corrected_text[right]!= '\0') {
+            right++;
+        }
+
+        char* tmp = (char*)malloc((right - left + 1) / sizeof(char));
+
+        if (tmp == NULL) {
+            printf("%s\n", "problems allocating memory");
+            exit(EXIT_FAILURE);
+        }
+
+        memcpy(tmp, to_be_corrected_text + left, right - left);
+        tmp[right - left] = '\0';
+
+        int edit_distance = INT_MAX;
+        int correct_index;
+        for (int i = 0; i < dictionary_length && edit_distance != 0; i++)
+        {
+            int k = edit_distance_dyn(tmp, unstructured_dictionary[i]);
+            word_analized++;
+            if (k < edit_distance) {
+                edit_distance = k;
+                correct_index = i;
+            }
+        }
+
+#if log == 1
+        printf("%s --> %s , edit distance %d\n",tmp, unstructured_dictionary[correct_index], edit_distance);
+#endif
+
+        strcat(corrected_text,unstructured_dictionary[correct_index]);
+        char cToStr[2];
+        cToStr[1] = '\0';
+        while (to_be_corrected_text[right] == ' '
+               || to_be_corrected_text[right] == ',' || to_be_corrected_text[right] == '.'
+               || to_be_corrected_text[right] == ';' || to_be_corrected_text[right] == ':'
+               || to_be_corrected_text[right] == '?' || to_be_corrected_text[right] == '\''
+               || to_be_corrected_text[right] == '\n'|| to_be_corrected_text[right] == '\0') {
+            cToStr[0] = to_be_corrected_text[right];
+            strcat(corrected_text,cToStr);
+            right++;
+        }
+        left = right;
+    }
+    printf("%s\n", to_be_corrected_text);
+    printf("%s\n", corrected_text);
+    printf("word analyzed: %d\n", word_analized);
 }
 
 void correct_structured(char* to_be_corrected_text,WLN* head){
@@ -516,7 +618,7 @@ void correct_structured(char* to_be_corrected_text,WLN* head){
                && to_be_corrected_text[right] != ',' && to_be_corrected_text[right] != '.'
                && to_be_corrected_text[right] != ';' && to_be_corrected_text[right] != ':'
                && to_be_corrected_text[right] != '?' && to_be_corrected_text[right] != '\n'
-               && to_be_corrected_text[right]!= '\0') {
+               && to_be_corrected_text[right] != '\''&& to_be_corrected_text[right]!= '\0') {
             right++;
         }
 
@@ -539,7 +641,7 @@ void correct_structured(char* to_be_corrected_text,WLN* head){
             head_ = head_->next;
         }
         struct result_set res;
-        
+        res.edit_distance = INT_MAX;
 		//search middle
         if((int)strlen(tmp) == head_->value){
             res = correct_structured_word(tmp,head_);
@@ -558,23 +660,27 @@ void correct_structured(char* to_be_corrected_text,WLN* head){
             }
 
             if(head_->next != NULL){
-                head_right = head->next; //todo: check if "head" should be "head_"
+                head_right = head_->next; //todo: check if "head" should be "head_"
             }
 
-            while (edit_distance != 0 && (head_left->prev != NULL || head_right->next != NULL)){
+            while (res.edit_distance != 0 && (head_left->prev != NULL || head_right->next != NULL)){
                 res = correct_structured_word(tmp,head_left);
                 if (res.edit_distance < edit_distance) {
                     strcpy(word_corrected,res.word);
                     edit_distance = res.edit_distance;
                 }
-                if(edit_distance == 0)break;
+                if(edit_distance == 0) {
+                    break;
+                }
 
-                res = correct_structured_word(tmp,head_left);
+                res = correct_structured_word(tmp,head_right);
                 if (res.edit_distance < edit_distance) {
                     strcpy(word_corrected,res.word);
                     edit_distance = res.edit_distance;
                 }
-                if(edit_distance == 0)break;
+                if(edit_distance == 0) {
+                    break;
+                }
 
                 if(head_left->prev != NULL){
                     head_left = head_left->prev;
@@ -585,44 +691,55 @@ void correct_structured(char* to_be_corrected_text,WLN* head){
                 }
             }
         }
-
-        printf("%s corrected with %s with edit distance %d\n",tmp, word_corrected, edit_distance);
-
-        for (int i = left; i < right; i++) {//todo: this could be wrong
-            corrected_text[i] = tmp[i];
-        }
-
+#if log == 1
+        printf("%s --> %s , edit distance %d\n",tmp, word_corrected, edit_distance);
+#endif
+        strcat(corrected_text,word_corrected);
+        char cToStr[2];
+        cToStr[1] = '\0';
         while (to_be_corrected_text[right] == ' '
                || to_be_corrected_text[right] == ',' || to_be_corrected_text[right] == '.'
                || to_be_corrected_text[right] == ';' || to_be_corrected_text[right] == ':'
                || to_be_corrected_text[right] == '?' || to_be_corrected_text[right] == '\n'
-               || to_be_corrected_text[right] == '\0') {
-            corrected_text[right] = to_be_corrected_text[right];
+               ||to_be_corrected_text[right] == '\'' || to_be_corrected_text[right] == '\0') {
+            cToStr[0] = to_be_corrected_text[right];
+            strcat(corrected_text,cToStr);
             right++;
+
         }
         left = right;
 
     }
+    printf("%s\n", to_be_corrected_text);
+    printf("%s\n", corrected_text);
+    printf("word analyzed: %d\n", word_analized);
 }
 
 struct result_set correct_structured_word(char* word,WLN* head){
+
     struct result_set res;
     res.edit_distance = INT_MAX;
 
     if(head->value == 0 || head->alpphabet_order_dictionary_head == 0){
         return res;
     }
-    res.word = (char*)malloc(head->value * sizeof (char));
+    res.word = (char*)malloc((head->value) * sizeof (char));
 
-    AN* dictionary_ = head->alpphabet_order_dictionary_head->next;
+    AN* dictionary_;
+    if(head->alpphabet_order_dictionary_head->value == 0){
+        dictionary_ = head->alpphabet_order_dictionary_head->next;
+    }else{
+        dictionary_ = head->alpphabet_order_dictionary_head;
+    }
 
 	//go to the nearest word by the first letter
-    while ((int)word[0] > (int)dictionary_->value && dictionary_->next != NULL){
+    while ((int)word[0] > (int)dictionary_->value && dictionary_ != NULL && dictionary_->next != NULL){
         dictionary_ = dictionary_->next;
     }
     if(word[0] == dictionary_->value){
-        for (int i = 0; i < dictionary_->num_words && edit_distance != 0; ++i) { //todo: check if "edit_distance" should be "res.edit_distance"
+        for (int i = 0; i < dictionary_->num_words && res.edit_distance != 0; ++i) {
             int k = edit_distance_dyn(word, dictionary_->dictionary[i]);
+            word_analized++;
             if (k < res.edit_distance) {
                 res.edit_distance = k;
                 if(dictionary_->dictionary[i] != NULL)
@@ -632,7 +749,7 @@ struct result_set correct_structured_word(char* word,WLN* head){
     }
 
 	//search the nearest word in the lists one element further to left than right
-    if(edit_distance != 0){ //todo: check if "edit_distance" should be "res.edit_distance"
+    if(res.edit_distance != 0){
         AN* dictionary_left;
         AN* dictionary_right;
         if(dictionary_->prev != NULL){
@@ -645,24 +762,31 @@ struct result_set correct_structured_word(char* word,WLN* head){
 
         while (dictionary_left->prev != NULL || dictionary_right->next != NULL){
             //search
-            for (int i = 0; i < dictionary_left->num_words && edit_distance != 0; ++i) { //todo: check if "edit_distance" should be "res.edit_distance"
+            for (int i = 0; i < dictionary_left->num_words && res.edit_distance != 0; ++i) {
                 int k = edit_distance_dyn(word, dictionary_left->dictionary[i]);
+                word_analized++;
                 if (k < res.edit_distance) {
                     res.edit_distance = k;
-                    if(dictionary_->dictionary[i] != NULL)
-                    strcpy(res.word,dictionary_->dictionary[i]);  }
+                    if(dictionary_left->dictionary[i] != NULL)
+                    strcpy(res.word,dictionary_left->dictionary[i]);  }
             }
-            if(edit_distance == 0)break; //todo: check if "edit_distance" should be "res.edit_distance"
+            if(res.edit_distance == 0) {
+                break;
+            }
 
-            for (int i = 0; i < dictionary_right->num_words && edit_distance != 0; ++i) { //todo: check if "edit_distance" should be "res.edit_distance"
+            for (int i = 0; i < dictionary_right->num_words && res.edit_distance != 0; ++i) {
                 int k = edit_distance_dyn(word, dictionary_right->dictionary[i]);
+                word_analized++;
                 if (k < res.edit_distance) {
                     res.edit_distance = k;
-                    if(dictionary_->dictionary[i] != NULL)
-                    strcpy(res.word,dictionary_->dictionary[i]);
+                    if(dictionary_right->dictionary[i] != NULL){
+                        strcpy(res.word,dictionary_right->dictionary[i]);
+                    }
                 }
             }
-            if(edit_distance == 0)break; //todo: check if "edit_distance" should be "res.edit_distance"
+            if(res.edit_distance == 0) {
+                break;
+            }
 
             if(dictionary_left->prev != NULL){
                 dictionary_left = dictionary_left->prev;
