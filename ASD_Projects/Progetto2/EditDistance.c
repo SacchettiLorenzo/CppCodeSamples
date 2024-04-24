@@ -172,17 +172,18 @@ int main(int argc, char *argv[])
     char* to_be_corrected_text;
     char** unstructured_dictionary;
 
+    /*
 	const char* s1 = "orizonte";
 	const char* s2 = "oriente";
     const char* s3 = "quanto";
 
     int res;
-	// res = edit_distance(s1, s2);
-	//printf("%d\n", res);
+	 res = edit_distance(s1, s2);
+	printf("%d\n", res);
 
-    //res = edit_distance_dyn(s1, s2);
-    //printf("%d\n", res);
-
+    res = edit_distance_dyn(s1, s2);
+    printf("%d\n", res);
+    */
 
     to_be_corrected_file_ptr = fopen("correctme.txt", "r");
     dictionary_file_ptr = fopen("dictionary.txt", "r");
@@ -804,7 +805,7 @@ size_t getline_(char** lineptr, size_t* n, FILE* stream) {
 	char* p = bufptr;
 	size_t size;
 	int c;
-	int char_counter = 0;
+
 
 	if (lineptr == NULL) {
 		return -1;
@@ -857,7 +858,6 @@ void new_word(char* word, WLN* head){
         printf("%s\n", "one ore more NULL pointers");
         exit(EXIT_FAILURE);
     }
-    WLN* original_WLN_head = head;
     if(head->alpphabet_order_dictionary_head == NULL){
         head->alpphabet_order_dictionary_head = (AN*)malloc(sizeof (struct alphabetic_node));
         head->alpphabet_order_dictionary_head->value = 0;
@@ -877,7 +877,6 @@ void new_word(char* word, WLN* head){
         head = head->prev;
     }
 
-    AN* original_AN_head = head->alpphabet_order_dictionary_head;
     int first_char_value = (int)word[0];
     while(first_char_value > (int)head->alpphabet_order_dictionary_head->value){
         if(head->alpphabet_order_dictionary_head->next == NULL){

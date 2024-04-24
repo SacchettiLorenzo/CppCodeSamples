@@ -1,6 +1,6 @@
 SHELL:=bash 
 CC:=gcc
-CFLAGS := -Wall -Wextra -g
+CFLAGS := -Wall -Wextra
 
 all: ./editDistance.o ./executable.out
 
