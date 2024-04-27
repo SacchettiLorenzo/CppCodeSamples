@@ -1,5 +1,6 @@
 #include "Generic_data_manipulation.h"
 
+
 /* void merge_sort(void* base, size_t nitems, size_t size, int (*compar)(const void*, const void*));
 
 int com(int* a, int* b) {
@@ -19,10 +20,9 @@ int main()
 {
 	FILE* input = NULL;
 	FILE* output = NULL;
-	errno_t error;
 
-	error = fopen_s(&input, "C:\\Users\\Lorenzo\\Desktop\\subset.csv", "r");
-	error = fopen_s(&output, "C:\\Users\\Lorenzo\\Desktop\\result.csv", "a");
+    input = fopen("subset.csv", "r");
+    output = fopen("result.csv", "a");
 	sort_records(input, output, 2, 1);
 
 	/*TODO: check with quick_sort()*/
