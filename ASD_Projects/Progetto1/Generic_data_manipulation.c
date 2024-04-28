@@ -26,7 +26,11 @@ Dataset* new_Dataset(int struct_size, int expected_rows,... /*variadic function 
 
     }
     else {
-        GDM.dataset = (Dataset*)realloc(GDM.dataset, GDM.length * sizeof(Dataset)); //TODO: check if works and add null protection
+        GDM.dataset = (Dataset*)realloc(GDM.dataset, GDM.length * sizeof(Dataset));
+        if(GDM.dataset == NULL){
+            printf("problems with memory allocation");
+            exit(EXIT_FAILURE);
+        }
     }
 
     if (GDM.dataset + (GDM.length - 1) != NULL) {
@@ -37,8 +41,11 @@ Dataset* new_Dataset(int struct_size, int expected_rows,... /*variadic function 
         (GDM.dataset + (GDM.length - 1))->size = 0;
         (GDM.dataset + (GDM.length - 1))->struct_type = (Type*)malloc(struct_size * sizeof(Type));
         return GDM.dataset + (GDM.length - 1);
+    }else{
+        printf("problems with memory allocation");
+        exit(EXIT_FAILURE);
     }
-    //todo: add null porotection if GDM.dataset + (GDM.length - 1) == NULL
+
 }
 
 void laod_from_file(FILE* fp, Dataset* dataset) {
@@ -139,7 +146,11 @@ void new_record_allocation_function(Dataset* dataset) {
 
 
     if (dataset->last_inserted == dataset->size-1) {
-        (*dataset).rows = (Struct*)realloc((*dataset).rows, (dataset->size * 2) * sizeof(Struct*));//TODO: check if works and add null protection
+        (*dataset).rows = (Struct*)realloc((*dataset).rows, (dataset->size * 2) * sizeof(Struct*));
+        if((*dataset).rows == NULL){
+            printf("problems with memory allocation");
+            exit(EXIT_FAILURE);
+        }
         dataset->size *= 2;
     }
 
@@ -153,7 +164,7 @@ void load_element_as_int(char** lineptr, int i, int j, int column, Dataset* data
 
     int placeholder = 0;
 
-    for (size_t index = i; index <= j; index++)
+    for (int index = i; index <= j; index++)
     {
         placeholder *= 10;
         placeholder += (int)(*lineptr)[index] - '0';
@@ -219,7 +230,7 @@ void load_element_as_double(char** lineptr, int i, int j, int column, Dataset* d
 }
 
 void load_element_as_float(char** lineptr, int i, int j, int column, Dataset* dataset) {
-    char* placeholder = (char*)malloc(((j - i) + 1) + sizeof(char)); //TODO: cambiare il segno + con il segno *
+    char* placeholder = (char*)malloc(((j - i) + 1) * sizeof(char));
     float d_placeholder = 0;
     if (placeholder == NULL) {
         printf("%s\n", "error loading float from file");
@@ -246,10 +257,10 @@ void load_element_as_float(char** lineptr, int i, int j, int column, Dataset* da
 #endif
 }
 
-//todo:
-void load_element_as_boolean(char** lineptr, int i, int j, int column, Dataset* dataset){}
 
-//todo:
+void load_element_as_boolean(char** lineptr, int i, int j, int column, Dataset* dataset){
+}
+
 void load_element_as_struct(char** lineptr, int i, int j, int column, Dataset* dataset){}
 
 int comparator(Var first, Var second, int num_comparation, ...) {
@@ -285,20 +296,63 @@ int default_int_sort_function(const void* a,const void* b) {
     if (*(int*)a > *(int*)b)return 1;
 }
 
+int default_float_sort_function(const void* a,const void* b) {
+    if (*(float*)a < *(float*)b)return -1;
+    if (*(float*)a == *(float*)b)return 0;
+    if (*(float*)a > *(float*)b)return 1;
+}
+
+int default_double_sort_function(const void* a,const void* b) {
+    if (*(double*)a < *(double*)b)return -1;
+    if (*(double*)a == *(double*)b)return 0;
+    if (*(double*)a > *(double*)b)return 1;
+}
+
+int default_string_sort_function(const void* a,const void* b) {
+    int res = strcmp((*(char**)a),(*(char**)b));
+    if(res == 0) return 0;
+    if(res > 0) return 1;
+    if(res < 0)return -1;
+}
+
 void sort_records(FILE *infile, FILE *outfile, size_t field, size_t algo){
     Dataset* dataset = GDM.new_Dataset(4, 20000000, &load_element_as_int, &load_element_as_char_array, &load_element_as_int, &load_element_as_double);
+    void* sorting_function;
+    switch (field) {
+        case 0:
+            sorting_function = GDM.default_int_sort_function;
+            break;
+        case 1:
+            sorting_function = GDM.default_string_sort_function;
+            break;
+        case 2:
+            sorting_function = GDM.default_int_sort_function;
+            break;
+        case 3:
+            sorting_function = GDM.default_double_sort_function;
+            break;
+        default:
+            printf("you must provide an existing field");
+            break;
+
+    }
     GDM.load_from_file(infile, dataset);
     GDM.sorting_fields = field;
+    double time_spent;
+    clock_t begin = clock();
     switch (algo)
     {
         case 1:
-            GDM.mergeSort(dataset, dataset->last_inserted, dataset->_Struct_size, GDM.default_int_sort_function);
+            GDM.mergeSort(dataset, dataset->last_inserted, dataset->_Struct_size, sorting_function);
             break;
         case 2:
-            GDM.quickSort(dataset, dataset->last_inserted, dataset->_Struct_size, GDM.default_int_sort_function);
+            GDM.quickSort(dataset, dataset->last_inserted, dataset->_Struct_size, sorting_function);
         default:
             break;
     }
+    clock_t end = clock();
+    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("records sorted in: %f seconds",time_spent);
 
     for (int i = 0; i < dataset->size; i++) {
         for (int j = 0; j < dataset->_Struct_size; j++)
@@ -321,15 +375,17 @@ void sort_records(FILE *infile, FILE *outfile, size_t field, size_t algo){
                 fprintf(outfile, "%s", ",");
             }
         }
-        fprintf(outfile, "\n", "\0");//todo: check if works (may add %)
+        fprintf(outfile, "\n", "\0");
     }
+
+
 }
 
 void merge_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*)){
     if(((Dataset*)base)->type == T_dataset){
         tmp = (Struct*)malloc(nitems * sizeof(Struct*));
         merge_sort_Dataset((Dataset*)base, 0, nitems-1, compar);
-        free(tmp); //TODO: check if works
+        free(tmp);
     }else{
         merge_sort_void(base, 0, nitems - 1, size, compar);
     }
@@ -440,10 +496,10 @@ void quick_sort(void *base, size_t nitems, size_t size, int (*compar)(const void
     if (((Dataset*)base)->type == T_dataset) {
         tmp = (Struct*)malloc(sizeof(Struct*));
         quick_sort_Dataset((Dataset*)base, 0, nitems - 1, compar);
-        free(tmp);//TODO: check if works
+        free(tmp);
     }
     else {
-        //todo: normal quick sort, use compar function
+        quick_sort_void(base, 0, nitems - 1, size, compar);
     }
 }
 
