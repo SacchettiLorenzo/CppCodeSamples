@@ -3,13 +3,13 @@
 #include <string.h>
 #include <time.h>
 
+
 #define INT_MAX 2147483647 
 #define bufferSpan 16
 #define expected_dictionary_length 661562
 #define printValueMatrix 0
 #define printArrowsMatrix 0
 #define log 1
-
 
 //todo: add toLOwerCase function
 
@@ -413,11 +413,7 @@ void edit_distance_dyn_rec(const char* s1, const char* s2, int i, int j) {
 			}
 		}
 
-
-
 	}
-
-
 
 	if (j < (int)strlen(s2))
 		edit_distance_dyn_rec(s1, s2, i, j + 1);
