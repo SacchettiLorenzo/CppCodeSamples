@@ -1,6 +1,4 @@
 #include "edit_distance.h"
-#include "UnitTest.h"
-
 int main(int argc, char *argv[])
 {
     if (argc != 2) {

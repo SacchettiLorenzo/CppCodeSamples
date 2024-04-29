@@ -7,17 +7,16 @@ CC	 = gcc
 FLAGS	 = -g -c -Wall -Wextra
 
 all: $(OBJS)
-	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
+	$(CC) -g $(OBJS) -o $(OUT) 
 
 main.o: main.c
 	$(CC) $(FLAGS) main.c 
-
 
 clean:
 	rm -f $(OBJS) $(OUT)
 
 test: $(TEST)
-	$(CC) -g $(TEST) -o $(OUT) $(LFLAGS)
+	$(CC) -g $(TEST) -o $(OUT) 
 
 test.o: test.c
 	$(CC) $(FLAGS) test.c
