@@ -1,15 +1,27 @@
-SHELL:=bash 
-CC:=gcc
-CFLAGS := -Wall -Wextra
+OBJS	= main.o editDistance.o
+TEST	= test.o editDistance.o UnitTest.o
+OUT	= executable.out
+CC	 = gcc
+FLAGS	 = -g -c -Wall -Wextra
 
-all: ./editDistance.o ./executable.out
+all: $(OBJS)
+	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
 
-./editDistance.o: ./EditDistance.c 
-	${CC} $(CFLAGS) -c $< -o $@ 
+main.o: main.c
+	$(CC) $(FLAGS) main.c 
 
-./executable.out: ./EditDistance.o
-	${CC} ./editDistance.o -o $@ 
-
-.PHONY: clean
 clean:
-	rm -f editDistance.o executable.out
+	rm -f $(OBJS) $(OUT)
+
+test: $(TEST)
+	$(CC) -g $(TEST) -o $(OUT) $(LFLAGS)
+	
+test.o: test.c
+	$(CC) $(FLAGS) test.c
+
+UnitTest.o: UnitTest.c
+	$(CC) $(FLAGS) UnitTest.c
+
+editDistance.o: ./EditDistance.c 
+	${CC} $(CFLAGS) -c $< -o $@ 
+	
