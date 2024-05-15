@@ -18,3 +18,5 @@
 *.png
 *.jpg
 *.dll
+records.csv
+result.csv

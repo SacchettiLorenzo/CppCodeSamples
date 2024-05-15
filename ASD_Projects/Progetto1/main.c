@@ -21,15 +21,15 @@ int main()
 	FILE* input = NULL;
 	FILE* output = NULL;
 
-    input = fopen("subset.csv", "r");
+    input = fopen("records.csv", "r");
     output = fopen("result.csv", "a");
-	sort_records(input, output, 2, 1);
+	sort_records(input, output, 1, 1);
 
 	/*TODO: check with quick_sort()*/
 	/*int array[32] = { 7,4,1,8,2,3,6,5,7,4,1,8,2,3,6,5,7,4,1,8,2,3,6,5,7,4,1,8,2,3,6,5 };
 	quick_sort_void(array, 0, 31, sizeof(int), com);
 	merge_sort_void(array, 0, 31, sizeof(int), com);
-	for (size_t i = 0; i < 31; i++)
+	for (size_t i = 0; i < 31; i++)A
 	{
 		printf("%d\n", array[i]);
 	}*/

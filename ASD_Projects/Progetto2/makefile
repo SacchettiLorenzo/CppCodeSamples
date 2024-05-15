@@ -1,15 +1,30 @@
-SHELL:=bash 
-CC:=gcc
-CFLAGS := -Wall -Wextra
+OBJS	= main.o edit_distance.o
+TEST	= test.o edit_distance.o UnitTest.o
+SOURCE	= main.c edit_distance.c
+HEADER	= edit_distance.h
+OUT	= executable.out
+CC	 = gcc
+FLAGS	 = -g -c -Wall -Wextra
 
-all: ./editDistance.o ./executable.out
+all: $(OBJS)
 
-./editDistance.o: ./EditDistance.c 
-	${CC} $(CFLAGS) -c $< -o $@ 
+	$(CC) -g $(OBJS) -o $(OUT) 
 
-./executable.out: ./EditDistance.o
-	${CC} ./editDistance.o -o $@ 
+main.o: main.c
+	$(CC) $(FLAGS) main.c 
 
-.PHONY: clean
 clean:
-	rm -f editDistance.o executable.out
+	rm -f $(OBJS) $(TEST) $(OUT)
+
+test: $(TEST)
+	$(CC) -g $(TEST) -o $(OUT) 
+	
+test.o: test.c
+	$(CC) $(FLAGS) test.c
+
+UnitTest.o: UnitTest.c
+	$(CC) $(FLAGS) UnitTest.c
+
+edit_distance.o: edit_distance.c 
+	${CC} $(FLAGS) edit_distance.c  
+	

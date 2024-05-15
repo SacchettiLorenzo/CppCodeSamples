@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 
 #define bufferSpan 16
 //#define log 1
@@ -143,6 +144,7 @@ void load_element_as_float(char** lineptr, int i, int j, int column, Dataset* da
  * @param j ending position within the row for reading
  * @param column the index of the element in the row
  * @param dataset pointer to dataset
+ * @note unimplemented
  */
 void load_element_as_boolean(char** lineptr, int i, int j, int column, Dataset* dataset);
 
@@ -154,6 +156,7 @@ void load_element_as_boolean(char** lineptr, int i, int j, int column, Dataset* 
  * @param j ending position within the row for reading
  * @param column the index of the element in the row
  * @param dataset pointer to dataset
+ * @note unimplemented
  */
 void load_element_as_struct(char** lineptr, int i, int j, int column, Dataset* dataset);
 
@@ -178,6 +181,34 @@ int comparator(Var first, Var second, int num_comparation, ...);
  * @return int 
  */
 int default_int_sort_function(const void* a,const void* b);
+
+/**
+ * @brief compare to variable. the provided variables are treated as float
+ *
+ * @param a pointer to variable
+ * @param b pointer to variable
+ * @return int
+ */
+int default_float_sort_function(const void* a,const void* b);
+
+/**
+ * @brief compare to variable. the provided variables are treated as double
+ *
+ * @param a pointer to variable
+ * @param b pointer to variable
+ * @return int
+ */
+int default_double_sort_function(const void* a,const void* b);
+
+/**
+ * @brief compare to variable. the provided variables are treated as string
+ *
+ * @param a pointer to variable
+ * @param b pointer to variable
+ * @return int
+ */
+int default_string_sort_function(const void* a,const void* b);
+
 
 /**
  * @brief sort records with a given algorithm
@@ -262,10 +293,14 @@ struct generic_data_manipulation {
 	void(*mergeSort)(void*, size_t, size_t, int(*)(const void*, const void*)); 
 	void(*quickSort)(void*, size_t, size_t, int(*)(const void*, const void*));
 	int(*default_int_sort_function)(const void*, const void*);
+    int(*default_float_sort_function)(const void*, const void*);
+    int(*default_double_sort_function)(const void*, const void*);
+    int(*default_string_sort_function)(const void*, const void*);
+
 };
 
 /**
  * @brief object containing pointers for operating the library
  * 
  */
-static struct generic_data_manipulation GDM = { 0,0,NULL,&new_Dataset, &laod_from_file, &new_record_allocation_function,&comparator,&sort_records,&merge_sort,&quick_sort,&default_int_sort_function};
+static struct generic_data_manipulation GDM = { 0,0,NULL,&new_Dataset, &laod_from_file, &new_record_allocation_function,&comparator,&sort_records,&merge_sort,&quick_sort,&default_int_sort_function,&default_float_sort_function,&default_double_sort_function,&default_string_sort_function};
