@@ -42,5 +42,22 @@
     <ClCompile Include="QuickSort.cpp">
       <Filter>Sort</Filter>
     </ClCompile>
+    <ClCompile Include="CountingSort.cpp">
+      <Filter>Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Heap.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="HeapSort.cpp">
+      <Filter>Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="PriorityCue.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Heap.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
