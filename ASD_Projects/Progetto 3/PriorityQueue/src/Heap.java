@@ -1,15 +1,37 @@
 import java.util.Comparator;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.*;
 
 public class Heap<T> implements AbstractHeap<T>{
 
     private int heap_size = 0;
-    ArrayList<T> heap;
-    Comparator<T> comparator;
+
+    private ArrayList<T> heap;
+    private Comparator<T> comparator;
+    public int getHeap_size() {
+        return heap_size;
+    }
     public Heap(Comparator<T> comparator) {
-        heap = new ArrayList<>();
         this.comparator = comparator;
+        heap = new ArrayList<T>();
+    }
+
+    public T getFirst(){
+            try {
+                return this.heap.getFirst();
+            }catch (NoSuchElementException e){
+                System.out.println("Heap is empty");
+            }
+        return null;
+    }
+
+    public T get(int index){
+        try {
+            return heap.get(index);
+        }catch (IndexOutOfBoundsException e){
+            System.out.println("Heap does not reach " + index + "th element");
+        }
+       return null;
     }
 
     @Override
@@ -31,25 +53,40 @@ public class Heap<T> implements AbstractHeap<T>{
     public void Insert(T value) {
         heap_size++;
         int i = heap_size-1;
+
         heap.addLast(value);
-
-
-        while (i > 0 &&  comparator.compare(heap.get(Parent(i)),heap.get(i)) < 0) {
-            Collections.swap(heap,i,Parent(i));
-            i = Parent(i);
-        }
+           while (i > 0 && comparator.compare(heap.get(Parent(i)), heap.get(i)) < 0) {
+               Collections.swap(heap, i, Parent(i));
+               i = Parent(i);
+           }
     }
 
     @Override
     public void Extract() {
-        heap.removeFirst();
+        try{
+            heap.removeFirst();
+        }catch (NoSuchElementException e){
+            System.out.println("Heap is empty");
+        }
+
         heap_size--;
         Heapify(0);
+    }
+
+    public void Remove(int index){
+        try{
+            heap.remove(index);
+        }catch (IndexOutOfBoundsException e){
+            System.out.println("Heap does not reach " + index + "th element");
+        }
+        heap_size--;
+        //Heapify(0); //todo: check if needs to uncomment this
     }
 
     @Override
     public void Heapify(int index) {
         int largest = index;
+        //find max
         if(comparator.compare(heap.get(Left(index)), heap.get(index)) > 0){
             largest = Left(index);
         }
