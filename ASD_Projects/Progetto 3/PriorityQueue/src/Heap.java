@@ -5,20 +5,29 @@ import java.util.*;
 public class Heap<T> implements AbstractHeap<T>{
 
     private int heap_size = 0;
+    private int key = 0;
+    T x;
 
-    private ArrayList<T> heap;
+    private ArrayList<Map.Entry<Integer,T>> heap;
     private Comparator<T> comparator;
     public int getHeap_size() {
         return heap_size;
     }
     public Heap(Comparator<T> comparator) {
         this.comparator = comparator;
-        heap = new ArrayList<T>();
+        heap = new ArrayList<Map.Entry<Integer,T>>();
     }
 
+    public ArrayList<Map.Entry<Integer, T>> getHeap() {
+        return heap;
+    }
+
+    private int getKey(){
+        return ++key;
+    }
     public T getFirst(){
             try {
-                return this.heap.getFirst();
+                return this.heap.getFirst().getValue();
             }catch (NoSuchElementException e){
                 System.out.println("Heap is empty");
             }
@@ -27,7 +36,7 @@ public class Heap<T> implements AbstractHeap<T>{
 
     public T get(int index){
         try {
-            return heap.get(index);
+            return heap.get(index).getValue();
         }catch (IndexOutOfBoundsException e){
             System.out.println("Heap does not reach " + index + "th element");
         }
@@ -50,15 +59,16 @@ public class Heap<T> implements AbstractHeap<T>{
     }
 
     @Override
-    public void Insert(T value) {
+    public AbstractMap.SimpleEntry<Integer,T> Insert(T value) {
         heap_size++;
         int i = heap_size-1;
-
-        heap.addLast(value);
-           while (i > 0 && comparator.compare(heap.get(Parent(i)), heap.get(i)) < 0) {
+        AbstractMap.SimpleEntry<Integer,T> am = new AbstractMap.SimpleEntry<Integer,T>(value.toString().hashCode(),value);
+        heap.addLast(am);
+           while (i > 0 && comparator.compare(heap.get(Parent(i)).getValue(), heap.get(i).getValue()) < 0) {
                Collections.swap(heap, i, Parent(i));
                i = Parent(i);
            }
+           return am;
     }
 
     @Override
@@ -87,11 +97,11 @@ public class Heap<T> implements AbstractHeap<T>{
     public void Heapify(int index) {
         int largest = index;
         //find max
-        if(comparator.compare(heap.get(Left(index)), heap.get(index)) > 0){
+        if(comparator.compare(heap.get(Left(index)).getValue(), heap.get(index).getValue()) > 0){
             largest = Left(index);
         }
 
-        if(comparator.compare(heap.get(Right(index)), heap.get(index)) > 0){
+        if(comparator.compare(heap.get(Right(index)).getValue(), heap.get(index).getValue()) > 0){
             largest = Right(index);
         }
         if(largest != index){

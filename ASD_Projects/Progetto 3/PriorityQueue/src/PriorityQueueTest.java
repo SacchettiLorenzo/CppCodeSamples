@@ -1,5 +1,8 @@
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 
 public class PriorityQueueTest {
 
@@ -69,7 +72,4 @@ public class PriorityQueueTest {
         assertFalse(PQ.contains(2));
     }
 
-    public static void main(String[] args) {
-
-    }
 }

@@ -3,7 +3,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class Graph<V,L> implements AbstractGraph<V,L> {
+public class Graph<V extends Vertex,L extends Edge> implements AbstractGraph<V,L> {
 
     boolean directed;
     boolean labelled;
@@ -42,8 +42,14 @@ public class Graph<V,L> implements AbstractGraph<V,L> {
         if(a instanceof Vertex && b instanceof Vertex && l instanceof Edge<?,?>) {
             if(((Edge<?, ?>) l).start.equals(a) && ((Edge<?, ?>) l).end.equals(b)) {
                 edges.add((Edge<V,L>)l);
-                ((Vertex<V>) a).addAdjacentVertex(b);
-                ((Vertex<V>) b).addAdjacentVertex(a);
+                if(!isLabelled()){
+                    l.label = null;
+                }
+                ((Vertex) a).addAdjacentVertex((Vertex) b);
+
+                if(!isLabelled()){
+                    ( (Vertex)b).addAdjacentVertex((Vertex) a);
+                }
                 return true;
             }
 

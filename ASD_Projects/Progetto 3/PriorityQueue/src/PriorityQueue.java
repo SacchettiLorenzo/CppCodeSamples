@@ -1,9 +1,14 @@
+import java.util.AbstractMap;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PriorityQueue<T> implements AbstractQueue<T>{
 
     Heap<T> queue;
     Comparator<T> comparator;
+    HashMap<Integer, T> map = new HashMap<Integer,T>();
     public PriorityQueue(Comparator<T> comparator) {
         this.comparator = comparator;
         queue = new Heap<T>(comparator);
@@ -19,18 +24,23 @@ public class PriorityQueue<T> implements AbstractQueue<T>{
 
     @Override
     public boolean push(T o) {
-        queue.Insert(o);
+        AbstractMap.SimpleEntry<Integer,T> res = queue.Insert(o);
+        map.put(res.getKey(),res.getValue());
         return true;
     }
 
-    //todo: test this method
     @Override
     public boolean contains(T o) {
-        if(empty()){return false;}
-        if(comparator.compare(queue.get(0),o) == 0){
-            return true;
-        }
-        return contains_wrapped(o,1);
+        //this map is not a copy of queue but only keep pointer to his element
+        //HashMap<Integer, T> map = new HashMap<Integer,T>();
+        //map = (HashMap<Integer, T>) queue.getHeap().stream().collect(Collectors.toMap(Map.Entry<Integer, T>::getKey, Map.Entry::getValue));
+
+        return map.containsValue(o);
+        //        if(empty()){return false;}
+//        if(comparator.compare(queue.get(0),o) == 0){
+//            return true;
+//        }
+//        return contains_wrapped(o,1);
     }
 
     private boolean contains_wrapped(T o, int index){
@@ -67,6 +77,7 @@ public class PriorityQueue<T> implements AbstractQueue<T>{
 
     @Override
     public boolean remove(T o) {
+        map.remove(o);
          //todo: check if work. may uncomment Heapify in remove method in Heap class
         if(comparator.compare(queue.get(0),o) == 0){
             queue.Remove(0);

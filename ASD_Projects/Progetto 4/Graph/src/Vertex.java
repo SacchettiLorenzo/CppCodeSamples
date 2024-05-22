@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Vertex<V>{
+public class Vertex<V extends Vertex>{
     private int distance;
     private Vertex predecessor;
     Color color;
