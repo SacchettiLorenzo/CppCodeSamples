@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 
 public class Vertex<V extends Vertex>{
-    private int distance;
+
+    Object value;
+    private int distance; //DFS parameter
     private Vertex predecessor;
     Color color;
     private ArrayList<V> adjacentVertices;
@@ -25,7 +27,15 @@ public class Vertex<V extends Vertex>{
     public ArrayList<V> getAdjacentVertices() {return this.adjacentVertices;}
 
     public void addAdjacentVertex(V vertex) {
-        this.adjacentVertices.add(vertex);
+        boolean found = false;
+        for(V v: adjacentVertices) {
+            if(v.equals(vertex)) {
+                found = true;
+            }
+        }
+        if(!found){
+            adjacentVertices.add(vertex);
+        }
     }
 
     public void removeAdjacentVertex(V vertex) {

@@ -1,8 +1,6 @@
 import java.util.AbstractMap;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class PriorityQueue<T> implements AbstractQueue<T>{
 
@@ -44,12 +42,12 @@ public class PriorityQueue<T> implements AbstractQueue<T>{
     }
 
     private boolean contains_wrapped(T o, int index){
-       if(comparator.compare(queue.get(index),o) == 0){
+       if(comparator.compare(queue.get(index).getValue(),o) == 0){
            return true;
        }
 
        boolean res = false;
-        if(comparator.compare(o,queue.get(index)) < 0) {
+        if(comparator.compare(o,queue.get(index).getValue()) < 0) {
 
             //search left
             if (queue.Left(index) < queue.getHeap_size()) {
@@ -67,7 +65,7 @@ public class PriorityQueue<T> implements AbstractQueue<T>{
 
     @Override
     public T top() {
-        return queue.getFirst();
+        return queue.getFirst().getValue();
     }
 
     @Override
@@ -77,33 +75,38 @@ public class PriorityQueue<T> implements AbstractQueue<T>{
 
     @Override
     public boolean remove(T o) {
-        map.remove(o);
          //todo: check if work. may uncomment Heapify in remove method in Heap class
-        if(comparator.compare(queue.get(0),o) == 0){
+        if(comparator.compare(queue.getFirst().getValue(),o) == 0){
             queue.Remove(0);
             return true;
         }
-        return remove_if_exist(o,1);
-    }
-
-    private boolean remove_if_exist(T o, int index){
-        if(comparator.compare(queue.get(index),o) == 0){
-            queue.Remove(index);
+        int res = remove_if_exist(o,1);
+        map.remove(res);
+        if(res != -1){
             return true;
         }
+        return false;
+    }
 
-        boolean res = false;
-        if(comparator.compare(o,queue.get(index)) < 0) {
+    private int  remove_if_exist(T o, int index){
+        if(comparator.compare(queue.get(index).getValue(),o) == 0){
+            int resKey = queue.get(index).getKey();
+            queue.Remove(index);
+            return resKey;
+        }
+
+        int res = -1;
+        if(comparator.compare(o,queue.get(index).getValue()) < 0) {
 
             if (queue.Left(index) < queue.getHeap_size()) {
                 res =  remove_if_exist(o, queue.Left(index)+1);
             }
-            if (res != true && queue.Right(index) > queue.getHeap_size()) {
+            if (res == -1 && queue.Right(index) > queue.getHeap_size()) {
                 res =  remove_if_exist(o, queue.Right(index)+1);
             }
             return res;
         }
 
-        return false;
+        return -1;
     }
 }

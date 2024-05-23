@@ -1,5 +1,3 @@
-import java.util.Comparator;
-import java.util.ArrayList;
 import java.util.*;
 
 public class Heap<T> implements AbstractHeap<T>{
@@ -25,18 +23,18 @@ public class Heap<T> implements AbstractHeap<T>{
     private int getKey(){
         return ++key;
     }
-    public T getFirst(){
+    public Map.Entry<Integer, T> getFirst(){
             try {
-                return this.heap.getFirst().getValue();
+                return this.heap.getFirst();
             }catch (NoSuchElementException e){
                 System.out.println("Heap is empty");
             }
         return null;
     }
 
-    public T get(int index){
+    public Map.Entry<Integer, T> get(int index){
         try {
-            return heap.get(index).getValue();
+            return heap.get(index);
         }catch (IndexOutOfBoundsException e){
             System.out.println("Heap does not reach " + index + "th element");
         }

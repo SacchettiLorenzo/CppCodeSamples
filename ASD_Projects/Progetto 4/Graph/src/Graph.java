@@ -1,20 +1,20 @@
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 public class Graph<V extends Vertex,L extends Edge> implements AbstractGraph<V,L> {
 
     boolean directed;
     boolean labelled;
-    private ArrayList<V> vertices;
-    private ArrayList<AbstractEdge<V,L>> edges;
+    private HashMap<Integer,V> vertices;
+    private HashMap<Integer,AbstractEdge<V,L>> edges;
+
 
     public Graph(boolean directed, boolean labelled) {
         this.directed = directed;
         this.labelled = labelled;
-        vertices = new ArrayList<V>();
-        edges = new ArrayList<AbstractEdge<V,L>>();
+        vertices = new HashMap<Integer, V>();
+        edges = new HashMap<Integer,AbstractEdge<V,L>>();
     }
 
     @Override
@@ -30,7 +30,10 @@ public class Graph<V extends Vertex,L extends Edge> implements AbstractGraph<V,L
     @Override
     public boolean addNode(V a) {
         if(a instanceof Vertex) {
-            vertices.add(a);
+            //check if the key already exist to avoid replacement
+                if(!vertices.containsKey(a.value.toString().hashCode())) {
+                    vertices.put(a.value.toString().hashCode(),a);
+                }
             return true;
         }else{
             return false;
@@ -39,64 +42,62 @@ public class Graph<V extends Vertex,L extends Edge> implements AbstractGraph<V,L
 
     @Override
     public boolean addEdge(V a, V b, L l) {
-        if(a instanceof Vertex && b instanceof Vertex && l instanceof Edge<?,?>) {
-            if(((Edge<?, ?>) l).start.equals(a) && ((Edge<?, ?>) l).end.equals(b)) {
-                edges.add((Edge<V,L>)l);
-                if(!isLabelled()){
-                    l.label = null;
+        try {
+            if (a instanceof Vertex && b instanceof Vertex && l instanceof Edge<?, ?>) {
+                if (labelled) {
+                    if (l.label == null) {
+                        throw new NoLabelException("missing label");
+                    }
                 }
-                ((Vertex) a).addAdjacentVertex((Vertex) b);
 
-                if(!isLabelled()){
-                    ( (Vertex)b).addAdjacentVertex((Vertex) a);
+                //check if vertex are in the map
+                if(this.containsNode(a) && this.containsNode(b)) {
+                    if (((Edge<?, ?>) l).start.equals(a) && ((Edge<?, ?>) l).end.equals(b)) {
+                        edges.put(l.start.value.toString().hashCode() + l.end.value.toString().hashCode(), l);
+                        if (!isLabelled()) {
+                            l.label = null;
+                        }
+                        if(Objects.equals((String) a.value, "torino")){
+                            int aa = 0;
+                        }
+                        vertices.get(a.value.toString().hashCode()).addAdjacentVertex(vertices.get(b.value.toString().hashCode()));
+
+
+                        if (!isDirected()) {
+                            vertices.get(b.value.toString().hashCode()).addAdjacentVertex(vertices.get(a.value.toString().hashCode()));
+                        }
+                        return true;
+                    }
                 }
-                return true;
+
             }
-
+            return false;
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return false;
         }
-        return false;
     }
 
     @Override
     public boolean containsNode(V a) {
-        for(V v : vertices) {
-            if(v.equals(a)) {
-                return true;
-            }
-        }
-        return false;
+        return vertices.containsKey(a.value.toString().hashCode());
     }
 
     @Override
     public boolean containsEdge(V a, V b) {
-        for(AbstractEdge<V,L> e : edges) {
-            if(e.getStart().equals(a) && e.getEnd().equals(b)) {
-                return true;
-            }
-        }
-        return false;
+        return edges.containsKey(a.value.toString().hashCode()+b.value.toString().hashCode());
     }
 
     @Override
     public boolean removeNode(V a) {
-        for(V v : vertices) {
-            if(v.equals(a)) {
-                vertices.remove(v);
-                return true;
-            }
-        }
-        return false;
+        return vertices.remove(a.value.toString().hashCode()).equals(a);
+        //todo: remove all edges with that node
     }
 
     @Override
     public boolean removeEdge(V a, V b) {
-        for(AbstractEdge<V,L> e : edges) {
-            if(e.getStart().equals(a) && e.getEnd().equals(b)) {
-                edges.remove(e);
-                return true;
-            }
-        }
-        return false;
+        AbstractEdge<V, L> res = edges.remove(a.value.toString().hashCode()+b.toString().hashCode());
+        return res.getStart().equals(a) && res.getEnd().equals(b);
     }
 
     @Override
@@ -111,34 +112,26 @@ public class Graph<V extends Vertex,L extends Edge> implements AbstractGraph<V,L
 
     @Override
     public Collection<V> getNodes() {
-        return vertices;
+        return (Collection<V>) vertices;
     }
 
     @Override
     public Collection<? extends AbstractEdge<V, L>> getEdges() {
-        return edges;
+        return (Collection<? extends AbstractEdge<V, L>>) edges;
     }
 
     @Override
     public Collection<V> getNeighbours(V a) {
         if(a instanceof Vertex){
-            for(V v : vertices) {
-                if(v.equals(a)) {
-                    return (((Vertex)v).getAdjacentVertices());
-                }
-            }
+            return (Collection<V>)vertices.get(a.value.toString().hashCode()).getAdjacentVertices();
         }
     return null;
     }
 
     @Override
     public L getLabel(V a, V b) {
-        for(AbstractEdge<V,L> e : edges) {
-            if(e.getStart().equals(a) && e.getEnd().equals(b)) {
-                e.getLabel();
-            }
-        }
-        return null;
+        return edges.get(a.value.toString().hashCode()+b.value.toString().hashCode()).getLabel();
     }
+
 }
 
