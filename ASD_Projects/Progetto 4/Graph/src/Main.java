@@ -54,7 +54,7 @@ public class Main {
 //    Object o = g.getNeighbours(v1);
 
         Graph<StringVertex,Edge<StringVertex,Float>> g = new Graph<StringVertex,Edge<StringVertex,Float>>(false,true);
-        readFromCSV(new File("/home/lorenzo/Documents/CppCodeSamples/ASD_Projects/Progetto 4/Graph/italian_dist_graph.csv"),g);
+        readFromCSV(new File("/home/lorenzo/Documents/C/CppCodeSamples/ASD_Projects/Progetto 4/Graph/src/italian_dist_graph.csv"),g);
         Object o = g.getNeighbours(new StringVertex("torino"));
 
     }

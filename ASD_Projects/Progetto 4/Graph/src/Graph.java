@@ -53,6 +53,7 @@ public class Graph<V extends Vertex,L extends Edge> implements AbstractGraph<V,L
                 //check if vertex are in the map
                 if(this.containsNode(a) && this.containsNode(b)) {
                     if (((Edge<?, ?>) l).start.equals(a) && ((Edge<?, ?>) l).end.equals(b)) {
+                        //todo: add a condition to check duplicates
                         edges.put(l.start.value.toString().hashCode() + l.end.value.toString().hashCode(), l);
                         if (!isLabelled()) {
                             l.label = null;
