@@ -1,14 +1,15 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.Optional;
 
-public class Graph<V extends Vertex,L extends Edge> implements AbstractGraph<V,L> {
+public class Graph<V extends Vertex,L> implements AbstractGraph<V,L> {
 
     boolean directed;
     boolean labelled;
     private HashMap<Integer,V> vertices;
-    private HashMap<Integer,AbstractEdge<V,L>> edges;
 
+    private HashMap<Integer,AbstractEdge<V,L>> edges;
 
     public Graph(boolean directed, boolean labelled) {
         this.directed = directed;
@@ -45,7 +46,7 @@ public class Graph<V extends Vertex,L extends Edge> implements AbstractGraph<V,L
         try {
             if (a instanceof Vertex && b instanceof Vertex && l instanceof Edge<?, ?>) {
                 if (labelled) {
-                    if (l.label == null) {
+                    if (l == null) {
                         throw new NoLabelException("missing label");
                     }
                 }
@@ -53,10 +54,16 @@ public class Graph<V extends Vertex,L extends Edge> implements AbstractGraph<V,L
                 //check if vertex are in the map
                 if(this.containsNode(a) && this.containsNode(b)) {
                     if (((Edge<?, ?>) l).start.equals(a) && ((Edge<?, ?>) l).end.equals(b)) {
-                        edges.put(l.start.value.toString().hashCode() + l.end.value.toString().hashCode(), l);
+
+                        edges.put( l.hashCode(), new Edge<V,L>(a,b, Optional.of(l)));
+
                         if (!isLabelled()) {
-                            l.label = null;
+                            edges.put( l.hashCode(), new Edge<V,L>(a,b, Optional.empty()));
+                        }else{
+                            edges.put( l.hashCode(), new Edge<V,L>(a,b, Optional.of(l)));
                         }
+
+
                         if(Objects.equals((String) a.value, "torino")){
                             int aa = 0;
                         }
@@ -112,7 +119,7 @@ public class Graph<V extends Vertex,L extends Edge> implements AbstractGraph<V,L
 
     @Override
     public Collection<V> getNodes() {
-        return (Collection<V>) vertices;
+        return (Collection<V>) vertices.values();
     }
 
     @Override

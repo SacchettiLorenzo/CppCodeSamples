@@ -1,25 +1,31 @@
 class IntegerVertex extends Vertex {
+
+
+
     public IntegerVertex(Integer value) {
-        this.value = value;
+        super.value = value;
     }
 
     public void setValue(int value) {
-        this.value = value;
+        super.value = (int)value;
     }
     public int getValue() {
-        return (int)value;
+        return (int) super.value;
     }
 }
 
 class StringVertex extends Vertex {
+
+
     public StringVertex(String value) {
-        this.value = value;
+
+        super.value = (String)value;
     }
 
     public void setValue(String value) {
-        this.value = value;
+        super.value = value;
     }
     public String getValue() {
-        return (String)value;
+        return (String)super.value;
     }
 }

@@ -25,3 +25,10 @@ class StringComparator implements Comparator<String> {
     }
 
 }
+
+class  StringVertexComparator implements Comparator<StringVertex> {
+    @Override
+    public int compare(StringVertex o1, StringVertex o2) {
+        return ((String)o1.value).compareTo((String)o2.value);
+    }
+}

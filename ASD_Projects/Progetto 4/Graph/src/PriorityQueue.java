@@ -1,7 +1,6 @@
 import java.util.AbstractMap;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Optional;
 
 public class PriorityQueue<T> implements AbstractQueue<T>{
 
@@ -10,8 +9,6 @@ public class PriorityQueue<T> implements AbstractQueue<T>{
 
     HashMap<Integer, T> map = new HashMap<Integer,T>(); //used to tell if an element is present or not
     public enum HeapType{MIN,MAX}
-
-    protected PriorityQueue(){}
 
     public PriorityQueue(Comparator<T> comparator) {
         this.comparator = comparator;

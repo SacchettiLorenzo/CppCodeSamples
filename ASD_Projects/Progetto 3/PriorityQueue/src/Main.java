@@ -40,16 +40,28 @@ public class Main {
 
 
 
-        PriorityQueue<Integer> PQ = new PriorityQueue<Integer>(comparator_I);
-        PQ.push(1);
-        PQ.push(2);
-        PQ.push(10);
-        PQ.push(6);
-        PQ.push(20);
-        PQ.push(20);
+//        PriorityQueue<Integer> PQ = new PriorityQueue<Integer>(comparator_I,PriorityQueue.HeapType.MAX);
+//        PQ.push(1);
+//        PQ.push(2);
+//        PQ.push(10);
+//        PQ.push(6);
+//        PQ.push(20);
+//        PQ.push(20);
 
-        System.out.println(PQ.top());
-        boolean contains = PQ.contains(10);
-        Integer res = PQ.top();
+
+        MaxFloatPriorityQueue PQ = new MaxFloatPriorityQueue();
+        PQ.push(1.0f);
+        PQ.push(2.0f);
+        PQ.push(10.0f);
+        PQ.push(6.0f);
+        PQ.push(20.0f);
+        PQ.push(20.0f);
+        PQ.EncreaseValue(20.0f,30.0f);
+        PQ.EncreaseValue(20.0f,30.0f);
+        //PQ.remove(5.0f);
+
+        //System.out.println(PQ.top());
+        //boolean contains = PQ.contains(10);
+        //Integer res = PQ.top();
     }
 }

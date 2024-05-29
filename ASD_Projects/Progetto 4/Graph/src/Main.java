@@ -1,17 +1,15 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Scanner;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void readFromCSV(File file, Graph<StringVertex,Edge<StringVertex,Float>> g){
+    public static void readFromCSV(File file, Graph g){
         Scanner sc = null;
         StringVertex a = null;
         StringVertex b = null;
-        Edge<StringVertex,Float> l = null;
+        Number l = null;
         try {
             sc = new Scanner(file);
         } catch (FileNotFoundException e) {
@@ -23,9 +21,9 @@ public class Main {
             try{
                 a = new StringVertex(sc.next());
                 b = new StringVertex(sc.next());
-                l = new Edge<StringVertex,Float>(a,b, Optional.of(sc.nextFloat()));
+                l = sc.nextFloat();
             }catch(Exception e){
-                System.out.println(e);
+                System.out.println(e.getMessage());
             }
 
             g.addNode(a);
@@ -53,9 +51,9 @@ public class Main {
 //
 //    Object o = g.getNeighbours(v1);
 
-        Graph<StringVertex,Edge<StringVertex,Float>> g = new Graph<StringVertex,Edge<StringVertex,Float>>(false,true);
+        Graph<StringVertex,Edge<StringVertex,Number>> g = new Graph<StringVertex,Edge<StringVertex,Number>>(false,true);
         readFromCSV(new File("/home/lorenzo/Documents/CppCodeSamples/ASD_Projects/Progetto 4/Graph/italian_dist_graph.csv"),g);
         Object o = g.getNeighbours(new StringVertex("torino"));
-
+        Prim.minimumSpanningForest(g);
     }
 }

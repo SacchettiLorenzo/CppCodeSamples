@@ -7,7 +7,7 @@ public class PriorityQueueTest {
     @Test
     public void testEmpty(){
         IntegerComparator comparator_I = new IntegerComparator();
-        PriorityQueue<Integer> PQ = new PriorityQueue<Integer>(comparator_I);
+        PriorityQueue<Integer> PQ = new PriorityQueue<Integer>(comparator_I,null);
         assertTrue(PQ.empty());
     }
 
