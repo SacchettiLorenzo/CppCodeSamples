@@ -1,12 +1,12 @@
 import java.util.ArrayList;
 
-public class Vertex<V extends Vertex>{
+public class Vertex{
 
     Object value;
     private int distance; //DFS parameter
     private Vertex predecessor;
     Color color;
-    private ArrayList<V> adjacentVertices;
+    private ArrayList<Vertex> adjacentVertices;
 
     public Vertex() {
         this.distance = 0;
@@ -21,14 +21,14 @@ public class Vertex<V extends Vertex>{
     public int getDistance() {return this.distance;}
     public void setColor(Color color) {this.color = color;}
     public Color getColor() {return this.color;}
-    public void setAdjacentVertices(ArrayList<V> adjacentVertices) {
+    public void setAdjacentVertices(ArrayList<Vertex> adjacentVertices) {
         this.adjacentVertices = adjacentVertices;
     }
-    public ArrayList<V> getAdjacentVertices() {return this.adjacentVertices;}
+    public ArrayList<Vertex> getAdjacentVertices() {return this.adjacentVertices;}
 
-    public void addAdjacentVertex(V vertex) {
+    public void addAdjacentVertex(Vertex vertex) {
         boolean found = false;
-        for(V v: adjacentVertices) {
+        for(Vertex v: adjacentVertices) {
             if(v.equals(vertex)) {
                 found = true;
             }
@@ -38,18 +38,18 @@ public class Vertex<V extends Vertex>{
         }
     }
 
-    public void removeAdjacentVertex(V vertex) {
+    public void removeAdjacentVertex(Vertex vertex) {
         this.adjacentVertices.remove(vertex);
     }
 
     public void printAdjacentVertices() {
-        for(V vertex : this.adjacentVertices) {
+        for(Vertex vertex : this.adjacentVertices) {
             System.out.println(vertex);
         }
     }
 
-    public boolean isAdjacent(V vertex) {
-        for(V adjacentVertex : this.adjacentVertices) {
+    public boolean isAdjacent(Vertex vertex) {
+        for(Vertex adjacentVertex : this.adjacentVertices) {
             if(adjacentVertex.equals(vertex)) {
                 return true;
             }

@@ -29,3 +29,15 @@ class StringVertex extends Vertex {
         return (String)super.value;
     }
 }
+
+class FloatVertex extends Vertex {
+    public FloatVertex(Float value) {
+        this.value = value;
+    }
+    public void setValue(Float value) {
+        this.value = value;
+    }
+    public Float getValue() {
+        return (Float)value;
+    }
+}
