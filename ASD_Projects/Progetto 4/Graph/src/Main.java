@@ -7,8 +7,8 @@ import java.util.Scanner;
 public class Main {
     public static void readFromCSV(File file, Graph g){
         Scanner sc = null;
-        StringVertex a = null;
-        StringVertex b = null;
+        Vertex a = null;
+        Vertex b = null;
         Number l = null;
         try {
             sc = new Scanner(file);
@@ -19,8 +19,8 @@ public class Main {
         while (sc.hasNext())
         {
             try{
-                a = new StringVertex(sc.next());
-                b = new StringVertex(sc.next());
+                a = new Vertex(sc.next());
+                b = new Vertex(sc.next());
                 l = sc.nextFloat();
             }catch(Exception e){
                 System.out.println(e.getMessage());
@@ -51,9 +51,9 @@ public class Main {
 //
 //    Object o = g.getNeighbours(v1);
 
-        Graph<StringVertex,Edge<StringVertex,Number>> g = new Graph<StringVertex,Edge<StringVertex,Number>>(false,true);
-        readFromCSV(new File("/home/lorenzo/Documents/CppCodeSamples/ASD_Projects/Progetto 4/Graph/italian_dist_graph.csv"),g);
-        Object o = g.getNeighbours(new StringVertex("torino"));
-        Prim.minimumSpanningForest(g);
+        Graph<Vertex,Number> g = new Graph<Vertex,Number>(false,true);
+        readFromCSV(new File("/home/lorenzo/Documents/C/CppCodeSamples/ASD_Projects/Progetto 4/Graph/src/italian_dist_graph.csv"),g);
+        //Object o = g.getNeighbours(new Vertex("torino"));
+        Prim.minimumSpanningForest((Graph)g);
     }
 }

@@ -1,6 +1,6 @@
 import java.util.Optional;
 
-public class Edge<V extends Vertex,L> implements AbstractEdge<V,L> {
+public class Edge<V,L> implements AbstractEdge<V,L> {
 
     V start;
     V end;

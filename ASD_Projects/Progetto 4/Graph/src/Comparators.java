@@ -26,9 +26,9 @@ class StringComparator implements Comparator<String> {
 
 }
 
-class  StringVertexComparator implements Comparator<StringVertex> {
+class  VertexComparator implements Comparator<Vertex> {
     @Override
-    public int compare(StringVertex o1, StringVertex o2) {
-        return ((String)o1.value).compareTo((String)o2.value);
+    public int compare(Vertex o1, Vertex o2) {
+        return (((Float)o1.getDistance()).compareTo((Float) o2.getDistance()) );
     }
 }

@@ -53,7 +53,7 @@ public class Heap<T> implements AbstractHeap<T>{
 
     @Override
     public int Parent(int index) {
-        return index/2;
+        return (index)/2;
     }
 
     @Override

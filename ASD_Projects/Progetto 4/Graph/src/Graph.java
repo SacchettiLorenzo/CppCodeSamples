@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Graph<V extends Vertex,L> implements AbstractGraph<V,L> {
+public class Graph<V ,L> implements AbstractGraph<V,L> {
 
     boolean directed;
     boolean labelled;
@@ -44,25 +44,19 @@ public class Graph<V extends Vertex,L> implements AbstractGraph<V,L> {
     @Override
     public boolean addEdge(V a, V b, L l) {
         try {
-            if (a instanceof Vertex && b instanceof Vertex && l instanceof Edge<?, ?>) {
+            if (a instanceof Vertex && b instanceof Vertex) {
                 if (labelled) {
                     if (l == null) {
                         throw new NoLabelException("missing label");
                     }
                 }
-
-                //check if vertex are in the map
-                if(this.containsNode(a) && this.containsNode(b)) {
-                    if (((Edge<?, ?>) l).start.equals(a) && ((Edge<?, ?>) l).end.equals(b)) {
-
-                        edges.put( l.hashCode(), new Edge<V,L>(a,b, Optional.of(l)));
+                        //check if vertex are in the map
 
                         if (!isLabelled()) {
-                            edges.put( l.hashCode(), new Edge<V,L>(a,b, Optional.empty()));
+                            edges.put( a.hashCode() + b.hashCode(), new Edge<V,L>(a,b, Optional.empty()));
                         }else{
-                            edges.put( l.hashCode(), new Edge<V,L>(a,b, Optional.of(l)));
+                            edges.put( a.hashCode() + b.hashCode(), new Edge<V,L>(a,b, Optional.of(l)));
                         }
-
 
                         if(Objects.equals((String) a.value, "torino")){
                             int aa = 0;
@@ -74,8 +68,8 @@ public class Graph<V extends Vertex,L> implements AbstractGraph<V,L> {
                             vertices.get(b.value.toString().hashCode()).addAdjacentVertex(vertices.get(a.value.toString().hashCode()));
                         }
                         return true;
-                    }
-                }
+
+
 
             }
             return false;
@@ -83,6 +77,10 @@ public class Graph<V extends Vertex,L> implements AbstractGraph<V,L> {
             System.out.println(e.getMessage());
             return false;
         }
+    }
+
+    public Edge getEdge(V a, V b) {
+        return (Edge) edges.get(a.hashCode() + b.hashCode());
     }
 
     @Override
