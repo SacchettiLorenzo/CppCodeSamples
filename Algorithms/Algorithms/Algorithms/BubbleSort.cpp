@@ -3,6 +3,15 @@ using namespace std;
 
 #define length 8
 
+/**
+ * @brief bubble sort
+ * 
+ * @param array 
+ * @pre
+ * @post
+ * @invariant
+ * @details
+ */
 void sort(int* array) {
 	for (size_t i = 0; i < length-1; i++)
 	{

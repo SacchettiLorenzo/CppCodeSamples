@@ -29,10 +29,8 @@ void Bandiera(Color B[], int n)
             cout << endl;
         }
 
-        
-
-
     }
+    
 }
 int main()
 {

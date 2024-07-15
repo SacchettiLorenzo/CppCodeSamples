@@ -19,9 +19,15 @@
     <Filter Include="Sort">
       <UniqueIdentifier>{de60ee89-8f25-4ded-9457-fa5a7160730c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tree">
+      <UniqueIdentifier>{fbff1be4-60a7-435a-acdd-b211715b4836}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="List">
+      <UniqueIdentifier>{b93bfe9b-d912-4700-876f-4a731cffe364}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Algorithms.cpp">
+    <ClCompile Include="Miscellanesous.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="MergeSort.cpp">
@@ -52,6 +58,36 @@
       <Filter>Sort</Filter>
     </ClCompile>
     <ClCompile Include="PriorityCue.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="PeekFinding.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="BTree.c">
+      <Filter>Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="KTree.c">
+      <Filter>Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="BinarySearchTree.c">
+      <Filter>Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="HashTable.c">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="RedBlackTree.c">
+      <Filter>Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="HashTableConcat.c">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="List.c">
+      <Filter>List</Filter>
+    </ClCompile>
+    <ClCompile Include="Dynamic.c">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Heap.c">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>

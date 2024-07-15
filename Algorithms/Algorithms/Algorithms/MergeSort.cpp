@@ -3,6 +3,17 @@ using namespace std;
 
 #define length 8
 
+/**
+ * @brief merge sort
+ * 
+ * @param array 
+ * @param i 
+ * @param j 
+ * @pre
+ * @post
+ * @invariant
+ * @details
+ */
 void sort(int* array, int i, int j) {
 	int middle = (i + j) / 2;
 	if (i < j) {

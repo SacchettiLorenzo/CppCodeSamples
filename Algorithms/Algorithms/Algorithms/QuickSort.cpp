@@ -3,6 +3,15 @@ using namespace std;
 
 #define length 8
 
+/**
+ * @brief partition function
+ * 
+ * @param array 
+ * @param lo 
+ * @param hi 
+ * @return int 
+ * @details 
+ */
 int partition(int* array, int lo, int hi) {
 	int pivot = array[hi];
 	int index = lo - 1;
@@ -24,6 +33,13 @@ int partition(int* array, int lo, int hi) {
 	return index;
 }
 
+/**
+ * @brief quick sort
+ * 
+ * @param array 
+ * @param i 
+ * @param j 
+ */
 void sort(int* array, int i, int j) {
 	if (i >= j || i < 0) {
 		return;
