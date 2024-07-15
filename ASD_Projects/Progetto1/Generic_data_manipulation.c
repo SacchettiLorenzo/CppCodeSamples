@@ -336,10 +336,14 @@ void sort_records(FILE *infile, FILE *outfile, size_t field, size_t algo){
             break;
 
     }
-    GDM.load_from_file(infile, dataset);
-    GDM.sorting_fields = field;
     double time_spent;
     clock_t begin = clock();
+    GDM.load_from_file(infile, dataset);
+    clock_t end = clock();
+    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("records loaded in: %f seconds \n",time_spent);
+    GDM.sorting_fields = field;
+    begin = clock();
     switch (algo)
     {
         case 1:
@@ -350,10 +354,11 @@ void sort_records(FILE *infile, FILE *outfile, size_t field, size_t algo){
         default:
             break;
     }
-    clock_t end = clock();
+    end = clock();
     time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    printf("records sorted in: %f seconds",time_spent);
+    printf("records sorted in: %f seconds \n",time_spent);
 
+    begin = clock();
     for (int i = 0; i < dataset->size; i++) {
         for (int j = 0; j < dataset->_Struct_size; j++)
         {
@@ -377,7 +382,9 @@ void sort_records(FILE *infile, FILE *outfile, size_t field, size_t algo){
         }
         fprintf(outfile, "\n", "\0");
     }
-
+    end = clock();
+    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("records writed in: %f seconds \n",time_spent);
 
 }
 

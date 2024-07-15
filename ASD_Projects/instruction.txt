@@ -1,0 +1,1 @@
+export CLASSPATH=/home/lorenzo/Documents/CppCodeSamples/ASD_Projects/junit-4.13.2.jar:/home/lorenzo/Documents/CppCodeSamples/ASD_Projects/hamcrest-core-1.3.jar
