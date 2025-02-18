@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Nuovo profilo",
+    "Projects": [
+      {
+        "Path": "PipeServer\\PipeServer.vcxproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "PipeClient\\PipeClient.vcxproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

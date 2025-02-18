@@ -30,7 +30,7 @@ int main()
 //templates allow to create generic functions or classes
 // the actual code for the specific type is generated at compile time. The compiler understand that the generic function is called with a specific type, so it create the specific function
 // it avoid the massive function overloading for each type that could be managed by a specific function
-// it is possible to specify a specific while calling the function
+// it is possible to specify a specific type while calling the function
 // if the template does not get called even once the template does not evet exist after compile time
 
 //template work at compile time so it is possible to dynamically generate array(or simil structures) on the stack and not on the heap 

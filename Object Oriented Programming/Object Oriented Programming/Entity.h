@@ -27,6 +27,11 @@ public:
 	//copy assignement operator
 	Entity& operator= (const Entity& other);
 
+	//Move Constructor
+	Entity(Entity&& other);
+
+	Entity& operator=(Entity&& other);
+
 	virtual void WhoAmI(); //function declered virtual to allow override
 
 	void Move(int newx, int newy);

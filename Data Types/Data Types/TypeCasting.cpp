@@ -15,8 +15,8 @@ public:
 		cout << "Constructor Called" << std::endl;
 	}
 
-	// user defined conversion operator to string type
 
+	// user defined conversion operator to string type
 	operator std::string()
 	{
 		cout << "Conversion Operator Called" << std::endl;

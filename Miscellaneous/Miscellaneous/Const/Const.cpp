@@ -63,5 +63,5 @@ int main()
 * if the class can be istantiated as const the method used should be const or at least have a const version
 *
 * the keyword mutable allow the const method to modify a class member variable. it should be used for debugging purposes or if most of the
-* member should me const and only few need to update
+* member should be const and only few need to update
 */

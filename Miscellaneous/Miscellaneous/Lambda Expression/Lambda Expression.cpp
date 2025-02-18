@@ -7,7 +7,7 @@ using namespace std;
 int main()
 {
 
-
+	
 
 	vector<int> v{ 2, 3, 7, 14, 23 };
 	for_each(v.begin(), v.end(), [](int x) {cout << x << endl; }); //function fron algorithm library / for each element execute lambda function
@@ -55,6 +55,9 @@ int main()
 //in this way it is possible to avoid the use of a function that need to be declered in a header file just to be used one time
 /*
 * [] capture clause for variables that comes from outside the calling function
+* [&] variable are aquired by reference
+* [=] variable are aquired by value
+* it is possible to define capture clause for each variable [&a, =b]
 * () parameters for varaibles that comes from inside the calling function
 * {} function definition
 

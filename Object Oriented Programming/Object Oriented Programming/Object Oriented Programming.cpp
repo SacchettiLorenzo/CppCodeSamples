@@ -53,18 +53,18 @@ void friendFunction(Entity& obj) {
 //rule of zero five three
 /*
 * ZERO
-* if a class does not manage resorces shod not have special member functions like:
+* if a class does not manage resources should not have special member functions like:
 * - destructor
 * - copy constructor
 * - copy assignement operator
 * - move constructor
 * - move assignement operator
-* the compiler will generate those functions accordingly to what the class handles in term of mwmory
+* the compiler will generate those functions accordingly to what the class handles in term of memory
 *
 * THREE
 * a class that manage resorces should define the following functions:
 * - Destructor
-* - Copy cnonstructor
+* - Copy constructor
 * - Copy assignement operator
 * 
 * FIVE
@@ -104,6 +104,6 @@ void friendFunction(Entity& obj) {
 */
 
 /* FRIEND function
-* friend functions are functions declered as friednd inside the class but defined outside.
+* friend functions are functions declered as friend inside the class but defined outside.
 * friend functions can access private members of the class by an instance passed by reference
 */

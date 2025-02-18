@@ -48,7 +48,7 @@ void Map() {
 }
 
 void Unordered_Map() {
-	//use ash table to gether the hash that find the searched element, sometimes the data are stored inthe same order as inserted but is not guaranteed
+	//use ash table to gether the hash that find the searched element, sometimes the data are stored in the same order as inserted but is not guaranteed
 	unordered_map<string, CityRecord> cityMap;	// first argument is the key used to index the data, in this case it index by name
 	cityMap["Torino"] = CityRecord{ "Torino", 1000, 9.4, 8.4 };
 	cityMap["Milano"] = CityRecord{ "Milano", 2000, 6.4, 9.6 };

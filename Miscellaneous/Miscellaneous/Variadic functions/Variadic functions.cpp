@@ -15,7 +15,7 @@ void simple_print(const char* fmt...) {
         }
         else if (*fmt == 'c') {
             int c = va_arg(args, int);
-            cout << static_cast<char>(c) << endl;
+            cout << static_cast<char>(c) << endl; //static cast used for checking cast safety at compile time (casting used only for the example)
         }
         else if (*fmt == 'f') {
             double d = va_arg(args, double);
@@ -60,4 +60,5 @@ int main()
 *   simple_print() work by providing the letter for the correct type in the first argument
 *   generic_print() overload an empty function with template parameter and variadic template parameters.
         it call itself recursively passing the next set of parameters as argument for the function
+        the ampty function in this case is needed to handle the base case (recursive function)
 */

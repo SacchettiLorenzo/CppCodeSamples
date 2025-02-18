@@ -1,3 +1,13 @@
-﻿  PPM.cpp
-C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Miscellaneous\Netpbm image designer\Netpbm image designer\PPM.cpp(51,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Netpbm image designer.vcxproj -> C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Miscellaneous\Netpbm image designer\x64\Debug\Netpbm image designer.exe
+﻿  Netpbm image designer.cpp
+  PBM.cpp
+C:\dev\CppCodeSamples\Projects\Netpbm image designer\Netpbm image designer\PBM.cpp(72,9): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+C:\dev\CppCodeSamples\Projects\Netpbm image designer\Netpbm image designer\PBM.cpp(76,9): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+C:\dev\CppCodeSamples\Projects\Netpbm image designer\Netpbm image designer\PBM.cpp(77,9): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+  PGM.cpp
+C:\dev\CppCodeSamples\Projects\Netpbm image designer\Netpbm image designer\PGM.cpp(88,9): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+C:\dev\CppCodeSamples\Projects\Netpbm image designer\Netpbm image designer\PGM.cpp(92,9): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+C:\dev\CppCodeSamples\Projects\Netpbm image designer\Netpbm image designer\PGM.cpp(93,9): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+  PPM.cpp
+C:\dev\CppCodeSamples\Projects\Netpbm image designer\Netpbm image designer\PPM.cpp(51,12): warning C4244: 'argomento': conversione da 'time_t' a 'unsigned int'. Possibile perdita di dati.
+  Generazione del codice in corso...
+  Netpbm image designer.vcxproj -> C:\dev\CppCodeSamples\Projects\Netpbm image designer\x64\Debug\Netpbm image designer.exe

@@ -21,5 +21,5 @@ int main()
 * 
 *   it is usefull when we have to check that the sysytem we are compiling on has some characteristics
 *   for example if the system use  64 or 32 bit pointers 
-*   or if the classes wse are working on are up to date
+*   or if the classes we are working on are up to date
 */

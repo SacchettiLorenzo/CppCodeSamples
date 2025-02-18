@@ -25,24 +25,41 @@ int main()
     char letter = 'A';
     bool is_cpp_great = true;
 
-    struct Person { //Structures are used to group variables of different data types together under a single name.
-        string name;
-        int age;
-        float height;
+    //Structures are used to group variables of different data types together under a single name.
+    //usually structs use padding to allign data at the 8th byte. padding is added at runtime
+    struct Person {
+        string name;    //40
+        int age;        //4
+        float height;   //4
     };
+
+    cout << "Person size: " << sizeof(Person) << endl;
+    cout << "Person allignment: " << alignof(Person) << endl;
+
+    //it is possible to define a custom allignement (power of 2)
+    struct alignas(32) PersonCustomAllignment {
+        string name;    //40
+        int age;        //4
+        float height;   //4
+    };
+
+    cout << "PersonCustomAllignment size: " << sizeof(PersonCustomAllignment) << endl;
+    cout << "PersonCustomAllignment allignment: " << alignof(PersonCustomAllignment) << endl;
 
     Person p1 = { "John Doe", 30, 5.9 };
     
-    union Data { //Unions are used to store different data types in the same memory location. Only one member can contain a value at any given time.
+    //Unions are used to store different data types in the same memory location. Only one member can contain a value at any given time.
+    union Data { 
         int num;
         char letter;
         float decimal;
     };
 
+
     Data myData;
     myData.num = 42;
     myData.decimal = 13.2f;
-    cout << "Union: " << myData.num << endl; //print a value without any meaning because myData.num is overwritten
+    cout << "Union: " << myData.num << endl; //print a value without any meaning because myData.num has been partially overwritten
 
 
 
@@ -93,12 +110,12 @@ int main()
     data = 2;
     data = "Lollo";
     string s = get<string>(data);
-    string s2 = any_cast<string>(data);
+   // string s2 = any_cast<string>(data);
 #endif
 
     //typeid -------------------------------
     Base* base_ptr = new Derived;
-
+    
     cout << "type: " << typeid(*base_ptr).name() << endl;
     cout << "type: " << typeid(any_value).name() << endl;
     //cout << "type: " << typeid(*void_ptr).name() << endl; do not work
@@ -152,7 +169,7 @@ int main()
 */
 
 /* <any> only working with c++ 17 or higher
-* generalized type safe container fur single values of any type
+* generalized type safe container for single values of any type
 */
 
 /* typeid

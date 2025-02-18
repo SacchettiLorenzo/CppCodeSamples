@@ -98,9 +98,9 @@ int main()
 */
 
 /* INPUT ITERATOR
-*  it can be used only with with single pass algorithms in which we can got to all the locations in the range at most once
+*  it can be used only with single pass algorithms in which we can got to all the locations in the range at most once
 *  An input iterator can be compared for equality with another iterator, two iterators will be equal only when they point to the same position
-*  an input iterator can be dereferenced (* or ->) to obtain the value stored at the position beaing pointed by the iterator
+*  an input iterator can be dereferenced (* or ->) to obtain the value stored at the position being pointed by the iterator
 *  it can be incremented so that it refer to the next element in the sequence using ++ operator but not -- operator
 *  input iterator are used only for accessing elements and not for performing copy or assignement
 *  Permitted operations: std::find

@@ -56,7 +56,7 @@ int main()
     printf("at line: %d \n", __LINE__);
     printf("time: %s \n", __TIME__);
     printf("date: %s \n", __DATE__);
-    printf("name fo this function: %s \n", __func__);
+    printf("name for this function: %s \n", __func__);
 
     CHECK1(0, "here %s %s %s", "are", "some", "varargs1(1)\n");
 

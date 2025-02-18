@@ -2,6 +2,9 @@
 
 using namespace std;
 
+//& lvalue reference declerator
+//&& rvalue reference declerator
+
 int main() {
 	int var = 10;
 
@@ -30,6 +33,6 @@ void swap(int& a, int& b) { //reference as parameters
 
 // reference
 /*
-* it is possible ot use the reference just like the original variable; When the value of the reference change, the value of the original variable change too;
-* 
+* it is possible to use the reference just like the original variable; When the value of the reference change, the value of the original variable change too;
+* it acts as an alias of the original variable
 */

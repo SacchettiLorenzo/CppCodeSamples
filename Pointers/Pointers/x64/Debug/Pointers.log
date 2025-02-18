@@ -1,4 +1,4 @@
 ﻿  PointersMiscellaneous.c
-C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Pointers\Pointers\PointersMiscellaneous.c(23,6): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Pointers\Pointers\PointersMiscellaneous.c(33,6): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-  Pointers.vcxproj -> C:\Users\VGpc\Documents\GitHub\CppCodeSamples\Pointers\x64\Debug\Pointers.exe
+C:\dev\CppCodeSamples\Pointers\Pointers\PointersMiscellaneous.c(23,6): warning C4267: '=': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\dev\CppCodeSamples\Pointers\Pointers\PointersMiscellaneous.c(33,6): warning C4267: '=': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  Pointers.vcxproj -> C:\dev\CppCodeSamples\Pointers\x64\Debug\Pointers.exe
