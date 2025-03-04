@@ -16,7 +16,7 @@
 *.o
 *.zip
 *.png
-*.jpg
+
 *.dll
 records.csv
 result.csv

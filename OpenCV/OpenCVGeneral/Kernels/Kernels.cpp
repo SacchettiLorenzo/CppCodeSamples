@@ -1,7 +1,3 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
-
 
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
@@ -10,7 +6,7 @@
 using namespace std;
 using namespace cv;
 
-string image_path = "..\\..\\images\\geometry.png";
+string image_path = "..\\..\\images\\image-1.jpg";
 
 void Identity(Mat);
 void Ridge(Mat);
@@ -28,9 +24,9 @@ int main(int argc, char* argv[])
 
 	//Identity(src);
 	//Ridge(src);
-	EdgeDetection(src);
+	//EdgeDetection(src);
 	//Sharpen(src);
-	//BoxBlur(src);
+	BoxBlur(src);
 	//GaussianBlur(src);
 	//GaussianBlurBigger(src);
 

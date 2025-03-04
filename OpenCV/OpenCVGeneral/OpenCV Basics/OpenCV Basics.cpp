@@ -10,6 +10,7 @@
 void showImage();
 void MatBasics();
 void lookupTable();
+void iteratorImageAccess();
 
 using namespace cv;
 using namespace std;
@@ -17,9 +18,10 @@ using namespace std;
 string image_path = "..\\..\\images\\image-1.jpg";
 int main()
 {
-	showImage();
-	MatBasics();
-	lookupTable();
+	//showImage();
+	//MatBasics();
+	//lookupTable();
+	iteratorImageAccess();
 }
 
 void showImage() {
@@ -90,7 +92,9 @@ void lookupTable() {
 	imshow("normal color", normalimg);
 
 	Mat img = normalimg.clone();
-	/*
+	
+
+	//lookup table application procedure
 	int channels = img.channels();
 	int nRows = img.rows;
 	int nCols = img.cols * channels; //multipying column and channel to simulate one column for each color channel (avoid another for loop)
@@ -111,9 +115,7 @@ void lookupTable() {
 		}
 	}
 	
-
-
-
+	//lookup table application procedure with OPENCV built in function
 	Mat lookUpTable(1, 256, CV_8U);
 	uchar* q = lookUpTable.ptr();
 	for (int i = 0; i < 256; ++i)
@@ -122,5 +124,35 @@ void lookupTable() {
 	LUT(normalimg, lookUpTable, img);
 
 	imshow("reducted color", img);
+	int k = waitKey(0);
+
+}
+
+void iteratorImageAccess() {
+	Mat image = imread(image_path, IMREAD_COLOR);
+
+	const int channels = image.channels();
+
+	switch (channels) {
+	case 1:
+	{
+		MatIterator_<uchar> it, end;
+		for (it = image.begin<uchar>(), end = image.end<uchar>(); it != end; ++it) {
+			*it = 155; //random number
+		}
+		break;
+	}
+	case 3:
+	{
+		MatIterator_<Vec3b> it, end;
+		for (it = image.begin<Vec3b>(), end = image.end<Vec3b>(); it != end; ++it) {
+			(*it)[0] = 11;
+			(*it)[1] = 67;
+			(*it)[2] = 119;
+		}
+	}
+	}
+
+	imshow("recoloured", image);
 	int k = waitKey(0);
 }

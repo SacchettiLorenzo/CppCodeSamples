@@ -6,20 +6,47 @@ LFUCache::LFUCache(const int& max_size) : max_size(max_size)
 
 }
 
-bool LFUCache::insert(std::string key, std::any data)
+LFUCache& LFUCache::operator==(LFUCache&& other)
+{
+	if (this != &other) {
+		delete &cache;
+		delete& LFUElement;
+
+		this->max_size = other.max_size;
+		this->cache = other.cache;
+		this->LFUElement = other.LFUElement;
+	}
+
+	return *this;
+}
+
+bool LFUCache::insert(std::string key, std::any data, size_t size)
 {
 	if (cache.size() < this->max_size) {
-		LFUElement = cache.insert({ key,Data{data,0} }).first;
+		LFUElement = cache.insert({ key,Data{data,size,0} }).first;
 	}
 	else {
 		cache.erase(LFUElement);
-		LFUElement = cache.insert({ key,Data{data,0} }).first;
+		LFUElement = cache.insert({ key,Data{data,size,0} }).first;
 	}
 
 	return true;
 }
 
-std::any LFUCache::get(const std::string& key)
+bool LFUCache::update(std::string key, std::any data, size_t size)
+{
+	auto it = cache.find(key);
+
+	if (it != cache.end()) {
+		it->second = Data{ data,0 };
+	}
+	else {
+		insert(key, data,size);
+	}
+	return true;
+}
+
+std::pair<size_t,std::any> LFUCache::get(const std::string& key)
 {
 	std::unordered_map<std::string, Data>::iterator res = cache.find(key);
 	if (res != cache.end()) {
@@ -27,10 +54,10 @@ std::any LFUCache::get(const std::string& key)
 		if ((*res).second.frequency < (*LFUElement).second.frequency) {
 			LFUElement = res;
 		}
-		return (*res).second.data;
+		return std::pair<size_t, std::any>((*res).second.size, (*res).second.data);
 	}
 	else {
-		return NULL;
+		return std::pair<size_t,std::any>(0,NULL);
 	}
 }
 

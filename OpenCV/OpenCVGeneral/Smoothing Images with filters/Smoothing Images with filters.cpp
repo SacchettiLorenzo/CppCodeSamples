@@ -6,7 +6,7 @@
 using namespace std;
 using namespace cv;
 
-string image_path = "..\\..\\images\\image-7.jpg";
+string image_path = "..\\..\\images\\image-1.jpg";
 
 int DELAY_CAPTION = 1500;
 int DELAY_BLUR = 100;

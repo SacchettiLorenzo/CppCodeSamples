@@ -3,11 +3,13 @@
 #include <string>
 
 #define BUFSIZE 512
+#define KEYSIZE 128
 
-struct Header {
+struct Message {
 	services service;
-	int message_size;
-	types type;
+	int payload_size;
 	operations operation;
-	const char key[128]; //key | new size
+	const std::string key;
+	bool keep_thread_alive;
+	void* payload;
 };

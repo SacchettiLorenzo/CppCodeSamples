@@ -6,199 +6,348 @@
 #include <any>
 #include "..\Cache\Messages.h"
 #include <string>
+#include <list>
+#include <iostream>
 
-bool insert(HANDLE,Header* , LPCTSTR );
-bool remove(HANDLE, Header*);
+bool insert(HANDLE hPipe, services service, LPCVOID* data, int data_length, std::string key, bool keep_alive);
+bool remove(HANDLE hPipe, services service, std::string key, bool keep_alive);
+std::any get(HANDLE hPipe, services service, std::string key, bool keep_alive);
+
+HANDLE hHeap = GetProcessHeap();
 
 int _tmain(int argc, TCHAR* argv[])
 {
-    Sleep(100);
-    HANDLE hPipe;
+	std::cout << "Client" << std::endl;
+	Sleep(1000);
+	HANDLE hPipe;
 
-    LPCTSTR lpvMessage = TEXT("Default message from client.");
-    
-    
 
-    TCHAR  chBuf[BUFSIZE];
-    BOOL   fSuccess = FALSE;
-    DWORD  cbRead, cbWritten, dwMode;
-    LPCTSTR lpszPipename = TEXT("\\\\.\\pipe\\mynamedpipe");
+	LPCTSTR lpvMessage = TEXT("Get this message bitch.\0");
 
-  
+	TCHAR  chBuf[BUFSIZE];
+	BOOL   fSuccess = FALSE;
+	DWORD  cbRead, cbWritten, dwMode;
+	LPCTSTR lpszPipename = TEXT("\\\\.\\pipe\\main_pipe");
 
-    // Try to open a named pipe; wait for it, if necessary. 
+	// Try to open a named pipe; wait for it, if necessary. 
 
-    while (1)
-    {
-        hPipe = CreateFile(
-            lpszPipename,   // pipe name 
-            GENERIC_WRITE | GENERIC_READ ,  // write access 
-            0,              // no sharing 
-            NULL,           // default security attributes
-            OPEN_EXISTING,  // opens existing pipe 
-            0,              // default attributes 
-            NULL);          // no template file 
+	while (true)
+	{
+		hPipe = CreateFile(
+			lpszPipename,                   // pipe name 
+			GENERIC_WRITE | GENERIC_READ,  // write access 
+			0,                              // no sharing 
+			NULL,                           // default security attributes
+			OPEN_EXISTING,                  // opens existing pipe 
+			0,                              // default attributes 
+			NULL);                          // no template file 
 
-        // Break if the pipe handle is valid. 
+		// Break if the pipe handle is valid. 
 
-        if (hPipe != INVALID_HANDLE_VALUE)
-            break;
+		if (hPipe != INVALID_HANDLE_VALUE) {
+			break;
+		}
 
-        // Exit if an error other than ERROR_PIPE_BUSY occurs. 
+		// Exit if an error other than ERROR_PIPE_BUSY occurs. 
 
-        if (GetLastError() != ERROR_PIPE_BUSY)
-        {
-            _tprintf(TEXT("Could not open pipe. GLE=%d\n"), GetLastError());
-            return -1;
-        }
+		if (GetLastError() != ERROR_PIPE_BUSY)
+		{
+			_tprintf(TEXT("Could not open pipe. GLE=%d\n"), GetLastError());
+			//return -1;
+		}
 
-        // All pipe instances are busy, so wait for 20 seconds. 
+		// All pipe instances are busy, so wait for 20 seconds. 
 
-        if (!WaitNamedPipe(lpszPipename, 20000))
-        {
-            printf("Could not open pipe: 20 second wait timed out.");
-            return -1;
-        }
-    }
+		if (!WaitNamedPipe(lpszPipename, 20000))
+		{
+			printf("Could not open pipe: 20 second wait timed out.");
+			//return -1;
+		}
+	}
 
-    // The pipe connected; change to message-read mode. 
+	// The pipe connected; change to message-read mode. 
 
-    dwMode = PIPE_READMODE_MESSAGE | PIPE_READMODE_BYTE |PIPE_WAIT;
-    fSuccess = SetNamedPipeHandleState(
-        hPipe,    // pipe handle 
-        &dwMode,  // new pipe mode 
-        NULL,     // don't set maximum bytes 
-        NULL);    // don't set maximum time 
-    if (!fSuccess)
-    {
-        _tprintf(TEXT("SetNamedPipeHandleState failed. GLE=%d\n"), GetLastError());
-        return -1;
-    }
+	dwMode = PIPE_READMODE_MESSAGE | PIPE_READMODE_BYTE | PIPE_WAIT;
+	fSuccess = SetNamedPipeHandleState(
+		hPipe,    // pipe handle 
+		&dwMode,  // new pipe mode 
+		NULL,     // don't set maximum bytes 
+		NULL);    // don't set maximum time 
+	if (!fSuccess)
+	{
+		_tprintf(TEXT("SetNamedPipeHandleState failed. GLE=%d\n"), GetLastError());
+		//return -1;
+	}
 
-    Header* h = new Header{ LFU, lstrlen(lpvMessage),_MESSAGE,INSERT,"My_key" };
-    insert(hPipe, h, lpvMessage);
+	DWORD bytesRead = 0, bytesAvailable = 0, bytesLeftThisMessage = 0, bytesWritten = 0;
+	HANDLE hHeap = GetProcessHeap();
+	LPCTSTR* random_pipe_name = NULL;
 
-    Sleep(100);
 
-    h = new Header{ LFU, 0,_MESSAGE,REMOVE,"My_key" };
-    remove(hPipe, h);
-    
-    _getch();
+	while (true) {
+		fSuccess = PeekNamedPipe(
+			hPipe,
+			NULL,
+			0,
+			&bytesRead,
+			&bytesAvailable,
+			&bytesLeftThisMessage
+		);
 
-    //do
-    //{
-    //    // Read from the pipe. 
+		if (fSuccess == 0) {
+			std::cout << "PeekNamedPipe failed: , GLE = " << GetLastError() << std::endl;
+		}
 
-    //    fSuccess = ReadFile(
-    //        hPipe,    // pipe handle 
-    //        chBuf,    // buffer to receive reply 
-    //        BUFSIZE * sizeof(TCHAR),  // size of buffer 
-    //        &cbRead,  // number of bytes read 
-    //        NULL);    // not overlapped 
+		if (bytesAvailable > 0) {
+			random_pipe_name = (LPCTSTR*)HeapAlloc(hHeap, HEAP_ZERO_MEMORY, bytesAvailable);
+			fSuccess = ReadFile(
+				hPipe,
+				random_pipe_name,
+				bytesAvailable,
+				&bytesRead,
+				NULL
+			);
 
-    //    if (!fSuccess && GetLastError() != ERROR_MORE_DATA)
-    //        break;
 
-    //    _tprintf(TEXT("\"%s\"\n"), chBuf);
-    //} while (!fSuccess);  // repeat loop if ERROR_MORE_DATA 
+			if (fSuccess == 0) {
+				std::cout << "ReadFile failed: , GLE = " << GetLastError() << std::endl;
+			}
+			else {
+				break;
+			}
+		}
+	}
 
-    //if (!fSuccess)
-    //{
-    //    _tprintf(TEXT("ReadFile from pipe failed. GLE=%d\n"), GetLastError());
-    //    return -1;
-    //}
+	std::wstring pipe_name_base = L"\\\\.\\pipe\\";
+	wchar_t* pipe_name_end = reinterpret_cast<wchar_t*>(random_pipe_name);
+	std::wcout << pipe_name_end << std::endl;
 
-    //printf("\n<End of message, press ENTER to terminate connection and exit>");
-    
+	std::wstring pipe_name = pipe_name_base + pipe_name_end;
 
-    //CloseHandle(hPipe);
+	std::wcout << pipe_name << std::endl;
+	CloseHandle(hPipe);
 
-    return 0;
+	while (true) {
+		hPipe = CreateFile(
+			pipe_name.c_str(),                      // pipe name 
+			GENERIC_WRITE | GENERIC_READ,  // write access 
+			0,                              // no sharing 
+			NULL,                           // default security attributes
+			OPEN_EXISTING,                  // opens existing pipe 
+			0,                              // default attributes 
+			NULL);                          // no template file 
+
+		// Break if the pipe handle is valid. 
+
+		if (hPipe != INVALID_HANDLE_VALUE) {
+			break;
+		}
+
+		// Exit if an error other than ERROR_PIPE_BUSY occurs. 
+
+		if (GetLastError() != ERROR_PIPE_BUSY){
+			_tprintf(TEXT("Could not open pipe. GLE=%d\n"), GetLastError());
+			//if the named pipe is not opened on the server side yet, error will occur
+			//return -1;
+		}
+
+		// All pipe instances are busy, so wait for 20 seconds. 
+
+		if (!WaitNamedPipe(lpszPipename, 20000)){
+			printf("Could not open pipe: 20 second wait timed out.");
+			
+			//return -1;
+		}
+	}
+
+	insert(hPipe, LFU, (LPCVOID*)lpvMessage, lstrlen(lpvMessage) * sizeof(TCHAR), "My_data",true);
+	Sleep(1000);
+	//remove(hPipe, LFU, "My_data",false);
+	std::any res = get(hPipe, LFU, "My_data", false);
+	_getch();
+	CloseHandle(hPipe);
+
+
+	return 0;
 }
 
-bool insert(HANDLE hPipe, Header* h, LPCTSTR lpvMessage) {
-    
-    LPCVOID* header = (LPCVOID*)malloc(sizeof(Header));
-    memcpy(header, h, sizeof(Header));
+bool insert(HANDLE hPipe, services service, LPCVOID* data, int data_length, std::string key, bool keep_alive) {
 
-    DWORD cbToWrite = (sizeof(Header));
-    DWORD cbWritten = 0;
-    BOOL   fSuccess = FALSE;
+	DWORD cbWritten = 0;
+	BOOL   fSuccess = FALSE;
+	DWORD bytesRead = 0, bytesAvailable = 0, bytesLeftThisMessage = 0;
 
-    _tprintf(TEXT("Sending %d byte message: \"%s\"\n"), cbToWrite, lpvMessage);
+	Message message{
+		service,
+		data_length,
+		INSERT,
+		key,
+		keep_alive,
+		nullptr
+	};
 
-    fSuccess = WriteFile(
-        hPipe,                  // pipe handle 
-        header,                 // message 
-        cbToWrite,              // message length 
-        &cbWritten,             // bytes written 
-        NULL);                  // not overlapped 
+	//mess here in message memory allocation
+	message.payload = (void*)HeapAlloc(hHeap, HEAP_ZERO_MEMORY, data_length);
+	memcpy(message.payload, data, data_length);
 
-    if (!fSuccess)
-    {
-        _tprintf(TEXT("WriteFile to pipe failed. GLE=%d\n"), GetLastError());
-        return false;
-    }
+	int message_length = sizeof(Message) - sizeof(void*) + data_length;
 
-    DWORD bytesRead = 0, bytesAvailable = 0, bytesLeftThisMessage = 0;
+	fSuccess = PeekNamedPipe(
+		hPipe,
+		NULL,
+		0,
+		&bytesRead,
+		&bytesAvailable,
+		&bytesLeftThisMessage
+	);
 
-    fSuccess = PeekNamedPipe(
-        hPipe,
-        NULL,
-        0,
-        &bytesRead,
-        &bytesAvailable,
-        &bytesLeftThisMessage
-    );
+	if (bytesAvailable == 0) {
+		fSuccess = WriteFile(
+			hPipe,                  // pipe handle 
+			&message,                 // message 
+			message_length,              // message length 
+			&cbWritten,             // bytes written 
+			NULL);                  // not overlapped 
 
-    if (bytesAvailable == 0) {
-        cbToWrite = (h->message_size) * sizeof(TCHAR);
-        fSuccess = WriteFile(
-            hPipe,                  // pipe handle 
-            lpvMessage,                 // message 
-            cbToWrite,              // message length 
-            &cbWritten,             // bytes written 
-            NULL);                  // not overlapped 
+		if (!fSuccess)
+		{
+			_tprintf(TEXT("WriteFile to pipe failed. GLE=%d\n"), GetLastError());
+			return false;
+		}
 
-        if (!fSuccess)
-        {
-            _tprintf(TEXT("WriteFile to pipe failed. GLE=%d\n"), GetLastError());
-            return false;
-        }
-    }
+	}
 
-    return true;
-    
+	return true;
+
 }
 
-bool remove(HANDLE hPipe, Header* h) {
-    LPCVOID* header = (LPCVOID*)malloc(sizeof(Header));
-    memcpy(header, h, sizeof(Header));
+bool remove(HANDLE hPipe, services service, std::string key, bool keep_alive) {
 
-    DWORD cbToWrite = (sizeof(Header));
-    DWORD cbWritten = 0;
-    BOOL   fSuccess = FALSE;
+	DWORD cbWritten = 0;
+	BOOL   fSuccess = FALSE;
+	DWORD bytesRead = 0, bytesAvailable = 0, bytesLeftThisMessage = 0;
 
-    fSuccess = WriteFile(
-        hPipe,                  // pipe handle 
-        header,                 // message 
-        cbToWrite,              // message length 
-        &cbWritten,             // bytes written 
-        NULL);                  // not overlapped 
+	Message message{
+		service,
+		0,
+		REMOVE,
+		key,
+		keep_alive,
+		nullptr
+	};
 
-    if (!fSuccess)
-    {
-        _tprintf(TEXT("WriteFile to pipe failed. GLE=%d\n"), GetLastError());
-        return false;
-    }
+	int message_length = sizeof(Message) - sizeof(void*);
 
-    return true;
+	fSuccess = PeekNamedPipe(
+		hPipe,
+		NULL,
+		0,
+		&bytesRead,
+		&bytesAvailable,
+		&bytesLeftThisMessage
+	);
+
+	if (bytesAvailable == 0) {
+		fSuccess = WriteFile(
+			hPipe,                  // pipe handle 
+			&message,                 // message 
+			message_length,              // message length 
+			&cbWritten,             // bytes written 
+			NULL);                  // not overlapped 
+
+		if (!fSuccess)
+		{
+			_tprintf(TEXT("WriteFile to pipe failed. GLE=%d\n"), GetLastError());
+			return false;
+		}
+
+	}
+
+	return true;
 }
 
 bool resize() {
-    return true;
+	return true;
 }
 
-std::any get() {
-    return "";
+std::any get(HANDLE hPipe, services service, std::string key, bool keep_alive) {
+
+	DWORD cbWritten = 0;
+	BOOL   fSuccess = FALSE;
+	DWORD bytesRead = 0, bytesAvailable = 0, bytesLeftThisMessage = 0;
+
+	Message message{
+		service,
+		0,
+		GET,
+		key,
+		keep_alive,
+		nullptr
+	};
+
+	int message_length = sizeof(Message) - sizeof(void*);
+
+	fSuccess = PeekNamedPipe(
+		hPipe,
+		NULL,
+		0,
+		&bytesRead,
+		&bytesAvailable,
+		&bytesLeftThisMessage
+	);
+
+	if (bytesAvailable == 0) {
+		fSuccess = WriteFile(
+			hPipe,                  // pipe handle 
+			&message,                 // message 
+			message_length,              // message length 
+			&cbWritten,             // bytes written 
+			NULL);                  // not overlapped 
+
+		if (!fSuccess)
+		{
+			_tprintf(TEXT("WriteFile to pipe failed. GLE=%d\n"), GetLastError());
+			return false;
+		}
+	}
+
+	while (true) {
+		fSuccess = PeekNamedPipe(
+			hPipe,
+			NULL,
+			0,
+			&bytesRead,
+			&bytesAvailable,
+			&bytesLeftThisMessage
+		);
+
+		if (fSuccess == 0) {
+			_tprintf(TEXT("PeekNamedPipe failed, GLE=%d at line: %d\n"), GetLastError(), __LINE__);
+		}
+		if (bytesAvailable > 0) break;
+	}
+
+	if (bytesAvailable > 0) {
+		LPCVOID* data = (LPCVOID*)HeapAlloc(hHeap, HEAP_ZERO_MEMORY, bytesAvailable);
+		fSuccess = ReadFile(
+			hPipe,
+			data,
+			bytesAvailable,
+			&bytesRead,
+			NULL
+		);
+
+		if (!fSuccess || bytesRead == 0) {
+			if (GetLastError() == ERROR_BROKEN_PIPE) {
+				_tprintf(TEXT("InstanceThread: client disconnected, GLE=%d at line: %d \n"), GetLastError(), __LINE__);
+			}
+			else {
+				_tprintf(TEXT("InstanceThread ReadFile (header) failed, GLE=%d at line: %d \n"), GetLastError(), __LINE__);
+			}
+		}
+		else {
+			return data;
+		}
+	}
+
 }

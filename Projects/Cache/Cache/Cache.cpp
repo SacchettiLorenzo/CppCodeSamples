@@ -5,7 +5,7 @@
 
 int main()
 {
-    
+    std::cout << "Server" << std::endl;
     cache_server_start();
 
 }

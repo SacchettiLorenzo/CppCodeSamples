@@ -6,4 +6,4 @@ enum services {LFU,LRU};
 
 enum types {_MESSAGE,_BYTE};
 
-enum operations {INSERT,GET,REMOVE,RESIZE};
+enum operations {INSERT,GET,REMOVE,UPDATE,RESIZE};

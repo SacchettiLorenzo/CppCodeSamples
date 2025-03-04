@@ -11,38 +11,51 @@ LRUCache& LRUCache::operator==(LRUCache&& other) {
 	if (this != &other) {
 		
 		delete &cache;
-		delete &Oldestlement;
+		delete &Oldest_element;
 		
 		this->max_size = other.max_size;
 		this->cache = other.cache;
-		this->Oldestlement = other.Oldestlement;
+		this->Oldest_element = other.Oldest_element;
 	}
 
 	return *this;
 }
 
-bool LRUCache::insert(std::string key, std::any data)
+bool LRUCache::insert(std::string key, std::any data, size_t size)
 {
 	if (cache.size() < this->max_size) {
-		cache.insert({ key,Data{data,std::chrono::high_resolution_clock::now()}}).first;
+		cache.insert({ key,Data{data,size,std::chrono::high_resolution_clock::now()}}).first;
 		findOldestElement();
 	}
 	else {
-		cache.erase(Oldestlement);
-		cache.insert({ key,Data{data,std::chrono::high_resolution_clock::now()} }).first;
+		cache.erase(Oldest_element);
+		cache.insert({ key,Data{data,size,std::chrono::high_resolution_clock::now()} }).first;
 		findOldestElement();
 	}
 	return false;
 }
 
-std::any LRUCache::get(const std::string& key)
+bool LRUCache::update(std::string key, std::any data, size_t size)
+{
+	auto it = cache.find(key);
+	
+	if (it != cache.end()) {
+		it->second = Data{ data,size,std::chrono::high_resolution_clock::now()};
+	}
+	else {
+		insert(key, data, size);
+	}
+	return true;
+}
+
+std::pair<size_t, std::any> LRUCache::get(const std::string& key)
 {
 	std::unordered_map<std::string, Data>::iterator res = cache.find(key);
 	if (res != cache.end()) {
-		return (*res).second.data;
+		return std::pair<size_t, std::any>((*res).second.size, (*res).second.data);
 	}
 	else {
-		return NULL;
+		return std::pair<size_t, std::any>(0, NULL);
 	}
 }
 
@@ -51,7 +64,7 @@ bool LRUCache::remove(const std::string& key)
 	std::unordered_map<std::string, Data>::iterator to_remove = cache.find(key);
 	bool res = cache.erase(key);
 
-	if (res == true && to_remove == Oldestlement) {
+	if (res == true && to_remove == Oldest_element) {
 		findOldestElement();
 	}
 
@@ -79,7 +92,7 @@ bool LRUCache::resize(const int& new_size)
 		pq.pop();
 	}
 
-	Oldestlement = new_cache.insert({ (*pq.top()).first,(*pq.top()).second }).first;
+	Oldest_element = new_cache.insert({ (*pq.top()).first,(*pq.top()).second }).first;
 	pq.pop();
 
 	cache = std::move(new_cache);
@@ -97,7 +110,7 @@ bool LRUCache::resize(const int& new_size)
 
 void LRUCache::findOldestElement()
 {
-	Oldestlement = std::min_element(cache.begin(), cache.end(),
+	Oldest_element = std::min_element(cache.begin(), cache.end(),
 		[](const std::pair<std::string, Data>& l, const  std::pair<std::string, Data>& r) {
 			return l.second.time_point < r.second.time_point;
 		});
