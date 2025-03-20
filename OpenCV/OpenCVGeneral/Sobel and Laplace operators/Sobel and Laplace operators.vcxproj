@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{52B7068B-A02C-4203-9410-E8B1DFA92157}</ProjectGuid>
-    <RootNamespace>Thresholding</RootNamespace>
+    <ProjectGuid>{1926F456-8442-4B87-A429-E06D9130FD6D}</ProjectGuid>
+    <RootNamespace>SobelandLaplaceoperators</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -131,7 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Thresholding.cpp" />
+    <ClCompile Include="Sobel and Laplace operators.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

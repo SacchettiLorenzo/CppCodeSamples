@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{52B7068B-A02C-4203-9410-E8B1DFA92157}</ProjectGuid>
-    <RootNamespace>Thresholding</RootNamespace>
+    <ProjectGuid>{0dc480a6-1a55-4474-976b-00ea2fd0fb54}</ProjectGuid>
+    <RootNamespace>ConvexHull</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -131,7 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Thresholding.cpp" />
+    <ClCompile Include="Convex Hull.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

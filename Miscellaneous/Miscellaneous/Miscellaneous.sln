@@ -57,6 +57,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Enumeration", "Enumeration\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Static Assert", "Static Assert\Static Assert.vcxproj", "{6477D541-077E-4F48-9F88-2232FC58EA3A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BestPractices", "BestPractices\BestPractices.vcxproj", "{74175E1A-7F47-4267-B099-4D80EFDAC2FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -281,6 +283,14 @@ Global
 		{6477D541-077E-4F48-9F88-2232FC58EA3A}.Release|x64.Build.0 = Release|x64
 		{6477D541-077E-4F48-9F88-2232FC58EA3A}.Release|x86.ActiveCfg = Release|Win32
 		{6477D541-077E-4F48-9F88-2232FC58EA3A}.Release|x86.Build.0 = Release|Win32
+		{74175E1A-7F47-4267-B099-4D80EFDAC2FD}.Debug|x64.ActiveCfg = Debug|x64
+		{74175E1A-7F47-4267-B099-4D80EFDAC2FD}.Debug|x64.Build.0 = Debug|x64
+		{74175E1A-7F47-4267-B099-4D80EFDAC2FD}.Debug|x86.ActiveCfg = Debug|Win32
+		{74175E1A-7F47-4267-B099-4D80EFDAC2FD}.Debug|x86.Build.0 = Debug|Win32
+		{74175E1A-7F47-4267-B099-4D80EFDAC2FD}.Release|x64.ActiveCfg = Release|x64
+		{74175E1A-7F47-4267-B099-4D80EFDAC2FD}.Release|x64.Build.0 = Release|x64
+		{74175E1A-7F47-4267-B099-4D80EFDAC2FD}.Release|x86.ActiveCfg = Release|Win32
+		{74175E1A-7F47-4267-B099-4D80EFDAC2FD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

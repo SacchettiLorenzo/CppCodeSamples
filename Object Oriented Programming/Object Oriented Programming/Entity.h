@@ -14,6 +14,9 @@ public:
 	Entity();
 	Entity(string name);
 
+	//initialization list
+	Entity(int id, int private_variable) : id{ id }, private_variable{private_variable}{}
+
 	//destructor
 	~Entity();
 
@@ -58,5 +61,5 @@ private:
 //move constructor: member function that set the current instance to point to another instance. the other member of the instance are set to null pointer 
 //move assignement operator: overload "=" operator that set the current instance to point to the other one
 
-
+//initialization list: mids that the real order memeber are initialized is not the one of the initialization list but the one they are decleare in
 
