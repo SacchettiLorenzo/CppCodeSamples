@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Cuda", "Cuda\Cuda.vcxproj", "{817DF3DA-EFF4-452F-9581-DF308E147AAC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GetInfo", "GetInfo\GetInfo.vcxproj", "{B0E366C6-FBB8-4624-88B0-75CC7B3493F9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Basics", "Basics\Basics.vcxproj", "{4B5508F8-89F9-40E0-8EBA-F7FB4AB40C17}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{817DF3DA-EFF4-452F-9581-DF308E147AAC}.Debug|x64.ActiveCfg = Debug|x64
+		{817DF3DA-EFF4-452F-9581-DF308E147AAC}.Debug|x64.Build.0 = Debug|x64
+		{817DF3DA-EFF4-452F-9581-DF308E147AAC}.Release|x64.ActiveCfg = Release|x64
+		{817DF3DA-EFF4-452F-9581-DF308E147AAC}.Release|x64.Build.0 = Release|x64
+		{B0E366C6-FBB8-4624-88B0-75CC7B3493F9}.Debug|x64.ActiveCfg = Debug|x64
+		{B0E366C6-FBB8-4624-88B0-75CC7B3493F9}.Debug|x64.Build.0 = Debug|x64
+		{B0E366C6-FBB8-4624-88B0-75CC7B3493F9}.Release|x64.ActiveCfg = Release|x64
+		{B0E366C6-FBB8-4624-88B0-75CC7B3493F9}.Release|x64.Build.0 = Release|x64
+		{4B5508F8-89F9-40E0-8EBA-F7FB4AB40C17}.Debug|x64.ActiveCfg = Debug|x64
+		{4B5508F8-89F9-40E0-8EBA-F7FB4AB40C17}.Debug|x64.Build.0 = Debug|x64
+		{4B5508F8-89F9-40E0-8EBA-F7FB4AB40C17}.Release|x64.ActiveCfg = Release|x64
+		{4B5508F8-89F9-40E0-8EBA-F7FB4AB40C17}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

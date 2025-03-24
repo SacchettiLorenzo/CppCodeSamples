@@ -3,6 +3,7 @@
 #include <array>
 #include <unordered_map>
 
+
 //it is possible to avoid the use of use namespace std by calling only what we are actually using
 //using namespace std;
 using std::cout, std::endl;
@@ -82,7 +83,19 @@ void smart_pointers() {
         std::string name;
     };
 
-    auto customer = std::unique_ptr<Record>
+    //when heap allocation is needed try use smart pointer as much as possible to avoid manual pointer deletion
+    Record* customer_ = new Record{ 0,"james" };
+    delete customer_;
+
+    auto customer = std::unique_ptr<Record>(new Record{ 0,"james" });
+    auto other = std::shared_ptr<Record>(new Record{ 0,"james" });
+
+    //une make_unique or make_shared that call directly the default constructor of the class me are allocating
+    auto customer2 = std::make_unique<Record>(0, "james");
+    auto other2 = std::make_shared<Record>(new Record{ 0,"james" });
+
+    //smart pointer should only be used when the function using them owns the pointer
+    //if the function does not own the pointer the standard c style pointers are fine
 }
 
 

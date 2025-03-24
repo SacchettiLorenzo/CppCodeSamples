@@ -64,4 +64,7 @@ int main()
 *
 * the keyword mutable allow the const method to modify a class member variable. it should be used for debugging purposes or if most of the
 * member should be const and only few need to update
+* 
+* to better remember what const apply to:
+* const apply to whatever is immediately to its left unless it is the leftmost things in which it applies to the things to its right
 */
