@@ -15,8 +15,8 @@ struct DivisibleBy
 
 int main() {
 	//vector<int> v{1,3,5,7,9};
-	vector<int> v{ 2,4,6,8 };
-	//vector<int> v{1, 2, 3, 4, 5, 6, 7, 8, 9};
+	//vector<int> v{ 2,4,6,8 };
+	vector<int> v{1, 2, 3, 4, 5, 6, 7, 8, 9};
 	if (std::all_of(v.cbegin(), v.cend(), [](int i) { return i % 2 == 0; }))
 		std::cout << "All numbers are even\n";
 
@@ -31,6 +31,12 @@ int main() {
 
 	// multiply 3 element
 	std::for_each_n(v.begin(), 3, [](auto& n) { n *= 2; });
+
+	std::stable_sort(v.begin(), v.end());
+
+	auto it = std::lower_bound(v.begin(), v.end(), 4);
+
+	std::next_permutation(v.begin(), v.end());
 
 }
 /*

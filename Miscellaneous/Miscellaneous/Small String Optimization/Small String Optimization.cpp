@@ -43,4 +43,8 @@ int main()
 * allocates memory and copy the assigned value so it can be modified
 *
 * both array and Literal are accessible by poiters and end with '\0' character but only array of char can be modified
+* 
+* The number of char suitable for small string optimization depend on the architecture of the machine.
+* On a 64 bit architecture we could have 3 words string optimization or 24 byte. 
+* The commiper usually add information that could use 1 or 2 bytes. The total size could be (24-something) buytes
 */
