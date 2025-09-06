@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CudaCompile Include="1D 2D 3D Allocation.cu" />
+    <CudaCompile Include="Asynchrounous Concurrent Execution.cu" />
+    <CudaCompile Include="Atomic Functions.cu" />
+    <CudaCompile Include="Compiler optimization.cu" />
+    <CudaCompile Include="cudaMath.cu" />
+    <CudaCompile Include="ErrorHandling.cu" />
+    <CudaCompile Include="Memory Fence Functions.cu" />
+    <CudaCompile Include="Memory management technique.cu" />
+    <CudaCompile Include="Syncronization Functions.cu" />
+    <CudaCompile Include="Unified Memory Vector Addition.cu" />
+    <CudaCompile Include="Vector Addition.cu" />
+    <CudaCompile Include="Warp Vote Functions.cu" />
+    <CudaCompile Include="Cache Tiled Matix Multiplication v2.cu">
+      <Filter>Matrix multiplication</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Cache Tiled Matrix Multiplication.cu">
+      <Filter>Matrix multiplication</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Matrix Multiplication SHM.cu">
+      <Filter>Matrix multiplication</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Matrix Multiplication.cu">
+      <Filter>Matrix multiplication</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Tiled1DConvolution.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Matrix multiplication">
+      <UniqueIdentifier>{6d9eb80f-7c57-4e73-974e-a3e16b2d605c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

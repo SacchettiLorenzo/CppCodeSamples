@@ -1,4 +1,4 @@
-Identity=kernel.cu
+Identity=Tiled1DConvolution.cu
 AdditionalCompilerOptions=
 AdditionalCompilerOptions=
 AdditionalDependencies=
@@ -8,7 +8,7 @@ AdditionalOptions=
 AdditionalOptions=
 CodeGeneration=compute_52,sm_52
 CodeGeneration=compute_52,sm_52
-CompileOut=C:\dev\CppCodeSamples\Cuda\Cuda\Cuda\x64\Debug\kernel.cu.obj
+CompileOut=C:\dev\CppCodeSamples\Cuda\Cuda\Basics\x64\Debug\Tiled1DConvolution.cu.obj
 CudaRuntime=Static
 CudaToolkitCustomDir=
 DebugInformationFormat=ProgramDatabase

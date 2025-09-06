@@ -63,3 +63,5 @@ private:
 
 //initialization list: mids that the real order memeber are initialized is not the one of the initialization list but the one they are decleare in
 
+//friend class and functions cas access protected and private members of the class that elect them as friend
+

@@ -24,9 +24,6 @@ __global__ void tiledMatrixMul(int* a, int* b, int* c, int n, int tile_size);
 void matrix_init(int* matrix_ptr, int size);
 
 
-
-
-
 int main() {
 	//host matrix pointers
 	int* h_a, * h_b, * h_c;
@@ -76,10 +73,12 @@ __global__ void tiledMatrixMul(int* a, int* b, int* c, int n, int tile_size) {
 	int temp = 0;
 
 	//two staticallyt-sized pieces of shared memory
+	//the scope of shared memory is the block so this operation is performed only once per block
 	__shared__ int A[SHMEM_SIZE];
 	__shared__ int B[SHMEM_SIZE];
 
 	//shorter parameters for clean re-use
+	//this are automatic variables placed into registers
 	int tx = threadIdx.x;
 	int ty = threadIdx.y;
 	int bx = blockIdx.x;
@@ -91,6 +90,10 @@ __global__ void tiledMatrixMul(int* a, int* b, int* c, int n, int tile_size) {
 
 	for (size_t i = 0; i < (n / tile_size); i++)
 	{
+		//loading one element in shared memory for each tile
+		//to better understand this operation we have to imagine that
+		//tx ty bx by refer to different threads with differents tiles
+		//this assignments assign values to different tiles at the same time in different blocks or threads
 		A[(ty * tile_size) + tx] = a[row * n + (i * tile_size + tx)];
 		B[(ty * tile_size) + tx] = b[(i * tile_size * n + ty * n) + col];
 
@@ -102,9 +105,17 @@ __global__ void tiledMatrixMul(int* a, int* b, int* c, int n, int tile_size) {
 			temp += A[(ty * tile_size) + j] * B[(j * tile_size) + tx];
 		}
 
-		//ensure that threads that have already finished computing start writing on memory
+		//ensure that all thread have finished using the shared memory before any of
+		//them move on to the nex iteration
 		__syncthreads();
 	}
 
 	c[(row * n) + col] = temp;
 }
+
+/*
+* matrix multiplication can be splitted into tiles because because the final result
+* is a sum of multiplications performed lacally
+*
+* this technique is called strip mining: a big loop is divided into one outer and one inner loop
+*/
