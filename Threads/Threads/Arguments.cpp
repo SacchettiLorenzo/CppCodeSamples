@@ -30,7 +30,8 @@ int main() {
     //the buffer is converted before the function even start so it is safe to tell that the data insiede the thread has been copied correctly
     char buffer[1024] = "ciao";
     thread t(functionToCall2, 3, string(buffer));
-    t.detach();
+    t.join();
+    //t.detach();
 #endif
 
 #if scenario == 3

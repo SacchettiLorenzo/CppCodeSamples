@@ -88,12 +88,13 @@ int main()
 
     //String _dest((String&&)src);//casting into a String temporary (rvalue reference) will call the move constructor
     //String __dest(std::move(src)); //more elegant way using std::move
-    //
+    
     //String ___dest = (String&&)src; //call to the call the move constructor
     //String ____dest = std::move(src); //call the move constructor
 
-    String _____dest; 
-    _____dest.operator=(std::move(src));
+    //String _____dest; 
+    //_____dest.operator=(std::move(src)); //call to the call the assignemtn operator overloaded to move
+    
     //
     //std::cin.get();
     //

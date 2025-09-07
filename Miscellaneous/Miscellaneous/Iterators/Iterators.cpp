@@ -109,7 +109,7 @@ int main()
 /* OUTPUT ITERATOR
 *  it can be used only with with single pass algorithms in which we can got to all the locations in the range at most once
 *  output iterators cannot be compared for equality with another iterator.
-*  an output iterator can be dereferenced (* or ->) to obtain the value stored at the position beaing pointed by the iterator
+*  an output iterator can be dereferenced (* or ->) to obtain the value stored at the position being pointed by the iterator
 *  it can be incremented so that it refer to the next element in the sequence using ++ operator but not -- operator
 *  output iterators are used only when we want to assign elements and not when we have to access elements.
 *  Permitted operations: std::move

@@ -46,10 +46,10 @@ int main() {
 *	async is used to start an asynchronous task for which the result is not needed right away.
 *   std::async return a std::future object which eventually hold the return value.
 *   when you need the value the get() function is called and on the std::future object and the thread blocks until the 'future' is ready to return the value.
-*	additional argument can be passed in the same way that std:.thread does
+*	additional argument can be passed in the same way that std::thread does
 *   all the rvalue are copied
 *	it is possible to specify if async will runnof a different thread or syncronously in the current one using std::launch::---
 *	std::launch::deferred : the function won't run until wait() or get() is called (it may never actualy run)
 *	std::launch::async : the function will run on its own thread
-*   std::launch::async | std::launch::async : the implementation may choose the best option depending on the load on system (this is the default one)
+*   std::launch::deferred | std::launch::async : the implementation may choose the best option depending on the load on system (this is the default one)
 */

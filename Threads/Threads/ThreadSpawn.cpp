@@ -20,3 +20,6 @@ int main() {
 	for_each(threads.begin(), threads.end(), mem_fn(&thread::join));
 
 }
+
+//mem_fn return a function object (any object for which the function call operator is defined)
+//whose call invoke the pointed member function (in this case thread::join)

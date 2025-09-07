@@ -50,7 +50,7 @@ Note that a range is defined as [first, last) where last refers to the element p
 
 /* for_each
 *  applies the given function to every element dereferenced by the iterator in the given range
-*  the function ca be normal or lambda
+*  the function can be normal or lambda
 */
 
 /* for_each_n
@@ -58,5 +58,5 @@ Note that a range is defined as [first, last) where last refers to the element p
 */
 
 /*
-* a lot mre can be found in the c++ reference
+* a lot more can be found in the c++ reference
 */

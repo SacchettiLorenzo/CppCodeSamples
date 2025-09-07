@@ -53,7 +53,7 @@ int multiply(float a, int b) {
 *  this class template is used to wrap any callable object so that in can be invoked asynchronously
 *  it can be used as a building block for a thread pool
 *  the parameters of the template are the function parameters type and the return type <return(param1,param2,paramx)> <int(int,int)>
-*  the syntax of the parameters can depend on waht callable is used
+*  the syntax of the parameters can depend on what callable is used
 *  the packaged task return a 'future' from the get_future() member function
 *  std::packaged_task<void()> wrap a function with no return value, if the callable has a return value it is discarded
 */

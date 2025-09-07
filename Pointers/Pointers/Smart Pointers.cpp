@@ -80,6 +80,10 @@ int main() {
 * weak_ptr
 * work the same as a shared pointer but it doesn't encrease the count of the references
 * a weak pointer must be converted to a shared pointer to access the referenced object
+* letting a std::shared_ptr manage the data, and supplying std::weak_ptr to users of the data, the users can check validity of the data by calling expired() or lock()
+* 
+* the shared pointer should be used to manage the pointer, the weak pointer is used for accessing it
+* a weak pointer allows you to locate an object if it's still around, but it doesn't keep it around if nothing else needs it
 * 
 * smart pointer provide functions to get information about pointers
 */

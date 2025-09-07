@@ -3,7 +3,7 @@
 
 void MonodimensionalArray() {
 	int arr1[10]; //simple decleratrion of array of 10 elements
-	int arr2[] = { 10, 20, 30, 40 }; // size of array depend on hggow many elements there are in the definition
+	int arr2[] = { 10, 20, 30, 40 }; // size of array depend on how many elements are in the definition
 	int arr3[6] = { 10, 20, 30, 40 }; // decleration with size and initialization 
 
 	cout << "MonodimensionalArray arrays initialized" << endl;
