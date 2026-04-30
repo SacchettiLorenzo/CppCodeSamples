@@ -1,0 +1,53 @@
+Basic IO
+Data Types
+Pointers
+Collections
+Object Oriented programming
+Files
+Threads
+Benchmarking
+Design Patterns
+Simple Event System
+Miscellaneous
+    - Const
+    - Enumeration
+    - Iterators
+    - Functor
+    - Operator Overloading
+    - Template
+    - std Algorithm (currently in standard Library)
+    - chrono (currently in standard Library)
+    - Inline fuctions
+    - Lambda Expression
+    - Exceptions
+    - Functions 
+    - Isolated bit
+    - Lvalue Rvalue
+    - ADL Argument Dependant Lookup
+    - Attributes
+    - Bind
+    - BoolAlpha
+    - declspec _assume _restrict
+    - Macros
+    - Memory allignment
+    - memory allocations tracking
+    - Move
+    - Mutable
+    - Namespace
+    - Small String Optimization
+    - Static Assert
+    - variadic Functions
+    - Volatile
+    
+
+Cuda
+Open CV
+Algorithms
+C
+Dll
+Statis Library
+IPC
+precompiled Headers
+
+Projects
+Best practices (currently in miscellaneous)
