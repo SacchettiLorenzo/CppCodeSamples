@@ -10,9 +10,10 @@ BREAKLINE = \n----------\n
 OUTDIR = bin
 LOGDIR = log
 DTC = data_types_and_casting
+PTR = pointers
 
 # Default rule
-all: dirs $(OUTDIR)/i_o $(OUTDIR)/data_types $(OUTDIR)/type_casting
+all: dirs $(OUTDIR)/i_o $(OUTDIR)/data_types $(OUTDIR)/type_casting $(OUTDIR)/pointers $(OUTDIR)/pointers_misc
 
 # Ensure output and log directory exists
 .PHONY: dirs
@@ -31,6 +32,14 @@ $(OUTDIR)/data_types : $(DTC)/data_types.cpp | dirs
 $(OUTDIR)/type_casting : $(DTC)/type_casting.cpp | dirs
 	@echo "\n========== ##### ==========\n" >> $(LOGDIR)/type_casting.log 
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/type_casting $(DTC)/type_casting.cpp 2>&1 | tee -a $(LOGDIR)/type_casting.log 
+	
+$(OUTDIR)/pointers : $(PTR)/pointers.c | dirs
+	@echo "\n========== ##### ==========\n" >> $(LOGDIR)/pointers.log 
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/pointers $(PTR)/pointers.c 2>&1 | tee -a $(LOGDIR)/pointers.log 
+	
+$(OUTDIR)/pointers_misc : $(PTR)/pointers_misc.c | dirs
+	@echo "\n========== ##### ==========\n" >> $(LOGDIR)/pointers_misc.log 
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/pointers_misc $(PTR)/pointers_misc.c 2>&1 | tee -a $(LOGDIR)/pointers_misc.log 
 
 # Clean build files
 clean:
