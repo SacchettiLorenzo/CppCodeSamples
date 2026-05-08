@@ -11,9 +11,10 @@ IO = i_o
 DTC = data_types_and_casting
 PTR = pointers
 COL = collections
+OOP = object_oriented_programming
 
 # Default rule
-all: dirs $(OUTDIR)/i_o $(OUTDIR)/data_types $(OUTDIR)/type_casting $(OUTDIR)/pointers $(OUTDIR)/pointers_misc $(OUTDIR)/collections
+all: dirs $(OUTDIR)/i_o $(OUTDIR)/data_types $(OUTDIR)/type_casting $(OUTDIR)/pointers $(OUTDIR)/pointers_misc $(OUTDIR)/collections $(OUTDIR)/object_oriented_programming
 
 # Ensure output and log directory exists
 .PHONY: dirs
@@ -43,7 +44,25 @@ $(OUTDIR)/pointers_misc : $(PTR)/pointers_misc.c | dirs
 	
 $(OUTDIR)/collections : $(COL)/collections.cpp | dirs
 	@echo "\n========== ##### ==========\n" >> $(LOGDIR)/collections.log 
-	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/collections $(COL)/collections.cpp 2>&1 | tee -a $(LOGDIR)/collections.log 
+	$(CXX) $(CXXFLAGS) -Iinclude \
+	$(COL)/collections.cpp \
+	$(COL)/array.cpp \
+	$(COL)/enum.cpp \
+	$(COL)/list.cpp \
+	$(COL)/map.cpp \
+	$(COL)/queue.cpp \
+	$(COL)/vector.cpp \
+	-o $(OUTDIR)/collections 2>&1 | tee -a $(LOGDIR)/collections.log 
+
+$(OUTDIR)/object_oriented_programming : $(OOP)/object_oriented_programming.cpp | dirs
+	@echo "\n========== ##### ==========\n" >> $(LOGDIR)/object_oriented_programming.log 
+	$(CXX) $(CXXFLAGS) -Iinclude \
+	$(OOP)/object_oriented_programming.cpp \
+    $(OOP)/entity.cpp \
+    $(OOP)/player.cpp \
+    $(OOP)/enemy.cpp \
+    $(OOP)/opponent.cpp \
+	-o $(OUTDIR)/object_oriented_programming 2>&1 | tee -a $(LOGDIR)/object_oriented_programming.log 
 
 # Clean build files
 clean:

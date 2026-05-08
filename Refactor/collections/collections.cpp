@@ -2,11 +2,11 @@
 
 #include <iostream>
 #include "array.h"
-//#include "Vector.h"
-//#include "List.h"
-//#include "Map.h"
-//#include "Enum.h"
-//#include "Queue.h"
+//#include "vector.h"
+//#include "list.h"
+//#include "map.h"
+//#include "enum.h"
+//#include "queue.h"
 
 using namespace std;
 

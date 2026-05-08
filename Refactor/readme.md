@@ -26,7 +26,7 @@ All log file must be in the log directory
 - [x] Basic IO
 - [x] Data Types and casting
 - [x] Pointers
-- [] Collections
+- [x] Collections
 - [] Object Oriented programming
 - [] Files
 - [] Threads
