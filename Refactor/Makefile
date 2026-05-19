@@ -17,9 +17,10 @@ COL = collections
 OOP = object_oriented_programming
 F = files
 THR = threads
+BMK = benchmarking
 
 # Default rule
-all: dirs $(OUTDIR)/i_o $(OUTDIR)/data_types $(OUTDIR)/type_casting $(OUTDIR)/pointers $(OUTDIR)/pointers_misc $(OUTDIR)/collections $(OUTDIR)/object_oriented_programming  $(OUTDIR)/files $(OUTDIR)/threads
+all: dirs $(OUTDIR)/i_o $(OUTDIR)/data_types $(OUTDIR)/type_casting $(OUTDIR)/pointers $(OUTDIR)/pointers_misc $(OUTDIR)/collections $(OUTDIR)/object_oriented_programming  $(OUTDIR)/files $(OUTDIR)/threads $(OUTDIR)/benchmarking
 
 # Ensure output and log directory exists
 .PHONY: dirs
@@ -89,6 +90,12 @@ $(OUTDIR)/threads : $(THR)/threads.cpp $(THR)/mutex.cpp $(THR)/arguments.cpp $(T
 	$(CXX) $(CXXFLAGS) -pthread -o $(OUTDIR)/promise $(THR)/promise.cpp 2>&1 | tee -a $(LOGDIR)/threads.log
 	$(CXX) $(CXXFLAGS) -pthread -o $(OUTDIR)/thread_guard $(THR)/thread_guard.cpp 2>&1 | tee -a $(LOGDIR)/threads.log
 	$(CXX) $(CXXFLAGS) -pthread -o $(OUTDIR)/thread_spawn $(THR)/thread_spawn.cpp 2>&1 | tee -a $(LOGDIR)/threads.log
+
+#make bin/benchmarking
+$(OUTDIR)/benchmarking : $(BMK)/benchmarking.cpp | dirs
+	@$(LOG_SEPARATOR) >> $(LOGDIR)/benchmarking.log 
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/benchmarking $(BMK)/benchmarking.cpp 2>&1 | tee -a $(LOGDIR)/benchmarking.log 
+
 # Clean build files
 clean:
 	rm -rf $(OUTDIR) 

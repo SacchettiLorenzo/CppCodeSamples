@@ -29,8 +29,8 @@ All log file must be in the log directory
 - [x] Collections
 - [x] Object Oriented programming
 - [x] Files
-- [] Threads
-- [] Benchmarking
+- [x] Threads
+- [x] Benchmarking
 - [] Design Patterns
 - [] Simple Event System
 - Miscellaneous
