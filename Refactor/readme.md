@@ -27,8 +27,8 @@ All log file must be in the log directory
 - [x] Data Types and casting
 - [x] Pointers
 - [x] Collections
-- [] Object Oriented programming
-- [] Files
+- [x] Object Oriented programming
+- [x] Files
 - [] Threads
 - [] Benchmarking
 - [] Design Patterns
