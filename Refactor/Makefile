@@ -18,6 +18,7 @@ OOP = object_oriented_programming
 F = files
 THR = threads
 BMK = benchmarking
+DP = design_patterns
 
 # Default rule
 all: dirs $(OUTDIR)/i_o $(OUTDIR)/data_types $(OUTDIR)/type_casting $(OUTDIR)/pointers $(OUTDIR)/pointers_misc $(OUTDIR)/collections $(OUTDIR)/object_oriented_programming  $(OUTDIR)/files $(OUTDIR)/threads $(OUTDIR)/benchmarking
@@ -94,7 +95,35 @@ $(OUTDIR)/threads : $(THR)/threads.cpp $(THR)/mutex.cpp $(THR)/arguments.cpp $(T
 #make bin/benchmarking
 $(OUTDIR)/benchmarking : $(BMK)/benchmarking.cpp | dirs
 	@$(LOG_SEPARATOR) >> $(LOGDIR)/benchmarking.log 
-	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/benchmarking $(BMK)/benchmarking.cpp 2>&1 | tee -a $(LOGDIR)/benchmarking.log 
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/benchmarking $(BMK)/benchmarking.cpp 2>&1 | tee -a $(LOGDIR)/benchmarking.log
+
+#make bin/design_patterns
+$(OUTDIR)/design_patterns : \
+$(DP)/neural_network.cpp $(DP)/singleton.cpp $(DP)/monostate.cpp \
+$(DP)/factory.cpp $(DP)/inner_factory.cpp $(DP)/groovy_builder.cpp $(DP)/fluent_builder.cpp \
+$(DP)/static_decorator.cpp $(DP)/dynamic_decorator.cpp $(DP)/functional_decorator.cpp \
+$(DP)/object_duplication.cpp $(DP)/property_proxy.cpp $(DP)/virtual_proxy.cpp \
+$(DP)/memento.cpp $(DP)/flyweight.cpp $(DP)/mediator.cpp $(DP)/pointer_chain.cpp \
+$(DP)/filter.cpp | dirs
+	@$(LOG_SEPARATOR) >> $(LOGDIR)/design_patterns.log 
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/neural_network $(DP)/neural_network.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log  
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/singleton $(DP)/singleton.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/monostate $(DP)/monostate.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/factory $(DP)/factory.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/inner_factory $(DP)/inner_factory.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/groovy_builder $(DP)/groovy_builder.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/fluent_builder $(DP)/fluent_builder.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/static_decorator $(DP)/static_decorator.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/dynamic_decorator $(DP)/dynamic_decorator.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/functional_decorator $(DP)/functional_decorator.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/object_duplication $(DP)/object_duplication.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/property_proxy $(DP)/property_proxy.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/virtual_proxy $(DP)/virtual_proxy.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/memento $(DP)/memento.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/flyweight $(DP)/flyweight.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/mediator $(DP)/mediator.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/pointer_chain $(DP)/pointer_chain.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/filter $(DP)/filter.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
 
 # Clean build files
 clean:
