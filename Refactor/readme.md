@@ -34,25 +34,25 @@ All log file must be in the log directory
 - [] Design Patterns
 - [] Simple Event System
 - Miscellaneous
-    - [] Const
-    - [] Enumeration
-    - [] Iterators
-    - [] Functor
-    - [] Operator Overloading
-    - [] Template
-    - [] std Algorithm (currently in standard Library)
-    - [] chrono (currently in standard Library)
-    - [] Inline fuctions
-    - [] Lambda Expression
-    - [] Exceptions
-    - [] Functions 
-    - [] Isolated bit
-    - [] Lvalue Rvalue
-    - [] ADL Argument Dependant Lookup
+    - [#] Const
+    - [#] Enumeration
+    - [#] Iterators
+    - [#] Functor
+    - [#] Operator Overloading
+    - [#] Template
+    - [] std Algorithm (currently in standard Library - to be extended)
+    - [] chrono (currently in standard Library - to be extended)
+    - [#] Inline fuctions
+    - [#] Lambda Expression
+    - [#] Exceptions
+    - [#] Functions 
+    - [#] Isolated bit
+    - [#] Lvalue Rvalue
+    - [#] ADL Argument Dependant Lookup
     - [] Attributes
     - [] Bind
     - [] BoolAlpha
-    - [] declspec _assume _restrict
+    - [#] declspec _assume _restrict
     - [] Macros
     - [] Memory allignment
     - [] memory allocations tracking
@@ -64,6 +64,107 @@ All log file must be in the log directory
     - [] variadic Functions
     - [] Volatile
 
+todo:
+standard library
+- [] algorithm 
+- [] bitset
+- [] complex
+- [] locale
+- [] exception
+- [] fstream
+- [] functional
+- [] iomanip
+- [] ios
+- [] iosfwd
+- [] new 
+- [] numeric
+- [] limits
+- [] ostream
+- [] sstream
+- [] stdexcept
+- [] streambuf
+- [] typeinfo
+- [] utiity
+- [] valarray
+- [] atomic
+- [] codecvt
+- [] conditional_variable
+- [] forward_list
+- [] initializer_list
+- [] random
+- [] ratio
+- [] regex
+- [] scoped_allocator
+- [] system_error
+- [] tuple (add in collection)
+- [] type_traits
+- [] typeindex
+- [] unordered map (add in collection)
+- [] unordered set (add in collection)
+- [] deque (add in collection)
+- [] stack (add in collection)
+- [] set (add in collection)
+- [] shared_mutex (add in thread)
+- [] any
+- [] charconv
+- [] execution
+- [] filesystem
+- [] memory_resource
+- [] optional
+- [] string_view
+- [] variant
+- [] barrier
+- [] bit
+- [] compare 
+- [] concepts
+- [] corutine
+- [] format
+- [] latch
+- [] numbers
+- [] ranges
+- [] semaphore
+- [] soource_location
+- [] span
+- [] stop_token
+- [] syncstream
+- [] version
+- [] expected
+- [] flat_map (add in collection)
+- [] flat_set (add in collection)
+- [] generator
+- [] mdspan
+- [] print
+- [] spanstream
+- [] stacktrace
+- [] stdfloat
+- [] contracts
+- [] debugging
+- [] hazard_pointer
+- [] hive
+- [] inplace_vector
+- [] linalg
+- [] rcu
+- [] simd
+- [] text_encoding
+
+other
+- []
+- []
+- []
+- []
+- []
+- []
+- []
+- []
+- []
+- []
+- []
+- []
+- []
+- []
+
+
+  
 
 
 

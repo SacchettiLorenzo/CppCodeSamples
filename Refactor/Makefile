@@ -19,9 +19,15 @@ F = files
 THR = threads
 BMK = benchmarking
 DP = design_patterns
+MISC = miscellaneous
+STD = std_lib
 
 # Default rule
-all: dirs $(OUTDIR)/i_o $(OUTDIR)/data_types $(OUTDIR)/type_casting $(OUTDIR)/pointers $(OUTDIR)/pointers_misc $(OUTDIR)/collections $(OUTDIR)/object_oriented_programming  $(OUTDIR)/files $(OUTDIR)/threads $(OUTDIR)/benchmarking
+all: dirs $(OUTDIR)/i_o $(OUTDIR)/data_types $(OUTDIR)/type_casting \
+$(OUTDIR)/pointers $(OUTDIR)/pointers_misc $(OUTDIR)/collections \
+$(OUTDIR)/object_oriented_programming  $(OUTDIR)/files $(OUTDIR)/threads \
+$(OUTDIR)/benchmarking $(OUTDIR)/design_patterns $(OUTDIR)/miscellaneous \
+$(OUTDIR)/std_lib
 
 # Ensure output and log directory exists
 .PHONY: dirs
@@ -45,10 +51,13 @@ $(OUTDIR)/type_casting : $(DTC)/type_casting.cpp | dirs
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/type_casting $(DTC)/type_casting.cpp 2>&1 | tee -a $(LOGDIR)/type_casting.log 
 	
 #make bin/pointers
-$(OUTDIR)/pointers : $(PTR)/pointers.c $(PTR)/pointers_misc.c | dirs
+$(OUTDIR)/pointers : $(PTR)/pointers.c $(PTR)/pointers_misc.c $(PTR)/pointers_to_function.c | dirs
 	@$(LOG_SEPARATOR) >> $(LOGDIR)/pointers.log 
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/pointers $(PTR)/pointers.c 2>&1 | tee -a $(LOGDIR)/pointers.log 
-	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/pointers_misc $(PTR)/pointers_misc.c 2>&1 | tee -a $(LOGDIR)/pointers.log 
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/pointers_misc $(PTR)/pointers_misc.c 2>&1 | tee -a $(LOGDIR)/pointers.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/pointers_to_function $(PTR)/pointers_to_function.c 2>&1 | tee -a $(LOGDIR)/pointers.log 
+
+
 
 #make bin/collections	
 $(OUTDIR)/collections : $(COL)/collections.cpp | dirs
@@ -100,10 +109,10 @@ $(OUTDIR)/benchmarking : $(BMK)/benchmarking.cpp | dirs
 #make bin/design_patterns
 $(OUTDIR)/design_patterns : \
 $(DP)/neural_network.cpp $(DP)/singleton.cpp $(DP)/monostate.cpp \
-$(DP)/factory.cpp $(DP)/inner_factory.cpp $(DP)/groovy_builder.cpp $(DP)/fluent_builder.cpp \
+$(DP)/factory.cpp $(DP)/inner_factory.cpp $(DP)/prototype_factory.cpp $(DP)/groovy_builder.cpp $(DP)/fluent_builder.cpp \
 $(DP)/static_decorator.cpp $(DP)/dynamic_decorator.cpp $(DP)/functional_decorator.cpp \
 $(DP)/object_duplication.cpp $(DP)/property_proxy.cpp $(DP)/virtual_proxy.cpp \
-$(DP)/memento.cpp $(DP)/flyweight.cpp $(DP)/mediator.cpp $(DP)/pointer_chain.cpp \
+$(DP)/memento.cpp $(DP)/flyweight.cpp $(DP)/mediator.cpp $(DP)/pointer_chain.cpp  \
 $(DP)/filter.cpp | dirs
 	@$(LOG_SEPARATOR) >> $(LOGDIR)/design_patterns.log 
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/neural_network $(DP)/neural_network.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log  
@@ -111,6 +120,7 @@ $(DP)/filter.cpp | dirs
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/monostate $(DP)/monostate.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/factory $(DP)/factory.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/inner_factory $(DP)/inner_factory.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/prototype_factory $(DP)/prototype_factory.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/groovy_builder $(DP)/groovy_builder.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/fluent_builder $(DP)/fluent_builder.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/static_decorator $(DP)/static_decorator.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
@@ -124,6 +134,30 @@ $(DP)/filter.cpp | dirs
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/mediator $(DP)/mediator.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/pointer_chain $(DP)/pointer_chain.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/filter $(DP)/filter.cpp 2>&1 | tee -a $(LOGDIR)/design_patterns.log
+
+#make bin/miscellaneous
+$(OUTDIR)/miscellaneous : \
+$(MISC)/const.cpp $(MISC)/enumeration.cpp $(MISC)/functor.cpp $(MISC)/iterators.cpp $(MISC)/operator_overloading.cpp \
+$(MISC)/declspec_assume_restrict.cpp $(MISC)/template.cpp $(MISC)/inline_function.cpp $(MISC)/lambda_expression.cpp \
+$(MISC)/exceptions.cpp | dirs
+	@$(LOG_SEPARATOR) >> $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/const $(MISC)/const.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/enumeration $(MISC)/enumeration.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/functor $(MISC)/functor.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/iterators $(MISC)/iterators.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/operator_overloading $(MISC)/operator_overloading.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/declspec_assume_restrict $(MISC)/declspec_assume_restrict.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/template $(MISC)/template.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/inline_function $(MISC)/inline_function.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/lambda_expression $(MISC)/lambda_expression.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/exceptions $(MISC)/exceptions.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+
+#make bin/std_lib
+$(OUTDIR)/std_lib : \
+$(STD)/algorithm.cpp $(STD)/chrono.cpp | dirs
+	@$(LOG_SEPARATOR) >> $(LOGDIR)/std_lib.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/algorithm $(STD)/algorithm.cpp 2>&1 | tee -a $(LOGDIR)/std_lib.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/chrono $(STD)/chrono.cpp 2>&1 | tee -a $(LOGDIR)/std_lib.log
 
 # Clean build files
 clean:

@@ -32,12 +32,6 @@ int main() {
 
 	std::cout << "Current time: " << std::ctime(&now) << std::endl; //from timepoint to calendar date (unsafe)
 
-
-	//from timepoint to calendar date
-	char str[26];
-	ctime_s(str, sizeof str, &now);
-	std::cout << "Current time: " << str << endl;
-
 }
 
 /* Duration
