@@ -2,10 +2,12 @@
 
 using namespace std;
 
+// callback function 
 void HelloWord() {
     cout << "Hello word!" << endl;
 }
 
+// callback function 
 void HelloWord2(int a) {
     cout << "Hello word!" << a << endl;
 }
