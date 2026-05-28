@@ -23,7 +23,7 @@ MISC = miscellaneous
 STD = std_lib
 
 # Default rule
-all: dirs $(OUTDIR)/i_o $(OUTDIR)/data_types $(OUTDIR)/type_casting \
+all: clean rmlog dirs $(OUTDIR)/i_o $(OUTDIR)/data_types $(OUTDIR)/type_casting \
 $(OUTDIR)/pointers $(OUTDIR)/pointers_misc $(OUTDIR)/collections \
 $(OUTDIR)/object_oriented_programming  $(OUTDIR)/files $(OUTDIR)/threads \
 $(OUTDIR)/benchmarking $(OUTDIR)/design_patterns $(OUTDIR)/miscellaneous \
@@ -51,11 +51,11 @@ $(OUTDIR)/type_casting : $(DTC)/type_casting.cpp | dirs
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/type_casting $(DTC)/type_casting.cpp 2>&1 | tee -a $(LOGDIR)/type_casting.log 
 	
 #make bin/pointers
-$(OUTDIR)/pointers : $(PTR)/pointers.c $(PTR)/pointers_misc.c $(PTR)/pointers_to_function.c | dirs
+$(OUTDIR)/pointers : $(PTR)/pointers.c $(PTR)/pointers_misc.c $(PTR)/pointers_to_function.cpp | dirs
 	@$(LOG_SEPARATOR) >> $(LOGDIR)/pointers.log 
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/pointers $(PTR)/pointers.c 2>&1 | tee -a $(LOGDIR)/pointers.log 
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/pointers_misc $(PTR)/pointers_misc.c 2>&1 | tee -a $(LOGDIR)/pointers.log
-	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/pointers_to_function $(PTR)/pointers_to_function.c 2>&1 | tee -a $(LOGDIR)/pointers.log 
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/pointers_to_function $(PTR)/pointers_to_function.cpp 2>&1 | tee -a $(LOGDIR)/pointers.log 
 
 
 
@@ -139,7 +139,10 @@ $(DP)/filter.cpp | dirs
 $(OUTDIR)/miscellaneous : \
 $(MISC)/const.cpp $(MISC)/enumeration.cpp $(MISC)/functor.cpp $(MISC)/iterators.cpp $(MISC)/operator_overloading.cpp \
 $(MISC)/declspec_assume_restrict.cpp $(MISC)/template.cpp $(MISC)/inline_function.cpp $(MISC)/lambda_expression.cpp \
-$(MISC)/exceptions.cpp | dirs
+$(MISC)/exceptions.cpp $(MISC)/bit_mask.cpp $(MISC)/lvalue_rvalue.cpp $(MISC)/adl_arument_dependant_lookup.cpp \
+$(MISC)/attributes.cpp $(MISC)/boolalpha.cpp $(MISC)/macros.cpp $(MISC)/memery_allignment.cpp \
+$(MISC)/memory_allocation_tracking.cpp $(MISC)/move_semantics.cpp $(MISC)/mutable.cpp $(MISC)/namespace.cpp \
+$(MISC)/small_string_optimization.cpp $(MISC)/static_assert.cpp $(MISC)/variadic_functions.cpp $(MISC)/volatile.cpp | dirs
 	@$(LOG_SEPARATOR) >> $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/const $(MISC)/const.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/enumeration $(MISC)/enumeration.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
@@ -151,17 +154,34 @@ $(MISC)/exceptions.cpp | dirs
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/inline_function $(MISC)/inline_function.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/lambda_expression $(MISC)/lambda_expression.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/exceptions $(MISC)/exceptions.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/bit_mask $(MISC)/bit_mask.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/lvalue_rvalue $(MISC)/lvalue_rvalue.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/adl_arument_dependant_lookup $(MISC)/adl_arument_dependant_lookup.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/attributes $(MISC)/attributes.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/boolalpha $(MISC)/boolalpha.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/macros $(MISC)/macros.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/memery_allignment $(MISC)/memery_allignment.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/memory_allocation_tracking $(MISC)/memory_allocation_tracking.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/move_semantics $(MISC)/move_semantics.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/mutable $(MISC)/mutable.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/namespace $(MISC)/namespace.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/small_string_optimization $(MISC)/small_string_optimization.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/static_assert $(MISC)/static_assert.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/variadic_functions $(MISC)/variadic_functions.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/volatile $(MISC)/volatile.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 
 #make bin/std_lib
 $(OUTDIR)/std_lib : \
-$(STD)/algorithm.cpp $(STD)/chrono.cpp | dirs
+$(STD)/algorithm.cpp $(STD)/chrono.cpp $(STD)/functional.cpp | dirs
 	@$(LOG_SEPARATOR) >> $(LOGDIR)/std_lib.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/algorithm $(STD)/algorithm.cpp 2>&1 | tee -a $(LOGDIR)/std_lib.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/chrono $(STD)/chrono.cpp 2>&1 | tee -a $(LOGDIR)/std_lib.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/functional $(STD)/functional.cpp 2>&1 | tee -a $(LOGDIR)/std_lib.log
 
 # Clean build files
 clean:
 	rm -rf $(OUTDIR) 
 
+# Remove log files
 rmlog: 
 	rm -rf $(LOGDIR)

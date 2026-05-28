@@ -49,30 +49,29 @@ All log file must be in the log directory
     - [#] Isolated bit
     - [#] Lvalue Rvalue
     - [#] ADL Argument Dependant Lookup
-    - [] Attributes
-    - [] Bind
-    - [] BoolAlpha
+    - [#] Attributes
+    - [#] BoolAlpha
     - [#] declspec _assume _restrict
-    - [] Macros
-    - [] Memory allignment
-    - [] memory allocations tracking
-    - [] Move
-    - [] Mutable
-    - [] Namespace
-    - [] Small String Optimization
-    - [] Static Assert
-    - [] variadic Functions
-    - [] Volatile
+    - [#] Macros
+    - [#] Memory allignment
+    - [#] memory allocations tracking
+    - [#] move semantic (to be refined)
+    - [#] Mutable
+    - [#] Namespace
+    - [#] Small String Optimization
+    - [#] Static Assert
+    - [#] variadic Functions
+    - [#] Volatile
 
 todo:
 standard library
+- [] functional
 - [] algorithm 
 - [] bitset
 - [] complex
 - [] locale
 - [] exception
 - [] fstream
-- [] functional
 - [] iomanip
 - [] ios
 - [] iosfwd
