@@ -142,7 +142,8 @@ $(MISC)/declspec_assume_restrict.cpp $(MISC)/template.cpp $(MISC)/inline_functio
 $(MISC)/exceptions.cpp $(MISC)/bit_mask.cpp $(MISC)/lvalue_rvalue.cpp $(MISC)/adl_arument_dependant_lookup.cpp \
 $(MISC)/attributes.cpp $(MISC)/boolalpha.cpp $(MISC)/macros.cpp $(MISC)/memery_allignment.cpp \
 $(MISC)/memory_allocation_tracking.cpp $(MISC)/move_semantics.cpp $(MISC)/mutable.cpp $(MISC)/namespace.cpp \
-$(MISC)/small_string_optimization.cpp $(MISC)/static_assert.cpp $(MISC)/variadic_functions.cpp $(MISC)/volatile.cpp | dirs
+$(MISC)/small_string_optimization.cpp $(MISC)/static_assert.cpp $(MISC)/variadic_functions.cpp $(MISC)/volatile.cpp 
+$(MISC)/trailing_return_type.cpp \| dirs
 	@$(LOG_SEPARATOR) >> $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/const $(MISC)/const.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/enumeration $(MISC)/enumeration.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
@@ -169,6 +170,7 @@ $(MISC)/small_string_optimization.cpp $(MISC)/static_assert.cpp $(MISC)/variadic
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/static_assert $(MISC)/static_assert.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/variadic_functions $(MISC)/variadic_functions.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/volatile $(MISC)/volatile.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/trailing_return_type $(MISC)/trailing_return_type.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 
 #make bin/std_lib
 $(OUTDIR)/std_lib : \

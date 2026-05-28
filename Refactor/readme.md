@@ -40,7 +40,7 @@ All log file must be in the log directory
     - [#] Functor
     - [#] Operator Overloading
     - [#] Template
-    - [] std Algorithm (currently in standard Library - to be extended)
+    - [] std Algorithm (currently in standard Library - to be extended to c++20 and c++23 functionality)
     - [] chrono (currently in standard Library - to be extended)
     - [#] Inline fuctions
     - [#] Lambda Expression
@@ -147,7 +147,7 @@ standard library
 - [] text_encoding
 
 other
-- []
+- [type traits]
 - []
 - []
 - []
