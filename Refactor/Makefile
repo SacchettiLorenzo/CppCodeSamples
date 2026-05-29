@@ -23,7 +23,7 @@ MISC = miscellaneous
 STD = std_lib
 
 # Default rule
-all: clean rmlog dirs $(OUTDIR)/i_o $(OUTDIR)/data_types $(OUTDIR)/type_casting \
+all: clean rmlog dirs $(OUTDIR)/i_o $(OUTDIR)/data_types_and_casting \
 $(OUTDIR)/pointers $(OUTDIR)/pointers_misc $(OUTDIR)/collections \
 $(OUTDIR)/object_oriented_programming  $(OUTDIR)/files $(OUTDIR)/threads \
 $(OUTDIR)/benchmarking $(OUTDIR)/design_patterns $(OUTDIR)/miscellaneous \
@@ -40,15 +40,12 @@ $(OUTDIR)/i_o : $(IO)/i_o.cpp | dirs
 	@$(LOG_SEPARATOR) >> $(LOGDIR)/i_o.log 
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/i_o $(IO)/i_o.cpp 2>&1 | tee -a $(LOGDIR)/i_o.log 
 	
-#make bin/data_types
-$(OUTDIR)/data_types : $(DTC)/data_types.cpp | dirs
+#make bin/data_types_and_casting
+$(OUTDIR)/data_types_and_casting : $(DTC)/data_types.cpp $(DTC)/type_casting.cpp $(DTC)/decltype.cpp| dirs
 	@$(LOG_SEPARATOR) >> $(LOGDIR)/data_types.log 
-	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/data_types $(DTC)/data_types.cpp 2>&1 | tee -a $(LOGDIR)/data_types.log 
-
-#make bin/type_casting
-$(OUTDIR)/type_casting : $(DTC)/type_casting.cpp | dirs
-	@$(LOG_SEPARATOR) >> $(LOGDIR)/type_casting.log 
-	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/type_casting $(DTC)/type_casting.cpp 2>&1 | tee -a $(LOGDIR)/type_casting.log 
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/data_types $(DTC)/data_types.cpp 2>&1 | tee -a $(LOGDIR)/data_types_and_casting.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/type_casting $(DTC)/type_casting.cpp 2>&1 | tee -a $(LOGDIR)/data_types_and_casting.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/decltype $(DTC)/decltype.cpp 2>&1 | tee -a $(LOGDIR)/data_types_and_casting.log  
 	
 #make bin/pointers
 $(OUTDIR)/pointers : $(PTR)/pointers.c $(PTR)/pointers_misc.c $(PTR)/pointers_to_function.cpp | dirs

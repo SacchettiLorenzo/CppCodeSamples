@@ -81,7 +81,7 @@ int main() {
 
 	//USER DEFINED CONVERSION OPERATOR ----------------------------------------
 	// Converting an Object using a User-Defined Conversion Operator
-	//without the user defined conversion operator the conversion integet->strig does not exist.
+	//without the user defined conversion operator the conversion integer->string does not exist.
 	integer obj(3);
 	std::string str = obj;
 	obj = 20;
