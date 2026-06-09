@@ -140,7 +140,7 @@ $(MISC)/exceptions.cpp $(MISC)/bit_mask.cpp $(MISC)/lvalue_rvalue.cpp $(MISC)/ad
 $(MISC)/attributes.cpp $(MISC)/boolalpha.cpp $(MISC)/macros.cpp $(MISC)/memery_allignment.cpp \
 $(MISC)/memory_allocation_tracking.cpp $(MISC)/move_semantics.cpp $(MISC)/mutable.cpp $(MISC)/namespace.cpp \
 $(MISC)/small_string_optimization.cpp $(MISC)/static_assert.cpp $(MISC)/variadic_functions.cpp $(MISC)/volatile.cpp \
-$(MISC)/trailing_return_type.cpp $(MISC)/callback_with_type_definition.cpp $(MISC)/simple_event_system.cpp | dirs
+$(MISC)/trailing_return_type.cpp $(MISC)/callback_with_type_definition.cpp $(MISC)/simple_event_system.cpp $(MISC)/for_loop.cpp | dirs
 	@$(LOG_SEPARATOR) >> $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/const $(MISC)/const.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/enumeration $(MISC)/enumeration.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
@@ -170,6 +170,7 @@ $(MISC)/trailing_return_type.cpp $(MISC)/callback_with_type_definition.cpp $(MIS
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/trailing_return_type $(MISC)/trailing_return_type.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/callback_with_type_definition $(MISC)/callback_with_type_definition.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/simple_event_system $(MISC)/simple_event_system.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/for_loop $(MISC)/for_loop.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 
 #make bin/std_lib
 $(OUTDIR)/std_lib : \
