@@ -64,6 +64,7 @@ All log file must be in the log directory
     - [#] Volatile
 
 todo:
+templated lambda
 standard library
 - [] functional
 - [] algorithm 
