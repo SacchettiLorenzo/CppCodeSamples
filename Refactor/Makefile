@@ -36,9 +36,10 @@ dirs:
 	mkdir -p $(OUTDIR) $(LOGDIR)
 
 #make bin/i_o
-$(OUTDIR)/i_o : $(IO)/i_o.cpp | dirs
+$(OUTDIR)/i_o : $(IO)/i_o.cpp $(IO)/nonstandard_file_descriptor.cpp | dirs
 	@$(LOG_SEPARATOR) >> $(LOGDIR)/i_o.log 
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/i_o $(IO)/i_o.cpp 2>&1 | tee -a $(LOGDIR)/i_o.log 
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/nonstandard_file_descriptor $(IO)/nonstandard_file_descriptor.cpp 2>&1 | tee -a $(LOGDIR)/i_o.log
 	
 #make bin/data_types_and_casting
 $(OUTDIR)/data_types_and_casting : $(DTC)/data_types.cpp $(DTC)/type_casting.cpp $(DTC)/decltype.cpp| dirs
@@ -140,7 +141,8 @@ $(MISC)/exceptions.cpp $(MISC)/bit_mask.cpp $(MISC)/lvalue_rvalue.cpp $(MISC)/ad
 $(MISC)/attributes.cpp $(MISC)/boolalpha.cpp $(MISC)/macros.cpp $(MISC)/memery_allignment.cpp \
 $(MISC)/memory_allocation_tracking.cpp $(MISC)/move_semantics.cpp $(MISC)/mutable.cpp $(MISC)/namespace.cpp \
 $(MISC)/small_string_optimization.cpp $(MISC)/static_assert.cpp $(MISC)/variadic_functions.cpp $(MISC)/volatile.cpp \
-$(MISC)/trailing_return_type.cpp $(MISC)/callback_with_type_definition.cpp $(MISC)/simple_event_system.cpp $(MISC)/for_loop.cpp | dirs
+$(MISC)/trailing_return_type.cpp $(MISC)/callback_with_type_definition.cpp $(MISC)/simple_event_system.cpp $(MISC)/for_loop.cpp \
+$(MISC)/explicit.cpp | dirs
 	@$(LOG_SEPARATOR) >> $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/const $(MISC)/const.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/enumeration $(MISC)/enumeration.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
@@ -171,6 +173,7 @@ $(MISC)/trailing_return_type.cpp $(MISC)/callback_with_type_definition.cpp $(MIS
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/callback_with_type_definition $(MISC)/callback_with_type_definition.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/simple_event_system $(MISC)/simple_event_system.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/for_loop $(MISC)/for_loop.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
+	$(CXX) $(CXXFLAGS) -o $(OUTDIR)/explicit $(MISC)/explicit.cpp 2>&1 | tee -a $(LOGDIR)/miscellaneous.log
 
 #make bin/std_lib
 $(OUTDIR)/std_lib : \
