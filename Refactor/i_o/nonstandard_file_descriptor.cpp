@@ -18,4 +18,5 @@ int main (int argc, char **argv){
 } 
 
 //This code open and read/write from file descriptor diffrent from stdin and stdout
+//run with: ./nonstandard_file_descriptor 3<input.txt 4>&1 to redirect output to stdout
 
